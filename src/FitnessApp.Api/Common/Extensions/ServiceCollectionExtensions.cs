@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using FitnessApp.Api.Common.Errors;
 using FitnessApp.Api.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 
 namespace FitnessApp.Api.Common.Extensions;
 
@@ -62,7 +63,23 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddSwagger(this IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(o => o.SwaggerDoc("v1", new() { Title = "Fitness App API", Version = "v1" }));
+        services.AddSwaggerGen(o =>
+        {
+            o.SwaggerDoc("v1", new() { Title = "Fitness App API", Version = "v1" });
+
+            // "Authorize" button in Swagger UI: paste the accessToken from login to call protected endpoints.
+            o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT",
+                Description = "Wklej accessToken z /api/auth/login.",
+            });
+            o.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference("Bearer", document)] = [],
+            });
+        });
         return services;
     }
 }

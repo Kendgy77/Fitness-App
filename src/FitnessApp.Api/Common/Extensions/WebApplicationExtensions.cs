@@ -36,13 +36,20 @@ public static class WebApplicationExtensions
         // 5. CORS before anything that can reject the request, so the browser sees the CORS headers.
         app.UseCors(ServiceCollectionExtensions.FrontendCorsPolicy);
 
+        // 6. Who is calling (reads the JWT), then are they allowed (fallback policy, roles).
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        // 7. After authentication, so limits can later be partitioned per user as well as per IP.
+        app.UseRateLimiter();
+
         return app;
     }
 
     public static WebApplication MapApiEndpoints(this WebApplication app)
     {
         app.MapControllers();
-        app.MapHealthChecks("/health");
+        app.MapHealthChecks("/health").AllowAnonymous();
         return app;
     }
 }

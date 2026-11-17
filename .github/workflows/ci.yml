@@ -33,6 +33,12 @@ jobs:
       - name: Build
         run: dotnet build --no-restore -c Release
 
+      # Fails when an entity changed but nobody added a migration for it.
+      - name: Migrations up to date
+        run: |
+          dotnet tool restore
+          dotnet ef migrations has-pending-model-changes --project src/FitnessApp.Api --no-build --configuration Release
+
       # Integration tests start PostgreSQL in Docker (Testcontainers); ubuntu runners have Docker.
       - name: Test
         run: dotnet test --no-build -c Release

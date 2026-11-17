@@ -25,9 +25,16 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         await _database.DisposeAsync();
     }
 
+    /// <summary>Strong enough to pass every password rule.</summary>
+    public const string ValidPassword = "Trening123!";
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
         builder.UseSetting("ConnectionStrings:Default", _database.GetConnectionString());
+        builder.UseSetting("Jwt:Key", "integration-tests-signing-key-not-a-secret-0123456789");
+        // All test requests share one client IP, so the per-IP auth limit is lifted here;
+        // a dedicated test turns it back down to prove the limiter works.
+        builder.UseSetting("RateLimit:AuthPermitLimit", "100000");
     }
 }
