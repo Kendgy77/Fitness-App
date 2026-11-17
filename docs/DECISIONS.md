@@ -111,3 +111,27 @@ something different from it, the reason is logged here.
   Neon; frontend on Vercel. Final pick in week 7 after checking current free tiers.
 - **Consequences:** WNF01 (500 concurrent users) and WNF03 (99.9% uptime) can't be guaranteed on free
   tiers; the thesis presents them as design targets backed by a measured load test.
+
+### D013 · 2026-11-17 · Login answers: generic 401, but a distinct 423 when locked
+
+- **Context:** the thesis (UC002, T04) wants a message saying the account is locked for 15 minutes; security
+  practice says login errors shouldn't reveal whether an e-mail is registered.
+- **Choice:** wrong password and unknown e-mail both return the same 401 "Nieprawidłowy e-mail lub hasło.".
+  Only an account that really is locked returns 423 "Konto zablokowane" with `retryAfter` in seconds.
+- **Why:** the user needs to know they must wait; the 423 only appears after 3 failed tries on a real account,
+  and per-IP rate limiting (10 requests/min) makes probing e-mails this way slow.
+
+### D014 · 2026-11-17 · Registration logs the user in
+
+- **Choice:** `POST /api/auth/register` returns 201 with the same token response as login.
+- **Why:** thesis T01 expects the user to be logged in and taken to the dashboard after registering.
+  There is no e-mail confirmation in the MVP (no e-mail provider); it's in the backlog.
+
+### D015 · 2026-11-17 · Tooling: tests on Microsoft Testing Platform, dotnet-ef pinned in a tool manifest
+
+- **Choice:** xUnit v3 tests run on Microsoft Testing Platform (`global.json` → `"test": { "runner": … }`),
+  which `dotnet test` on .NET 10 requires for xUnit v3. `dotnet-ef` 10.x is pinned in `dotnet-tools.json`;
+  run `dotnet tool restore` once.
+- **Why:** everyone (and CI) uses the same EF tool version. Migrations are created locally with
+  `dotnet ef`, so the playbook's "add-migration" CI workflow isn't needed. CI checks
+  `has-pending-model-changes` so a forgotten migration fails the build.
