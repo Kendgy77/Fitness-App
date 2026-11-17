@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FitnessApp.Api.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20261117200952_InitialIdentity")]
+    [Migration("20261117201713_InitialIdentity")]
     partial class InitialIdentity
     {
         /// <inheritdoc />
@@ -117,6 +117,22 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "2c8e6f0a-5b1d-4c3e-9a7f-1d2b3c4e5f60",
+                            ConcurrencyStamp = "b1f0c2d3-0001-4000-8000-000000000001",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "7d4a9b1c-2e3f-4a5b-8c6d-7e8f9a0b1c2d",
+                            ConcurrencyStamp = "b1f0c2d3-0002-4000-8000-000000000002",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

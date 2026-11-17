@@ -19,12 +19,23 @@ public sealed class PlatformTests(ApiFactory factory)
     }
 
     [Fact]
-    public async Task Unknown_route_returns_404_as_problem_details()
+    public async Task Unknown_route_returns_404_as_problem_details_for_a_logged_in_user()
     {
-        var response = await _client.GetAsync("/api/does-not-exist", _ct);
+        var client = await factory.CreateAuthenticatedClientAsync(ct: _ct);
+
+        var response = await client.GetAsync("/api/does-not-exist", _ct);
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
         response.Content.Headers.ContentType?.MediaType.ShouldBe("application/problem+json");
+    }
+
+    [Fact]
+    public async Task Unknown_route_returns_401_for_an_anonymous_caller()
+    {
+        // Secure by default: anonymous callers can't even discover which routes exist.
+        var response = await _client.GetAsync("/api/does-not-exist", _ct);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
     }
 
     [Fact]

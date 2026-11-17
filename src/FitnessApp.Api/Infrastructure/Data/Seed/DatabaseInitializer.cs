@@ -31,15 +31,7 @@ public static class DatabaseInitializer
             await services.GetRequiredService<AppDbContext>().Database.MigrateAsync();
         }
 
-        var roles = services.GetRequiredService<RoleManager<IdentityRole>>();
-        foreach (var role in Roles.All)
-        {
-            if (!await roles.RoleExistsAsync(role))
-            {
-                await roles.CreateAsync(new IdentityRole(role));
-            }
-        }
-
+        // Roles are seeded by the migration (RoleConfiguration), not here.
         if (environment.IsDevelopment())
         {
             await SeedDevelopmentAdminAsync(services, app.Configuration);

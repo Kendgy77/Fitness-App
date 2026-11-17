@@ -4,6 +4,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace FitnessApp.Api.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
@@ -156,6 +158,15 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "2c8e6f0a-5b1d-4c3e-9a7f-1d2b3c4e5f60", "b1f0c2d3-0001-4000-8000-000000000001", "User", "USER" },
+                    { "7d4a9b1c-2e3f-4a5b-8c6d-7e8f9a0b1c2d", "b1f0c2d3-0002-4000-8000-000000000002", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
