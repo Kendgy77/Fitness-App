@@ -27,7 +27,7 @@ public sealed class GlobalExceptionHandler(
             DomainValidationException => (StatusCodes.Status400BadRequest, exception.Message),
             ConflictException => (StatusCodes.Status409Conflict, exception.Message),
             ForbiddenException => (StatusCodes.Status403Forbidden, exception.Message),
-            _ => (StatusCodes.Status500InternalServerError, "Wystąpił nieoczekiwany błąd."),
+            _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred."),
         };
 
         if (status >= StatusCodes.Status500InternalServerError)

@@ -3,19 +3,19 @@ using System.ComponentModel.DataAnnotations;
 namespace FitnessApp.Api.Features.Auth;
 
 public sealed record RegisterRequest(
-    [Required(ErrorMessage = "Podaj adres e-mail.")]
-    [EmailAddress(ErrorMessage = "Podaj poprawny adres e-mail.")]
-    [StringLength(256, ErrorMessage = "Adres e-mail może mieć najwyżej 256 znaków.")]
+    [Required(ErrorMessage = "Enter your email address.")]
+    [EmailAddress(ErrorMessage = "Enter a valid email address.")]
+    [StringLength(256, ErrorMessage = "The email address can be at most 256 characters long.")]
     string Email,
-    [Required(ErrorMessage = "Podaj hasło.")]
-    [StringLength(100, MinimumLength = 8, ErrorMessage = "Hasło musi mieć od 8 do 100 znaków.")]
+    [Required(ErrorMessage = "Enter your password.")]
+    [StringLength(100, MinimumLength = 8, ErrorMessage = "The password must be 8 to 100 characters long.")]
     string Password);
 
 public sealed record LoginRequest(
-    [Required(ErrorMessage = "Podaj adres e-mail.")]
+    [Required(ErrorMessage = "Enter your email address.")]
     [StringLength(256)]
     string Email,
-    [Required(ErrorMessage = "Podaj hasło.")]
+    [Required(ErrorMessage = "Enter your password.")]
     [StringLength(100)]
     string Password);
 

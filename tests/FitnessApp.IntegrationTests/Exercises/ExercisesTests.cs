@@ -15,13 +15,13 @@ public sealed class ExercisesTests(ApiFactory factory)
 {
     private const string Url = "/api/exercises";
     private const string AdminUrl = "/api/admin/exercises";
-    private const int BenchPressId = 1; // "Wyciskanie sztangi na ławce płaskiej" from the seeded catalog
+    private const int BenchPressId = 1; // "Barbell Bench Press" from the seeded catalog
     private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
 
     private static ExerciseRequest NewExercise(string? name = null) => new(
-        Name: name ?? $"Ćwiczenie {Guid.NewGuid():N}",
-        Description: "Opis techniki.",
-        Muscles: "Pośladki",
+        Name: name ?? $"Exercise {Guid.NewGuid():N}",
+        Description: "Technique.",
+        Muscles: "Glutes",
         Category: ExerciseCategory.Legs,
         Difficulty: Difficulty.Beginner,
         Equipment: Equipment.Bodyweight);
@@ -52,7 +52,7 @@ public sealed class ExercisesTests(ApiFactory factory)
         page.Items.Count.ShouldBe(20);
         page.Items.ShouldAllBe(e => e.Description.Length > 0 && e.Muscles.Length > 0);
         page.Items.Select(e => e.Name).ShouldBeInOrder(SortDirection.Ascending, StringComparer.Create(
-            new System.Globalization.CultureInfo("pl-PL"), ignoreCase: false));
+            System.Globalization.CultureInfo.InvariantCulture, ignoreCase: false));
     }
 
     [Fact]
@@ -79,16 +79,27 @@ public sealed class ExercisesTests(ApiFactory factory)
     }
 
     [Theory]
-    [InlineData("lawce")]   // no Polish letters typed
-    [InlineData("ŁAWCE")]   // different case
-    [InlineData("ławce płaskiej")]
-    public async Task Search_ignores_case_and_polish_accents(string search)
+    [InlineData("bench press")]
+    [InlineData("BENCH PRESS")]   // different case
+    [InlineData("arbell bench")]  // part of a word
+    public async Task Search_ignores_case_and_matches_parts_of_the_name(string search)
     {
         var client = await factory.CreateAuthenticatedClientAsync(ct: _ct);
 
         var page = await SearchAsync(client, $"?search={Uri.EscapeDataString(search)}");
 
         page.Items.Select(e => e.Id).ShouldContain(BenchPressId);
+    }
+
+    [Fact]
+    public async Task Search_ignores_accents_in_custom_exercise_names()
+    {
+        var client = await factory.CreateAuthenticatedClientAsync(ct: _ct);
+        var exercise = await CreateAsync(client, NewExercise($"Wiosłowanie TRX {Guid.NewGuid():N}"));
+
+        var page = await SearchAsync(client, "?search=wioslowanie%20trx&onlyCustom=true");
+
+        page.Items.ShouldHaveSingleItem().Id.ShouldBe(exercise.Id);
     }
 
     [Fact]
@@ -146,7 +157,7 @@ public sealed class ExercisesTests(ApiFactory factory)
 
         var exercise = await client.GetFromJsonAsync<ExerciseResponse>($"{Url}/{BenchPressId}", TestJson.Options, _ct);
 
-        exercise!.Name.ShouldBe("Wyciskanie sztangi na ławce płaskiej");
+        exercise!.Name.ShouldBe("Barbell Bench Press");
         exercise.IsCustom.ShouldBeFalse();
     }
 
@@ -208,17 +219,17 @@ public sealed class ExercisesTests(ApiFactory factory)
         var client = await factory.CreateAuthenticatedClientAsync(ct: _ct);
 
         var response = await client.PostAsJsonAsync(Url,
-            NewExercise("WYCISKANIE SZTANGI NA ŁAWCE PŁASKIEJ"), TestJson.Options, _ct);
+            NewExercise("BARBELL BENCH PRESS"), TestJson.Options, _ct);
 
         response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
         var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>(_ct);
-        problem!.Title.ShouldBe("Ćwiczenie o tej nazwie już istnieje.");
+        problem!.Title.ShouldBe("An exercise with this name already exists.");
     }
 
     [Fact]
     public async Task Two_users_may_each_have_a_custom_exercise_with_the_same_name()
     {
-        var name = $"Moje ćwiczenie {Guid.NewGuid():N}";
+        var name = $"My exercise {Guid.NewGuid():N}";
         var alice = await factory.CreateAuthenticatedClientAsync(ct: _ct);
         var bob = await factory.CreateAuthenticatedClientAsync(ct: _ct);
 
@@ -235,7 +246,7 @@ public sealed class ExercisesTests(ApiFactory factory)
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(_ct);
-        problem!.Errors["Category"].ShouldBe(["Wybierz kategorię."]);
+        problem!.Errors["Category"].ShouldBe(["Choose a category."]);
     }
 
     [Fact]

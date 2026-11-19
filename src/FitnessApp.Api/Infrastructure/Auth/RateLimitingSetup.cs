@@ -42,7 +42,7 @@ public static class RateLimitingSetup
                         ProblemDetails =
                         {
                             Status = StatusCodes.Status429TooManyRequests,
-                            Title = "Zbyt wiele prób. Odczekaj chwilę i spróbuj ponownie.",
+                            Title = "Too many attempts. Wait a moment and try again.",
                         },
                     });
                 };

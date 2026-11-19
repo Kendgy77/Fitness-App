@@ -80,7 +80,7 @@ public sealed class ProfileTests(ApiFactory factory)
 
         put.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         var problem = await put.Content.ReadFromJsonAsync<ValidationProblemDetails>(_ct);
-        problem!.Errors["WeightKg"].ShouldBe(["Masa ciała musi wynosić od 20 do 400 kg."]);
+        problem!.Errors["WeightKg"].ShouldBe(["Body weight must be between 20 and 400 kg."]);
 
         var profile = await client.GetFromJsonAsync<ProfileResponse>(Url, TestJson.Options, _ct);
         profile!.WeightKg.ShouldBe(78m);
@@ -108,7 +108,7 @@ public sealed class ProfileTests(ApiFactory factory)
 
         put.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         var problem = await put.Content.ReadFromJsonAsync<ValidationProblemDetails>(_ct);
-        problem!.Errors["birthDate"].ShouldBe(["Podaj poprawną datę urodzenia (wiek od 13 do 120 lat)."]);
+        problem!.Errors["birthDate"].ShouldBe(["Enter a valid birth date (age 13 to 120 years)."]);
     }
 
     [Fact]

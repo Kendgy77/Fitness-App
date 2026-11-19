@@ -13,7 +13,7 @@ public sealed class Exercise
     /// <summary>How to perform it: the technique (WF04 "opis techniki wykonania").</summary>
     public string Description { get; set; } = "";
 
-    /// <summary>Muscles involved, as readable text (WF04 "zaangażowane partie mięśniowe").</summary>
+    /// <summary>Muscles involved, as readable text (WF04 "muscles involved").</summary>
     public string Muscles { get; set; } = "";
 
     /// <summary>Main body part; what the library is filtered by (thesis T08).</summary>

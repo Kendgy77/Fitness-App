@@ -20,7 +20,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : Ident
     {
         base.OnModelCreating(builder);
 
-        // unaccent(): accent-insensitive search in the exercise library ("lawka" finds "ławka").
+        // unaccent(): accent-insensitive search in the exercise library ("wioslowanie" finds "Wiosłowanie").
         builder.HasPostgresExtension("unaccent");
         builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }

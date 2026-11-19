@@ -164,13 +164,27 @@ something different from it, the reason is logged here.
   archived: they disappear from the library but stay readable by id. A user who tries to edit a global
   exercise gets **403** (they can see it, so 404 would be misleading); someone else's custom exercise is
   **404** (it doesn't exist for them).
-- **Catalog:** 61 exercises with Polish technique descriptions, seeded by a migration (`HasData`) so every
+- **Catalog:** 61 exercises with technique descriptions (in English, see D021), seeded by a migration (`HasData`) so every
   environment has the same catalog and ids. Seeded ids are 1–61; ids created at runtime start at 1000.
-- **Search:** `unaccent` + `ILIKE` on name and muscles, so "lawka" finds "ławka" and case doesn't matter.
-  Names sort in Polish alphabetical order (ICU collation `pl-PL-x-icu`).
+- **Search:** `unaccent` + `ILIKE` on name and muscles: case and accents don't matter (a custom
+  "Wiosłowanie" is found by "wioslowanie"). Names sort alphabetically with the ICU root collation
+  (`und-x-icu`), so the order is the same on every database server.
 - **Names:** unique per owner among active exercises, ignoring case; a custom exercise can't repeat a global
   name. Checked in the service (friendly 409) and by a partial unique index (guards against races).
 - **Why:** plans and workout history (weeks 3–4) will point at exercises, and history must never change.
   Archiving keeps those references valid without the delete-cascade problems of the AutoCare project.
 - **Consequences:** the production database must allow the `unaccent` extension and have ICU collations
   (Azure PostgreSQL and Neon both do; checked again in week 7 when hosting is chosen).
+### D021 · 2026-11-19 · English UI, app name "Fitness Logger", time zone taken from the browser
+
+- **Context:** the plan said "UI in Polish". Ostap asked for English and a clearer product name.
+- **Choice:** the whole app is in English: screens, API error messages and the exercise catalog. The product
+  is called **Fitness Logger**. Code names (`FitnessApp.Api`, namespaces) stay as they are: renaming them
+  would touch every file and change nothing for the user. The time zone is no longer a field on the
+  profile page: the web app sends the browser's time zone (e.g. "Europe/Warsaw") with every profile save.
+- **Why:** English is easier to maintain next to English code, and every thesis screenshot uses the same language.
+  The time zone is still needed (a workout at 00:30 belongs to the right day; a reminder set for 18:00 fires at
+  18:00 local time), but users shouldn't have to know about it.
+- **Consequences:** the thesis text stays in Polish, and chapter 6 (mock-ups) mentions that the final UI is
+  in English. The API still accepts and validates `timeZone`, so a user who travels gets the zone of the
+  browser they used last.
