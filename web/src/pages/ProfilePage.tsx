@@ -14,7 +14,7 @@ export function ProfilePage() {
 
   return (
     <>
-      <PageHeader title="Profil" />
+      <PageHeader title="Profile" />
       {profile.isPending && <Loading />}
       {profile.isError && <Alert>{toApiError(profile.error).message}</Alert>}
       {profile.data && (
@@ -23,7 +23,7 @@ export function ProfilePage() {
           <ProfileForm profile={profile.data} />
           <Card className="h-fit">
             <BmiCard profile={profile.data} />
-            {profile.data.age !== null && <p className="mt-4 text-sm text-slate-600">Wiek: {profile.data.age} lat</p>}
+            {profile.data.age !== null && <p className="mt-4 text-sm text-slate-600">Age: {profile.data.age}</p>}
           </Card>
         </div>
       )}
@@ -37,11 +37,13 @@ interface FormState {
   heightCm: string;
   weightKg: string;
   goal: TrainingGoal | "";
-  timeZone: string;
 }
 
-const browserTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-const timeZones = Intl.supportedValuesOf("timeZone");
+/**
+ * The user's time zone, e.g. "Europe/Warsaw", as the browser reports it. The API needs it to put workouts on the
+ * right day and to send reminders at the right local time, but the user never has to choose it (D021).
+ */
+const browserTimeZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 function toFormState(profile: Profile): FormState {
   return {
@@ -50,12 +52,10 @@ function toFormState(profile: Profile): FormState {
     heightCm: profile.heightCm?.toString() ?? "",
     weightKg: profile.weightKg?.toString() ?? "",
     goal: profile.goal ?? "",
-    // A profile that was never saved suggests the browser's time zone.
-    timeZone: profile.updatedAtUtc ? profile.timeZone : browserTimeZone,
   };
 }
 
-/** "78,5" or "78.5" → 78.5; empty → null (not filled in); anything else → NaN, reported as an error. */
+/** "78.5" (or "78,5", as many phones type it) → 78.5; empty → null (not filled in); anything else → NaN. */
 function parseDecimal(text: string): number | null {
   const trimmed = text.trim();
   return trimmed === "" ? null : Number(trimmed.replace(",", "."));
@@ -87,8 +87,8 @@ function ProfileForm({ profile }: { profile: Profile }) {
     const weightKg = parseDecimal(form.weightKg);
 
     const fieldErrors: Record<string, string> = {};
-    if (Number.isNaN(heightCm)) fieldErrors.heightCm = "Podaj liczbę, np. 180.";
-    if (Number.isNaN(weightKg)) fieldErrors.weightKg = "Podaj liczbę, np. 75,5.";
+    if (Number.isNaN(heightCm)) fieldErrors.heightCm = "Enter a number, e.g. 180.";
+    if (Number.isNaN(weightKg)) fieldErrors.weightKg = "Enter a number, e.g. 75.5.";
     if (Object.keys(fieldErrors).length > 0) {
       setError({ status: null, message: "", fieldErrors });
       return;
@@ -101,7 +101,7 @@ function ProfileForm({ profile }: { profile: Profile }) {
       heightCm,
       weightKg,
       goal: form.goal || null,
-      timeZone: form.timeZone || null,
+      timeZone: browserTimeZone(),
     };
     save.mutate(request);
   }
@@ -113,35 +113,35 @@ function ProfileForm({ profile }: { profile: Profile }) {
     <Card>
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
         {generalError && <Alert>{generalError}</Alert>}
-        {saved && <Alert kind="success">Zapisano profil.</Alert>}
+        {saved && <Alert kind="success">Profile saved.</Alert>}
 
         <div className="grid gap-4 sm:grid-cols-2">
           <TextField
-            label="Masa ciała (kg)"
+            label="Weight (kg)"
             inputMode="decimal"
             value={form.weightKg}
             onChange={(e) => set("weightKg", e.target.value)}
             error={fieldErrors.weightKg}
-            placeholder="np. 78,5"
+            placeholder="e.g. 78.5"
           />
           <TextField
-            label="Wzrost (cm)"
+            label="Height (cm)"
             inputMode="decimal"
             value={form.heightCm}
             onChange={(e) => set("heightCm", e.target.value)}
             error={fieldErrors.heightCm}
-            placeholder="np. 183"
+            placeholder="e.g. 183"
           />
           <TextField
-            label="Data urodzenia"
+            label="Date of birth"
             type="date"
             max={new Date().toISOString().slice(0, 10)}
             value={form.birthDate}
             onChange={(e) => set("birthDate", e.target.value)}
             error={fieldErrors.birthDate}
           />
-          <SelectField label="Płeć" value={form.sex} onChange={(e) => set("sex", e.target.value as Sex | "")} error={fieldErrors.sex}>
-            <option value="">Nie podano</option>
+          <SelectField label="Sex" value={form.sex} onChange={(e) => set("sex", e.target.value as Sex | "")} error={fieldErrors.sex}>
+            <option value="">Not specified</option>
             {options(sexLabels).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
@@ -149,37 +149,23 @@ function ProfileForm({ profile }: { profile: Profile }) {
             ))}
           </SelectField>
           <SelectField
-            label="Cel treningowy"
+            label="Training goal"
             value={form.goal}
             onChange={(e) => set("goal", e.target.value as TrainingGoal | "")}
             error={fieldErrors.goal}
             className="sm:col-span-2"
           >
-            <option value="">Nie wybrano</option>
+            <option value="">Not chosen</option>
             {options(goalLabels).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
               </option>
             ))}
           </SelectField>
-          <SelectField
-            label="Strefa czasowa"
-            value={form.timeZone}
-            onChange={(e) => set("timeZone", e.target.value)}
-            error={fieldErrors.timeZone}
-            hint="Decyduje, do którego dnia należy trening."
-            className="sm:col-span-2"
-          >
-            {timeZones.map((zone) => (
-              <option key={zone} value={zone}>
-                {zone}
-              </option>
-            ))}
-          </SelectField>
         </div>
 
         <Button type="submit" busy={save.isPending}>
-          Zapisz profil
+          Save profile
         </Button>
       </form>
     </Card>

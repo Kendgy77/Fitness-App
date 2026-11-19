@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import type { Profile } from "../api/types";
 import { bmiLabels, formatDecimal } from "../lib/labels";
 
-const missingLabels = { weightKg: "masę ciała", heightCm: "wzrost" } as const;
+const missingLabels = { weightKg: "your weight", heightCm: "your height" } as const;
 
 // Position on the 15–35 scale, as a percentage of the bar.
 function scalePosition(bmi: number) {
@@ -16,7 +16,7 @@ export function BmiCard({ profile, showProfileLink = false }: { profile: Profile
 
   return (
     <div>
-      <h2 className="text-sm font-medium text-slate-600">Wskaźnik BMI</h2>
+      <h2 className="text-sm font-medium text-slate-600">Body Mass Index (BMI)</h2>
       {bmi ? (
         <>
           <p className="mt-1 flex items-baseline gap-3">
@@ -37,17 +37,17 @@ export function BmiCard({ profile, showProfileLink = false }: { profile: Profile
             />
           </div>
           <p className="mt-3 text-xs text-slate-500">
-            BMI to masa ciała (kg) podzielona przez kwadrat wzrostu (m). Kategorie według WHO dla dorosłych.
+            BMI is body weight (kg) divided by height (m) squared. Categories follow the WHO ranges for adults.
           </p>
         </>
       ) : (
         <p className="mt-2 text-sm text-slate-700">
-          Uzupełnij {profile.missingForBmi.map((f) => missingLabels[f]).join(" i ")}, aby obliczyć BMI.
+          Add {profile.missingForBmi.map((f) => missingLabels[f]).join(" and ")} to calculate your BMI.
           {showProfileLink && (
             <>
               {" "}
-              <Link to="/profil" className="font-semibold text-brand-700 hover:underline">
-                Przejdź do profilu
+              <Link to="/profile" className="font-semibold text-brand-700 hover:underline">
+                Go to profile
               </Link>
             </>
           )}

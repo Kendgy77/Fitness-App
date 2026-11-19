@@ -8,7 +8,7 @@ import { Alert, Button, Card, Loading, PageHeader, SelectField, TextAreaField, T
 import { categoryLabels, difficultyLabels, equipmentLabels, options } from "../lib/labels";
 import { queryKeys } from "../lib/queryKeys";
 
-/** Add a custom exercise (/cwiczenia/nowe) or edit one (/cwiczenia/:id/edycja). Only the author sees it. */
+/** Add a custom exercise (/exercises/new) or edit one (/exercises/:id/edit). Only its author sees it. */
 export function ExerciseFormPage() {
   const idParam = useParams().id;
   const id = idParam ? Number(idParam) : null;
@@ -20,7 +20,7 @@ export function ExerciseFormPage() {
 
   return (
     <>
-      <PageHeader title={id ? "Edytuj ćwiczenie" : "Nowe ćwiczenie"} />
+      <PageHeader title={id ? "Edit exercise" : "New exercise"} />
       {id === null && <ExerciseForm />}
       {id !== null && existing.isPending && <Loading />}
       {existing.isError && <Alert>{toApiError(existing.error).message}</Alert>}
@@ -56,7 +56,7 @@ function ExerciseForm({ exercise }: { exercise?: Exercise }) {
     onSuccess: async (saved) => {
       // Every cached exercise list may now be out of date.
       await queryClient.invalidateQueries({ queryKey: queryKeys.exercises });
-      navigate(`/cwiczenia/${saved.id}`, { replace: true });
+      navigate(`/exercises/${saved.id}`, { replace: true });
     },
     onError: (e) => setError(toApiError(e)),
   });
@@ -68,10 +68,10 @@ function ExerciseForm({ exercise }: { exercise?: Exercise }) {
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
     const fieldErrors: Record<string, string> = {};
-    if (form.name.trim().length < 2) fieldErrors.name = "Nazwa musi mieć od 2 do 100 znaków.";
-    if (!form.category) fieldErrors.category = "Wybierz kategorię.";
-    if (!form.difficulty) fieldErrors.difficulty = "Wybierz poziom trudności.";
-    if (!form.equipment) fieldErrors.equipment = "Wybierz sprzęt.";
+    if (form.name.trim().length < 2) fieldErrors.name = "The name must be 2 to 100 characters long.";
+    if (!form.category) fieldErrors.category = "Choose a category.";
+    if (!form.difficulty) fieldErrors.difficulty = "Choose a difficulty level.";
+    if (!form.equipment) fieldErrors.equipment = "Choose the equipment.";
     if (Object.keys(fieldErrors).length > 0 || !form.category || !form.difficulty || !form.equipment) {
       setError({ status: null, message: "", fieldErrors });
       return;
@@ -95,25 +95,25 @@ function ExerciseForm({ exercise }: { exercise?: Exercise }) {
     <Card>
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
         {generalError && <Alert>{generalError}</Alert>}
-        <TextField label="Nazwa" required maxLength={100} value={form.name} onChange={(e) => set("name", e.target.value)} error={fieldErrors.name} />
+        <TextField label="Name" required maxLength={100} value={form.name} onChange={(e) => set("name", e.target.value)} error={fieldErrors.name} />
         <div className="grid gap-4 sm:grid-cols-3">
-          <SelectField label="Kategoria" value={form.category} onChange={(e) => set("category", e.target.value as ExerciseCategory | "")} error={fieldErrors.category}>
-            <option value="">Wybierz…</option>
+          <SelectField label="Category" value={form.category} onChange={(e) => set("category", e.target.value as ExerciseCategory | "")} error={fieldErrors.category}>
+            <option value="">Choose…</option>
             {options(categoryLabels).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
               </option>
             ))}
           </SelectField>
-          <SelectField label="Poziom trudności" value={form.difficulty} onChange={(e) => set("difficulty", e.target.value as Difficulty | "")} error={fieldErrors.difficulty}>
+          <SelectField label="Difficulty" value={form.difficulty} onChange={(e) => set("difficulty", e.target.value as Difficulty | "")} error={fieldErrors.difficulty}>
             {options(difficultyLabels).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
               </option>
             ))}
           </SelectField>
-          <SelectField label="Sprzęt" value={form.equipment} onChange={(e) => set("equipment", e.target.value as Equipment | "")} error={fieldErrors.equipment}>
-            <option value="">Wybierz…</option>
+          <SelectField label="Equipment" value={form.equipment} onChange={(e) => set("equipment", e.target.value as Equipment | "")} error={fieldErrors.equipment}>
+            <option value="">Choose…</option>
             {options(equipmentLabels).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
@@ -122,15 +122,15 @@ function ExerciseForm({ exercise }: { exercise?: Exercise }) {
           </SelectField>
         </div>
         <TextField
-          label="Zaangażowane mięśnie"
+          label="Muscles worked"
           maxLength={200}
           value={form.muscles}
           onChange={(e) => set("muscles", e.target.value)}
           error={fieldErrors.muscles}
-          placeholder="np. pośladki, mięśnie dwugłowe ud"
+          placeholder="e.g. glutes, hamstrings"
         />
         <TextAreaField
-          label="Technika wykonania"
+          label="How to do it"
           rows={5}
           maxLength={2000}
           value={form.description}
@@ -139,13 +139,13 @@ function ExerciseForm({ exercise }: { exercise?: Exercise }) {
         />
         <div className="flex flex-wrap gap-3">
           <Button type="submit" busy={save.isPending}>
-            Zapisz
+            Save
           </Button>
           <Link
-            to={exercise ? `/cwiczenia/${exercise.id}` : "/cwiczenia"}
+            to={exercise ? `/exercises/${exercise.id}` : "/exercises"}
             className="inline-flex min-h-11 items-center rounded-lg px-4 text-sm font-semibold text-slate-700 hover:bg-slate-100"
           >
-            Anuluj
+            Cancel
           </Link>
         </div>
       </form>

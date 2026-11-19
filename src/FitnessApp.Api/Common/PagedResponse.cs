@@ -7,10 +7,10 @@ public record PageQuery
 {
     public const int MaxPageSize = 100;
 
-    [Range(1, int.MaxValue, ErrorMessage = "Numer strony musi być większy od zera.")]
+    [Range(1, int.MaxValue, ErrorMessage = "The page number must be greater than zero.")]
     public int Page { get; init; } = 1;
 
-    [Range(1, MaxPageSize, ErrorMessage = "Rozmiar strony musi wynosić od 1 do 100.")]
+    [Range(1, MaxPageSize, ErrorMessage = "The page size must be between 1 and 100.")]
     public int PageSize { get; init; } = 20;
 
     public int Skip => (Page - 1) * PageSize;

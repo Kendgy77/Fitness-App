@@ -1,4 +1,4 @@
-# Fitness App: instructions for AI agents
+# Fitness Logger: instructions for AI agents
 
 Diploma project (WSIiZ Rzeszów): a web app for planning and tracking workouts. Read these first:
 `docs/PLAN.md` (current week), `docs/DECISIONS.md`, `docs/PRODUCT.md`. `docs/BLUEPRINT.md` is a guide
@@ -17,7 +17,7 @@ and end each PR with a short "what to test" note and one sentence on the main co
   auth and other technical plumbing.
 - `tests/FitnessApp.UnitTests/`: pure logic (calculators, state machines).
 - `tests/FitnessApp.IntegrationTests/`: real HTTP + real PostgreSQL (Testcontainers).
-- `web/`: React + TypeScript + Vite frontend (from week 2). UI text in Polish.
+- `web/`: React + TypeScript + Vite frontend (from week 2). UI text in English (D021).
 - `docs/`: product, decisions, plan, backlog, blueprint.
 
 ## Non-negotiables

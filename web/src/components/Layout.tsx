@@ -4,9 +4,9 @@ import { useAuth } from "../auth/authContext";
 // Navigation from the thesis mock-ups (6.2): a side menu on wide screens. On phones the same links sit in a
 // bottom tab bar, where thumbs reach them (WNF05). Plans, workouts and progress join this list as they are built.
 const navItems = [
-  { to: "/", label: "Pulpit", icon: "M3 12l9-8 9 8M5 10v10h5v-6h4v6h5V10", end: true },
-  { to: "/cwiczenia", label: "Ćwiczenia", icon: "M6 9v6M9 7v10M15 7v10M18 9v6M9 12h6", end: false },
-  { to: "/profil", label: "Profil", icon: "M12 12a4 4 0 100-8 4 4 0 000 8zm-7 9a7 7 0 0114 0", end: false },
+  { to: "/", label: "Dashboard", icon: "M3 12l9-8 9 8M5 10v10h5v-6h4v6h5V10", end: true },
+  { to: "/exercises", label: "Exercises", icon: "M6 9v6M9 7v10M15 7v10M18 9v6M9 12h6", end: false },
+  { to: "/profile", label: "Profile", icon: "M12 12a4 4 0 100-8 4 4 0 000 8zm-7 9a7 7 0 0114 0", end: false },
 ];
 
 function NavIcon({ path }: { path: string }) {
@@ -23,26 +23,26 @@ export function Layout() {
   return (
     <div className="min-h-dvh bg-slate-50">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">
-        Przejdź do treści
+        Skip to content
       </a>
 
       <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4">
           <NavLink to="/" className="flex items-center gap-2 font-bold text-brand-800">
             <img src="/favicon.svg" alt="" className="size-7" />
-            Fitness App
+            Fitness Logger
           </NavLink>
           <div className="flex min-w-0 items-center gap-3">
             <span className="hidden truncate text-sm text-slate-600 sm:inline">{user?.email}</span>
             <button type="button" onClick={logout} className="min-h-11 rounded-lg px-3 text-sm font-medium text-slate-700 hover:bg-slate-100">
-              Wyloguj
+              Log out
             </button>
           </div>
         </div>
       </header>
 
       <div className="mx-auto flex max-w-6xl gap-8 px-4">
-        <nav aria-label="Menu główne" className="sticky top-14 hidden h-[calc(100dvh-3.5rem)] w-52 shrink-0 py-6 md:block">
+        <nav aria-label="Main menu" className="sticky top-14 hidden h-[calc(100dvh-3.5rem)] w-52 shrink-0 py-6 md:block">
           <ul className="space-y-1">
             {navItems.map((item) => (
               <li key={item.to}>
@@ -69,7 +69,7 @@ export function Layout() {
         </main>
       </div>
 
-      <nav aria-label="Menu główne" className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden">
+      <nav aria-label="Main menu" className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden">
         <ul className="grid grid-cols-3">
           {navItems.map((item) => (
             <li key={item.to}>

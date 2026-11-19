@@ -18,9 +18,9 @@ public sealed class ExerciseConfiguration : IEntityTypeConfiguration<Exercise>
             .UseIdentityByDefaultColumn()
             .HasIdentityOptions(startValue: ExerciseCatalog.FirstRuntimeId);
 
-        // Polish alphabetical order (A, Ą, B, C, Ć, …, L, Ł): the server's default collation would put the
-        // accented letters elsewhere. "pl-PL-x-icu" ships with PostgreSQL builds that include ICU.
-        builder.Property(e => e.Name).HasMaxLength(100).IsRequired().UseCollation("pl-PL-x-icu");
+        // Natural alphabetical order (ICU root collation), the same on every server: the default collation
+        // depends on how the database was created (C.UTF-8 would sort "Zercher" before "arm curl").
+        builder.Property(e => e.Name).HasMaxLength(100).IsRequired().UseCollation("und-x-icu");
         builder.Property(e => e.Description).HasMaxLength(2000).IsRequired();
         builder.Property(e => e.Muscles).HasMaxLength(200).IsRequired();
         builder.Property(e => e.Category).HasConversion<string>().HasMaxLength(16);

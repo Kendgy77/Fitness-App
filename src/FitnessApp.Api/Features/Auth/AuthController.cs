@@ -22,7 +22,7 @@ public sealed class AuthController(IAuthService auth) : ApiControllerBase
         {
             return ValidationProblem(new ValidationProblemDetails(outcome.Errors)
             {
-                Title = "Nie udało się utworzyć konta.",
+                Title = "Could not create the account.",
             });
         }
 
@@ -49,14 +49,14 @@ public sealed class AuthController(IAuthService auth) : ApiControllerBase
                 Response.Headers.RetryAfter = seconds.ToString(System.Globalization.CultureInfo.InvariantCulture);
                 var locked = ProblemDetailsFactory.CreateProblemDetails(HttpContext,
                     statusCode: StatusCodes.Status423Locked,
-                    title: "Konto zablokowane",
-                    detail: "Zbyt wiele nieudanych prób logowania. Spróbuj ponownie później.");
+                    title: "Account locked",
+                    detail: "Too many failed login attempts. Try again later.");
                 locked.Extensions["retryAfter"] = seconds;
                 return StatusCode(StatusCodes.Status423Locked, locked);
 
             default:
                 return Problem(statusCode: StatusCodes.Status401Unauthorized,
-                    title: "Nieprawidłowy e-mail lub hasło.");
+                    title: "Invalid email or password.");
         }
     }
 

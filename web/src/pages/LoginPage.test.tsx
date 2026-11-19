@@ -22,9 +22,9 @@ const emptyProfile: Profile = {
 
 async function submitLogin(password: string) {
   const user = userEvent.setup();
-  await user.type(screen.getByLabelText("E-mail"), "ostap@test.local");
-  await user.type(screen.getByLabelText("Hasło"), password);
-  await user.click(screen.getByRole("button", { name: "Zaloguj się" }));
+  await user.type(screen.getByLabelText("Email"), "ostap@test.local");
+  await user.type(screen.getByLabelText("Password"), password);
+  await user.click(screen.getByRole("button", { name: "Log in" }));
 }
 
 describe("LoginPage (WF02)", () => {
@@ -33,36 +33,36 @@ describe("LoginPage (WF02)", () => {
   });
 
   it("sends anonymous users from a protected page to the login page", async () => {
-    renderApp("/profil", { loggedIn: false });
+    renderApp("/profile", { loggedIn: false });
 
-    expect(await screen.findByRole("heading", { name: "Zaloguj się" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Log in" })).toBeInTheDocument();
   });
 
   it("T03: logs in and opens the page the user wanted", async () => {
     vi.mocked(endpoints.login).mockResolvedValue(testUser);
-    renderApp("/profil", { loggedIn: false });
+    renderApp("/profile", { loggedIn: false });
 
     await submitLogin("Trening123!");
 
-    expect(await screen.findByRole("heading", { name: "Profil" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Profile" })).toBeInTheDocument();
     expect(endpoints.login).toHaveBeenCalledWith("ostap@test.local", "Trening123!");
   });
 
   it("shows the API's message for a wrong password", async () => {
-    vi.mocked(endpoints.login).mockRejectedValue(apiError(401, { title: "Nieprawidłowy e-mail lub hasło." }));
-    renderApp("/logowanie", { loggedIn: false });
+    vi.mocked(endpoints.login).mockRejectedValue(apiError(401, { title: "Invalid email or password." }));
+    renderApp("/login", { loggedIn: false });
 
-    await submitLogin("zle-haslo");
+    await submitLogin("wrong-password");
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Nieprawidłowy e-mail lub hasło.");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Invalid email or password.");
   });
 
   it("T04: tells a locked-out user how many minutes to wait", async () => {
-    vi.mocked(endpoints.login).mockRejectedValue(apiError(423, { title: "Konto zablokowane", retryAfter: 840 }));
-    renderApp("/logowanie", { loggedIn: false });
+    vi.mocked(endpoints.login).mockRejectedValue(apiError(423, { title: "Account locked", retryAfter: 840 }));
+    renderApp("/login", { loggedIn: false });
 
-    await submitLogin("zle-haslo");
+    await submitLogin("wrong-password");
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Spróbuj ponownie za 14 min.");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Try again in 14 min.");
   });
 });

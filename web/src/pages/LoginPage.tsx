@@ -28,12 +28,12 @@ export function LoginPage() {
 
   return (
     <AuthLayout
-      title="Zaloguj się"
+      title="Log in"
       footer={
         <>
-          Nie masz konta?{" "}
-          <Link to="/rejestracja" className="font-semibold text-brand-700 hover:underline">
-            Zarejestruj się
+          No account yet?{" "}
+          <Link to="/register" className="font-semibold text-brand-700 hover:underline">
+            Sign up
           </Link>
         </>
       }
@@ -41,7 +41,7 @@ export function LoginPage() {
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
         {error && <Alert>{lockedMessage(error) ?? error.message}</Alert>}
         <TextField
-          label="E-mail"
+          label="Email"
           type="email"
           autoComplete="email"
           required
@@ -50,7 +50,7 @@ export function LoginPage() {
           error={error?.fieldErrors.email}
         />
         <TextField
-          label="Hasło"
+          label="Password"
           type="password"
           autoComplete="current-password"
           required
@@ -59,7 +59,7 @@ export function LoginPage() {
           error={error?.fieldErrors.password}
         />
         <Button type="submit" busy={busy} className="w-full">
-          Zaloguj się
+          Log in
         </Button>
       </form>
     </AuthLayout>
@@ -70,5 +70,5 @@ export function LoginPage() {
 function lockedMessage(error: ApiError) {
   if (error.status !== 423) return null;
   const minutes = Math.max(1, Math.ceil((error.retryAfter ?? 900) / 60));
-  return `Konto zostało zablokowane po trzech nieudanych próbach logowania. Spróbuj ponownie za ${minutes} min.`;
+  return `Your account is locked after three failed login attempts. Try again in ${minutes} min.`;
 }

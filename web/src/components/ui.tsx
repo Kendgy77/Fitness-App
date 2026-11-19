@@ -166,7 +166,7 @@ export function Loading() {
   return (
     <div className="flex justify-center py-12 text-brand-700" role="status">
       <Spinner />
-      <span className="sr-only">Ładowanie…</span>
+      <span className="sr-only">Loading…</span>
     </div>
   );
 }

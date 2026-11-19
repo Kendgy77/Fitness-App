@@ -10,10 +10,10 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { RegisterPage } from "./pages/RegisterPage";
 
-// Every screen of the app. Addresses are Polish, like the UI. Everything under Layout needs a logged-in user.
+// Every screen of the app. Everything under Layout needs a logged-in user.
 export const routes: RouteObject[] = [
   {
-    path: "/logowanie",
+    path: "/login",
     element: (
       <RedirectIfLoggedIn>
         <LoginPage />
@@ -21,10 +21,10 @@ export const routes: RouteObject[] = [
     ),
   },
   {
-    path: "/rejestracja",
+    path: "/register",
     element: (
       // A new user starts by filling in the profile, so BMI and later progress have data.
-      <RedirectIfLoggedIn to="/profil">
+      <RedirectIfLoggedIn to="/profile">
         <RegisterPage />
       </RedirectIfLoggedIn>
     ),
@@ -37,11 +37,11 @@ export const routes: RouteObject[] = [
     ),
     children: [
       { index: true, element: <DashboardPage /> },
-      { path: "profil", element: <ProfilePage /> },
-      { path: "cwiczenia", element: <ExercisesPage /> },
-      { path: "cwiczenia/nowe", element: <ExerciseFormPage /> },
-      { path: "cwiczenia/:id", element: <ExerciseDetailPage /> },
-      { path: "cwiczenia/:id/edycja", element: <ExerciseFormPage /> },
+      { path: "profile", element: <ProfilePage /> },
+      { path: "exercises", element: <ExercisesPage /> },
+      { path: "exercises/new", element: <ExerciseFormPage /> },
+      { path: "exercises/:id", element: <ExerciseDetailPage /> },
+      { path: "exercises/:id/edit", element: <ExerciseFormPage /> },
       { path: "*", element: <NotFoundPage /> },
     ],
   },

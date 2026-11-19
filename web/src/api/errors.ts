@@ -17,12 +17,12 @@ interface ProblemDetails {
 }
 
 const fallbackMessages: Record<number, string> = {
-  400: "Sprawdź wprowadzone dane.",
-  401: "Sesja wygasła. Zaloguj się ponownie.",
-  403: "Nie masz uprawnień do tej operacji.",
-  404: "Nie znaleziono.",
-  409: "Operacja koliduje z istniejącymi danymi.",
-  429: "Zbyt wiele prób. Odczekaj chwilę i spróbuj ponownie.",
+  400: "Please check the data you entered.",
+  401: "Your session has expired. Please log in again.",
+  403: "You don't have permission to do this.",
+  404: "Not found.",
+  409: "This conflicts with existing data.",
+  429: "Too many attempts. Wait a moment and try again.",
 };
 
 /**
@@ -31,11 +31,11 @@ const fallbackMessages: Record<number, string> = {
  */
 export function toApiError(error: unknown): ApiError {
   if (!axios.isAxiosError(error)) {
-    return { status: null, message: "Wystąpił nieoczekiwany błąd.", fieldErrors: {} };
+    return { status: null, message: "Something went wrong.", fieldErrors: {} };
   }
 
   if (!error.response) {
-    return { status: null, message: "Brak połączenia z serwerem. Sprawdź internet i spróbuj ponownie.", fieldErrors: {} };
+    return { status: null, message: "Can't reach the server. Check your connection and try again.", fieldErrors: {} };
   }
 
   const { status } = error.response;
@@ -50,7 +50,7 @@ export function toApiError(error: unknown): ApiError {
   }
 
   const message =
-    status >= 500 ? "Wystąpił błąd serwera. Spróbuj ponownie później." : problem.title ?? fallbackMessages[status] ?? "Wystąpił błąd.";
+    status >= 500 ? "Server error. Please try again later." : problem.title ?? fallbackMessages[status] ?? "Something went wrong.";
 
   return { status, message, fieldErrors, retryAfter: problem.retryAfter };
 }

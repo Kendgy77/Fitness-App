@@ -8,9 +8,9 @@ namespace FitnessApp.Api.Features.Exercises;
 
 public sealed class ExerciseService(AppDbContext db, TimeProvider clock) : IExerciseService
 {
-    private const string DuplicateName = "Ćwiczenie o tej nazwie już istnieje.";
-    private const string GlobalIsReadOnly = "Ćwiczenia z biblioteki może zmieniać tylko administrator.";
-    private const string ArchivedIsReadOnly = "Zarchiwizowanego ćwiczenia nie można edytować.";
+    private const string DuplicateName = "An exercise with this name already exists.";
+    private const string GlobalIsReadOnly = "Only an administrator can change library exercises.";
+    private const string ArchivedIsReadOnly = "An archived exercise can't be edited.";
 
     public async Task<PagedResponse<ExerciseResponse>> SearchAsync(string userId, ExerciseQuery query, CancellationToken ct)
     {
@@ -21,7 +21,7 @@ public sealed class ExerciseService(AppDbContext db, TimeProvider clock) : IExer
 
         if (!string.IsNullOrWhiteSpace(query.Search))
         {
-            // unaccent() strips Polish accents on both sides, so "lawka" finds "ławka"; ILIKE ignores case.
+            // unaccent() strips accents on both sides, so "wioslowanie" finds a custom "Wiosłowanie"; ILIKE ignores case.
             var pattern = $"%{EscapeLikePattern(query.Search.Trim())}%";
             exercises = exercises.Where(e =>
                 EF.Functions.ILike(EF.Functions.Unaccent(e.Name), EF.Functions.Unaccent(pattern)) ||

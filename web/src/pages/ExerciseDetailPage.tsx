@@ -17,20 +17,20 @@ export function ExerciseDetailPage() {
     mutationFn: () => archiveExercise(id),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.exercises });
-      navigate("/cwiczenia", { replace: true });
+      navigate("/exercises", { replace: true });
     },
   });
 
   function handleArchive() {
-    if (window.confirm("Usunąć to ćwiczenie z biblioteki? Zniknie z listy, ale zostanie w historii treningów.")) {
+    if (window.confirm("Remove this exercise from the library? It disappears from the list but stays in your workout history.")) {
       archive.mutate();
     }
   }
 
   return (
     <>
-      <Link to="/cwiczenia" className="mb-4 inline-flex min-h-11 items-center text-sm font-medium text-brand-700 hover:underline">
-        ← Biblioteka ćwiczeń
+      <Link to="/exercises" className="mb-4 inline-flex min-h-11 items-center text-sm font-medium text-brand-700 hover:underline">
+        ← Exercise library
       </Link>
 
       {exercise.isPending && <Loading />}
@@ -41,21 +41,21 @@ export function ExerciseDetailPage() {
             <Badge tone="brand">{categoryLabels[exercise.data.category]}</Badge>
             <Badge>{difficultyLabels[exercise.data.difficulty]}</Badge>
             <Badge>{equipmentLabels[exercise.data.equipment]}</Badge>
-            {exercise.data.isCustom && <Badge tone="amber">Własne</Badge>}
-            {exercise.data.isArchived && <Badge>Zarchiwizowane</Badge>}
+            {exercise.data.isCustom && <Badge tone="amber">Custom</Badge>}
+            {exercise.data.isArchived && <Badge>Archived</Badge>}
           </div>
           <h1 className="text-2xl font-bold text-slate-900">{exercise.data.name}</h1>
 
           {exercise.data.muscles && (
             <>
-              <h2 className="mt-5 text-sm font-semibold text-slate-900">Zaangażowane mięśnie</h2>
+              <h2 className="mt-5 text-sm font-semibold text-slate-900">Muscles worked</h2>
               <p className="mt-1 text-slate-700">{exercise.data.muscles}</p>
             </>
           )}
 
           {exercise.data.description && (
             <>
-              <h2 className="mt-5 text-sm font-semibold text-slate-900">Technika wykonania</h2>
+              <h2 className="mt-5 text-sm font-semibold text-slate-900">How to do it</h2>
               <p className="mt-1 whitespace-pre-line text-slate-700">{exercise.data.description}</p>
             </>
           )}
@@ -63,13 +63,13 @@ export function ExerciseDetailPage() {
           {exercise.data.isCustom && !exercise.data.isArchived && (
             <div className="mt-6 flex flex-wrap gap-3 border-t border-slate-100 pt-5">
               <Link
-                to={`/cwiczenia/${id}/edycja`}
+                to={`/exercises/${id}/edit`}
                 className="inline-flex min-h-11 items-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-800 hover:bg-slate-50"
               >
-                Edytuj
+                Edit
               </Link>
               <Button variant="danger" busy={archive.isPending} onClick={handleArchive}>
-                Usuń z biblioteki
+                Remove from library
               </Button>
             </div>
           )}

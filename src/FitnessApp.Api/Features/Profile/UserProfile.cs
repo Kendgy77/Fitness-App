@@ -22,7 +22,10 @@ public sealed class UserProfile
 
     public TrainingGoal? Goal { get; set; }
 
-    /// <summary>IANA id such as "Europe/Warsaw"; decides which calendar day a workout belongs to.</summary>
+    /// <summary>
+    /// IANA id such as "Europe/Warsaw"; decides which calendar day a workout belongs to and when reminders fire.
+    /// The web app fills it in from the browser, so the user never has to pick it (D021).
+    /// </summary>
     public string TimeZone { get; set; } = DefaultTimeZone;
 
     public DateTimeOffset UpdatedAtUtc { get; set; }

@@ -18,7 +18,7 @@ export function RegisterPage() {
     event.preventDefault();
     // Only a typo check; the real password rules are enforced by the API.
     if (password !== confirm) {
-      setError({ status: null, message: "", fieldErrors: { confirm: "Hasła nie są takie same." } });
+      setError({ status: null, message: "", fieldErrors: { confirm: "The passwords don't match." } });
       return;
     }
 
@@ -37,12 +37,12 @@ export function RegisterPage() {
 
   return (
     <AuthLayout
-      title="Załóż konto"
+      title="Create an account"
       footer={
         <>
-          Masz już konto?{" "}
-          <Link to="/logowanie" className="font-semibold text-brand-700 hover:underline">
-            Zaloguj się
+          Already have an account?{" "}
+          <Link to="/login" className="font-semibold text-brand-700 hover:underline">
+            Log in
           </Link>
         </>
       }
@@ -50,7 +50,7 @@ export function RegisterPage() {
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
         {error && !hasFieldErrors && <Alert>{error.message}</Alert>}
         <TextField
-          label="E-mail"
+          label="Email"
           type="email"
           autoComplete="email"
           required
@@ -59,17 +59,17 @@ export function RegisterPage() {
           error={error?.fieldErrors.email}
         />
         <TextField
-          label="Hasło"
+          label="Password"
           type="password"
           autoComplete="new-password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           error={error?.fieldErrors.password}
-          hint="Co najmniej 8 znaków, w tym wielka i mała litera oraz cyfra."
+          hint="At least 8 characters, with an upper-case letter, a lower-case letter and a digit."
         />
         <TextField
-          label="Powtórz hasło"
+          label="Repeat password"
           type="password"
           autoComplete="new-password"
           required
@@ -78,7 +78,7 @@ export function RegisterPage() {
           error={error?.fieldErrors.confirm}
         />
         <Button type="submit" busy={busy} className="w-full">
-          Załóż konto
+          Create account
         </Button>
       </form>
     </AuthLayout>

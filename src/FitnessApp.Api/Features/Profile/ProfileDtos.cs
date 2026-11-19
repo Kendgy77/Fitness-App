@@ -9,12 +9,12 @@ namespace FitnessApp.Api.Features.Profile;
 public sealed record UpdateProfileRequest(
     DateOnly? BirthDate,
     Sex? Sex,
-    [Range(100.0, 250.0, ErrorMessage = "Wzrost musi wynosić od 100 do 250 cm.")]
+    [Range(100.0, 250.0, ErrorMessage = "Height must be between 100 and 250 cm.")]
     decimal? HeightCm,
-    [Range(20.0, 400.0, ErrorMessage = "Masa ciała musi wynosić od 20 do 400 kg.")]
+    [Range(20.0, 400.0, ErrorMessage = "Body weight must be between 20 and 400 kg.")]
     decimal? WeightKg,
     TrainingGoal? Goal,
-    [StringLength(64, ErrorMessage = "Nieprawidłowa strefa czasowa.")]
+    [StringLength(64, ErrorMessage = "Unknown time zone.")]
     string? TimeZone);
 
 /// <summary>

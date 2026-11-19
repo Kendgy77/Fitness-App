@@ -7,7 +7,7 @@ export function AuthLayout({ title, children, footer }: { title: string; childre
       <div className="w-full max-w-sm">
         <div className="mb-6 flex items-center justify-center gap-2 text-xl font-bold text-brand-800">
           <img src="/favicon.svg" alt="" className="size-9" />
-          Fitness App
+          Fitness Logger
         </div>
         <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
           <h1 className="mb-5 text-xl font-bold text-slate-900">{title}</h1>

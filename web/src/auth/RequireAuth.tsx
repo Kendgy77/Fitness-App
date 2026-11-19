@@ -8,7 +8,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   const location = useLocation();
 
   if (!user) {
-    return <Navigate to="/logowanie" replace state={{ from: location.pathname + location.search }} />;
+    return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />;
   }
 
   return children;
@@ -17,7 +17,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
 /**
  * For the login and register pages: once a user is logged in, they leave. This is also how a successful login
  * moves on: the page only logs in, and this redirect takes the user to the page they first asked for
- * (remembered by RequireAuth), or to <paramref name="to"/>.
+ * (remembered by RequireAuth), or to `to`.
  */
 export function RedirectIfLoggedIn({ children, to = "/" }: { children: ReactNode; to?: string }) {
   const { user } = useAuth();

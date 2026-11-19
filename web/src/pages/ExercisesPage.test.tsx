@@ -9,16 +9,16 @@ vi.mock("../api/endpoints");
 
 const benchPress: Exercise = {
   id: 1,
-  name: "Wyciskanie sztangi na ławce płaskiej",
-  description: "Połóż się na ławce…",
-  muscles: "Klatka piersiowa",
+  name: "Barbell Bench Press",
+  description: "Lie on the bench…",
+  muscles: "Chest",
   category: "Chest",
   difficulty: "Intermediate",
   equipment: "Barbell",
   isCustom: false,
   isArchived: false,
 };
-const squat: Exercise = { ...benchPress, id: 36, name: "Przysiad ze sztangą na plecach", category: "Legs", description: "Połóż sztangę…" };
+const squat: Exercise = { ...benchPress, id: 36, name: "Barbell Back Squat", category: "Legs", description: "Rest the bar on your upper back…" };
 
 function page(items: Exercise[]): Paged<Exercise> {
   return { items, page: 1, pageSize: 12, totalCount: items.length, totalPages: 1 };
@@ -32,39 +32,39 @@ describe("ExercisesPage (WF04)", () => {
   });
 
   it("T07: lists exercises with category, difficulty and description", async () => {
-    renderApp("/cwiczenia");
+    renderApp("/exercises");
 
-    expect(await screen.findByText("Wyciskanie sztangi na ławce płaskiej")).toBeInTheDocument();
-    expect(screen.getByText("Połóż się na ławce…")).toBeInTheDocument();
-    expect(screen.getByText("Znaleziono: 2")).toBeInTheDocument();
+    expect(await screen.findByText("Barbell Bench Press")).toBeInTheDocument();
+    expect(screen.getByText("Lie on the bench…")).toBeInTheDocument();
+    expect(screen.getByText("Found: 2")).toBeInTheDocument();
   });
 
   it("T08: filtering by category asks the API for that category only", async () => {
-    renderApp("/cwiczenia");
+    renderApp("/exercises");
     const user = userEvent.setup();
-    await screen.findByText("Przysiad ze sztangą na plecach");
+    await screen.findByText("Barbell Back Squat");
 
-    await user.selectOptions(screen.getByLabelText("Kategoria"), "Legs");
+    await user.selectOptions(screen.getByLabelText("Category"), "Legs");
 
-    await waitFor(() => expect(screen.queryByText("Wyciskanie sztangi na ławce płaskiej")).not.toBeInTheDocument());
-    expect(screen.getByText("Przysiad ze sztangą na plecach")).toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText("Barbell Bench Press")).not.toBeInTheDocument());
+    expect(screen.getByText("Barbell Back Squat")).toBeInTheDocument();
     expect(endpoints.searchExercises).toHaveBeenLastCalledWith(expect.objectContaining({ category: "Legs", page: 1 }));
   });
 
   it("searches after the user stops typing", async () => {
-    renderApp("/cwiczenia");
+    renderApp("/exercises");
     const user = userEvent.setup();
-    await screen.findByText("Przysiad ze sztangą na plecach");
+    await screen.findByText("Barbell Back Squat");
 
-    await user.type(screen.getByLabelText("Szukaj"), "ławka");
+    await user.type(screen.getByLabelText("Search"), "squat");
 
-    await waitFor(() => expect(endpoints.searchExercises).toHaveBeenLastCalledWith(expect.objectContaining({ search: "ławka" })));
+    await waitFor(() => expect(endpoints.searchExercises).toHaveBeenLastCalledWith(expect.objectContaining({ search: "squat" })));
   });
 
   it("explains an empty result", async () => {
     vi.mocked(endpoints.searchExercises).mockResolvedValue(page([]));
-    renderApp("/cwiczenia?search=xyz");
+    renderApp("/exercises?search=xyz");
 
-    expect(await screen.findByText(/Brak ćwiczeń spełniających kryteria/)).toBeInTheDocument();
+    expect(await screen.findByText(/No exercises match/)).toBeInTheDocument();
   });
 });

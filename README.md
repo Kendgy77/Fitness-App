@@ -1,4 +1,4 @@
-# Fitness App
+# Fitness Logger
 
 Webowa aplikacja fitness wspierająca planowanie i monitorowanie aktywności fizycznej
 (praca dyplomowa, WSIiZ Rzeszów).
@@ -43,7 +43,7 @@ web/src/
 ├── api/                       # HTTP client, one function per endpoint, DTO types, error mapping
 ├── auth/                      # login state (token in localStorage), protected routes
 ├── components/                # layout and shared UI (buttons, fields, BMI card)
-├── lib/                       # Polish labels, React Query setup
+├── lib/                       # display labels, query keys, React Query setup
 └── pages/                     # one file per screen, with its tests next to it
 ```
 
@@ -118,7 +118,7 @@ The full, always-current list is in Swagger (`/swagger` when running in Developm
 | POST, PUT, DELETE | `/api/admin/exercises[/{id}]` | admin | Manage the global catalog |
 | GET | `/health` | anonymous | `Healthy` when the API can reach the database |
 
-Errors are returned as [ProblemDetails](https://www.rfc-editor.org/rfc/rfc7807) JSON with Polish messages.
+Errors are returned as [ProblemDetails](https://www.rfc-editor.org/rfc/rfc7807) JSON with messages meant for the user.
 
 ## Working on the code
 

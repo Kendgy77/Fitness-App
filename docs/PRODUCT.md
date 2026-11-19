@@ -1,4 +1,4 @@
-# Product: Fitness App
+# Product: Fitness Logger
 
 ## Problem
 
@@ -51,4 +51,4 @@ apps, wearable integrations, AI coaching, payments, multiple gyms or trainers. I
 - Deadline: feature freeze on 3 Jan 2027, presentation from the week of 11 Jan 2027.
 - One developer plus an AI agent; Ostap reviews and merges every pull request.
 - Free hosting only (see [DECISIONS.md](DECISIONS.md)).
-- UI language: Polish. Code, commits and technical docs: English.
+- Language: English everywhere (UI, code, docs); see D021. The thesis text stays in Polish.

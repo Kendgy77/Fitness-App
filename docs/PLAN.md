@@ -21,10 +21,10 @@ The full plan with dates, risks and a detailed step-by-step playbook lives in th
 ## Week 2 · 23–29 Nov · Profile, BMI, exercise library, frontend shell (WF03, WF04, WF10)
 
 - [ ] PR feat/profile: UserProfile, BMI calculator; T05, T06, T16, T17
-- [ ] PR feat/exercises: ~60 Polish exercises seeded; search, filters, paging; custom exercises; admin; T07, T08
+- [ ] PR feat/exercises: ~60 exercises seeded; search, filters, paging; custom exercises; admin; T07, T08
 - [ ] PR feat/web-shell: React app, login/register, layout, profile page, exercise library; frontend CI
 - [x] UI direction (colours, font, spacing) in DECISIONS.md
-- [ ] Ostap: checked the Polish exercise texts; tried it on a phone
+- [ ] Ostap: checked the exercise texts; tried it on a phone
 
 ## Week 3 · 30 Nov–6 Dec · Training plans (WF05)
 

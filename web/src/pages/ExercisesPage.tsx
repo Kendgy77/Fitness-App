@@ -52,37 +52,37 @@ export function ExercisesPage() {
   return (
     <>
       <PageHeader
-        title="Biblioteka ćwiczeń"
+        title="Exercise library"
         actions={
           <Link
-            to="/cwiczenia/nowe"
+            to="/exercises/new"
             className="inline-flex min-h-11 items-center rounded-lg bg-brand-700 px-4 text-sm font-semibold text-white hover:bg-brand-800"
           >
-            Dodaj własne ćwiczenie
+            Add your own exercise
           </Link>
         }
       />
 
       <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <SearchBox initial={query.search ?? ""} onSearch={(text) => setFilter("search", text)} />
-        <SelectField label="Kategoria" value={query.category ?? ""} onChange={(e) => setFilter("category", e.target.value)}>
-          <option value="">Wszystkie</option>
+        <SelectField label="Category" value={query.category ?? ""} onChange={(e) => setFilter("category", e.target.value)}>
+          <option value="">All</option>
           {options(categoryLabels).map(([value, label]) => (
             <option key={value} value={value}>
               {label}
             </option>
           ))}
         </SelectField>
-        <SelectField label="Poziom trudności" value={query.difficulty ?? ""} onChange={(e) => setFilter("difficulty", e.target.value)}>
-          <option value="">Wszystkie</option>
+        <SelectField label="Difficulty" value={query.difficulty ?? ""} onChange={(e) => setFilter("difficulty", e.target.value)}>
+          <option value="">All</option>
           {options(difficultyLabels).map(([value, label]) => (
             <option key={value} value={value}>
               {label}
             </option>
           ))}
         </SelectField>
-        <SelectField label="Sprzęt" value={query.equipment ?? ""} onChange={(e) => setFilter("equipment", e.target.value)}>
-          <option value="">Dowolny</option>
+        <SelectField label="Equipment" value={query.equipment ?? ""} onChange={(e) => setFilter("equipment", e.target.value)}>
+          <option value="">Any</option>
           {options(equipmentLabels).map(([value, label]) => (
             <option key={value} value={value}>
               {label}
@@ -96,7 +96,7 @@ export function ExercisesPage() {
             checked={query.onlyCustom ?? false}
             onChange={(e) => setFilter("onlyCustom", e.target.checked ? "true" : "")}
           />
-          Tylko moje ćwiczenia
+          Only my exercises
         </label>
       </div>
 
@@ -105,10 +105,10 @@ export function ExercisesPage() {
       {data && (
         <>
           <p className="mb-3 text-sm text-slate-600" aria-live="polite">
-            Znaleziono: {data.totalCount}
+            Found: {data.totalCount}
           </p>
           {data.items.length === 0 ? (
-            <Alert kind="info">Brak ćwiczeń spełniających kryteria. Zmień filtry lub dodaj własne ćwiczenie.</Alert>
+            <Alert kind="info">No exercises match. Change the filters or add your own exercise.</Alert>
           ) : (
             <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {data.items.map((exercise) => (
@@ -119,19 +119,19 @@ export function ExercisesPage() {
             </ul>
           )}
           {data.totalPages > 1 && (
-            <nav aria-label="Strony" className="mt-6 flex items-center justify-between gap-3">
+            <nav aria-label="Pages" className="mt-6 flex items-center justify-between gap-3">
               <Button variant="secondary" disabled={data.page <= 1} onClick={() => setFilter("page", String(data.page - 1))}>
-                Poprzednia
+                Previous
               </Button>
               <span className="text-sm text-slate-600">
-                Strona {data.page} z {data.totalPages}
+                Page {data.page} of {data.totalPages}
               </span>
               <Button
                 variant="secondary"
                 disabled={data.page >= data.totalPages}
                 onClick={() => setFilter("page", String(data.page + 1))}
               >
-                Następna
+                Next
               </Button>
             </nav>
           )}
@@ -153,9 +153,9 @@ function SearchBox({ initial, onSearch }: { initial: string; onSearch: (text: st
 
   return (
     <TextField
-      label="Szukaj"
+      label="Search"
       type="search"
-      placeholder="Nazwa lub mięsień, np. wyciskanie"
+      placeholder="Name or muscle, e.g. squat"
       value={text}
       onChange={(e) => setText(e.target.value)}
     />
@@ -165,13 +165,13 @@ function SearchBox({ initial, onSearch }: { initial: string; onSearch: (text: st
 function ExerciseCard({ exercise }: { exercise: Exercise }) {
   return (
     <Link
-      to={`/cwiczenia/${exercise.id}`}
+      to={`/exercises/${exercise.id}`}
       className="flex h-full flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-brand-500 hover:shadow"
     >
       <div className="mb-2 flex flex-wrap gap-1.5">
         <Badge tone="brand">{categoryLabels[exercise.category]}</Badge>
         <Badge>{difficultyLabels[exercise.difficulty]}</Badge>
-        {exercise.isCustom && <Badge tone="amber">Własne</Badge>}
+        {exercise.isCustom && <Badge tone="amber">Custom</Badge>}
       </div>
       <h2 className="font-semibold text-slate-900">{exercise.name}</h2>
       <p className="mt-1 line-clamp-3 text-sm text-slate-600">{exercise.description || exercise.muscles}</p>
