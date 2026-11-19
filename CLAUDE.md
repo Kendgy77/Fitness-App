@@ -43,3 +43,4 @@ and end each PR with a short "what to test" note and one sentence on the main co
 - Run the API: `dotnet run --project src/FitnessApp.Api` (Swagger at `/swagger` in Development)
 - Build / test / format: `dotnet build`, `dotnet test` (needs Docker running), `dotnet format`
 - Add a migration: `dotnet ef migrations add <DescriptiveName> --project src/FitnessApp.Api --output-dir Infrastructure/Data/Migrations`
+- Web app: `cd web`, then `npm install`, `npm run dev` (http://localhost:5173), `npm test`, `npm run lint`, `npm run typecheck`

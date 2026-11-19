@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+/*
+ * UI direction (docs/DECISIONS.md D020): one brand colour (emerald: energy and health, good contrast with
+ * white text), slate greys for text and surfaces, the system font, Tailwind's 4 px spacing scale.
+ * Change the brand here and every button, link and highlight follows.
+ */
+@theme {
+  --color-brand-50: var(--color-emerald-50);
+  --color-brand-100: var(--color-emerald-100);
+  --color-brand-200: var(--color-emerald-200);
+  --color-brand-500: var(--color-emerald-500);
+  --color-brand-600: var(--color-emerald-600);
+  --color-brand-700: var(--color-emerald-700);
+  --color-brand-800: var(--color-emerald-800);
+  --color-brand-900: var(--color-emerald-900);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+  }
+
+  /* A clearly visible focus ring for keyboard users, on every interactive element. */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-600;
+  }
+}

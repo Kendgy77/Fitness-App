@@ -10,12 +10,12 @@ The full plan with dates, risks and a detailed step-by-step playbook lives in th
 
 ## Week 1 · 17–22 Nov · Foundation and login (WF01, WF02, WNF02)
 
-- [ ] PR docs/phase-0: BLUEPRINT, PRODUCT, DECISIONS, BACKLOG, PLAN, CLAUDE.md
-- [ ] PR chore/skeleton: solution, shared build settings, Docker Compose (PostgreSQL 16), Program.cs,
+- [x] PR docs/phase-0: BLUEPRINT, PRODUCT, DECISIONS, BACKLOG, PLAN, CLAUDE.md
+- [x] PR chore/skeleton: solution, shared build settings, Docker Compose (PostgreSQL 16), Program.cs,
       ProblemDetails, security headers, `/health`, Swagger, CORS, test projects, CI
-- [ ] PR feat/auth: Identity + JWT; register, login, logout, me; lockout 3 tries / 15 min; rate limiting
-- [ ] Tests T01–T04 automated; unauthenticated call → 401
-- [ ] Ostap: ran it locally, tried register/login/lockout in Swagger
+- [x] PR feat/auth: Identity + JWT; register, login, logout, me; lockout 3 tries / 15 min; rate limiting
+- [x] Tests T01–T04 automated; unauthenticated call → 401
+- [x] Ostap: ran it locally, tried register/login/lockout in Swagger
 - [ ] Ostap can explain what a JWT is and why lockout uses Identity
 
 ## Week 2 · 23–29 Nov · Profile, BMI, exercise library, frontend shell (WF03, WF04, WF10)
@@ -23,7 +23,7 @@ The full plan with dates, risks and a detailed step-by-step playbook lives in th
 - [ ] PR feat/profile: UserProfile, BMI calculator; T05, T06, T16, T17
 - [ ] PR feat/exercises: ~60 exercises seeded; search, filters, paging; custom exercises; admin; T07, T08
 - [ ] PR feat/web-shell: React app, login/register, layout, profile page, exercise library; frontend CI
-- [ ] UI direction (colours, font, spacing) in DECISIONS.md
+- [x] UI direction (colours, font, spacing) in DECISIONS.md
 - [ ] Ostap: checked the exercise texts; tried it on a phone
 
 ## Week 3 · 30 Nov–6 Dec · Training plans (WF05)

@@ -175,6 +175,36 @@ something different from it, the reason is logged here.
   Archiving keeps those references valid without the delete-cascade problems of the AutoCare project.
 - **Consequences:** the production database must allow the `unaccent` extension and have ICU collations
   (Azure PostgreSQL and Neon both do; checked again in week 7 when hosting is chosen).
+
+### D019 · 2026-11-19 · Frontend: versions, data fetching, login storage
+
+- **Versions** (replaces "picked in week 2" from D007): React 19.3, React Router 8.5, Vite 8.3, Tailwind CSS 4.3,
+  TypeScript 6.0, Vitest 5.1. Every package is pinned to an exact version that had been public for at least two
+  weeks when it was added, so a freshly published, possibly compromised release can't slip in. TypeScript 7
+  (the new native compiler) is not used yet: the linter (typescript-eslint) doesn't support it.
+- **TanStack Query** on top of Axios for loading data. It caches server responses, shares one request between
+  pages that need the same data, and handles loading and error states, so pages don't each re-implement them.
+  After a save, the affected cached lists are refreshed. Axios stays the HTTP client, as in the thesis (4.1.2).
+- **Login state:** the token and user are kept in `localStorage`, so a refresh doesn't log the user out. The
+  token expires after 60 minutes; an expired one is dropped on start-up or on the first 401. On logout the
+  data cache is cleared, so the next user of the same browser can't see the previous user's data.
+  Trade-off: a script injected into the page (XSS) could read the token. React escapes all rendered text and
+  the app renders no user HTML, which keeps that risk low; an httpOnly cookie is the stronger option and is
+  in the backlog together with refresh tokens.
+- **Addresses:** short English paths (`/exercises`, `/profile`). Filters of the exercise library are kept in
+  the address (`?category=Legs&page=2`), so back/forward and bookmarks keep them.
+
+### D020 · 2026-11-19 · UI direction
+
+- **Colour:** one brand colour, emerald (`brand-*` tokens in `web/src/index.css`, mapped to Tailwind's emerald
+  scale), slate greys for text and surfaces, red only for errors and destructive actions. Emerald 700 on white
+  has a contrast ratio above 4.5:1 (WCAG 2.1 AA, thesis WNF04).
+- **Type:** the system font (`system-ui`): no font download, and it looks native on every phone.
+- **Spacing and shape:** Tailwind's 4 px scale; cards with `rounded-xl`, a light border and a small shadow.
+- **Touch and keyboard:** every button, link and input is at least 44 px tall; a visible focus ring on every
+  interactive element; a "skip to content" link; every input has a label and its error is announced.
+- **Layout:** mobile first. Phones get a bottom tab bar (reachable with a thumb), wider screens the side menu
+  from the thesis mock-up (6.2).
 ### D021 · 2026-11-19 · English UI, app name "Fitness Logger", time zone taken from the browser
 
 - **Context:** the plan said "UI in Polish". Ostap asked for English and a clearer product name.
