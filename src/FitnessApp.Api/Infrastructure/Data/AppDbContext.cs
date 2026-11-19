@@ -1,4 +1,5 @@
 using FitnessApp.Api.Features.Auth;
+using FitnessApp.Api.Features.Exercises;
 using FitnessApp.Api.Features.Profile;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,14 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : Ident
 {
     public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
 
+    public DbSet<Exercise> Exercises => Set<Exercise>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        // unaccent(): accent-insensitive search in the exercise library ("wioslowanie" finds "Wiosłowanie").
+        builder.HasPostgresExtension("unaccent");
         builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 }

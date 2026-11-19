@@ -12,3 +12,6 @@ public sealed class DomainValidationException(string message, string? field = nu
 
 /// <summary>The request conflicts with the current state, e.g. editing an archived plan (409).</summary>
 public sealed class ConflictException(string message) : Exception(message);
+
+/// <summary>The user may see the resource but not change it, e.g. a global exercise (403).</summary>
+public sealed class ForbiddenException(string message) : Exception(message);
