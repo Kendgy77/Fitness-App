@@ -17,7 +17,14 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly PostgreSqlContainer _database = new PostgreSqlBuilder("postgres:16").Build();
 
-    public async ValueTask InitializeAsync() => await _database.StartAsync();
+    public async ValueTask InitializeAsync()
+    {
+        await _database.StartAsync();
+
+        // Start the API once now, so it migrates the database before any test runs. Otherwise a test that
+        // builds a second host (WithWebHostBuilder) can race the first one and both try to create the tables.
+        _ = Server;
+    }
 
     public override async ValueTask DisposeAsync()
     {

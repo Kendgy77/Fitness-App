@@ -10,6 +10,7 @@ builder.Services
     .AddAuth()
     .AddRateLimiting()
     .AddApiDefaults()
+    .AddFeatures()
     .AddFrontendCors(builder.Configuration)
     .AddSwagger();
 

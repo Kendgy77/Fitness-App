@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessApp.Api.Common.Errors;
 
@@ -25,7 +26,7 @@ public sealed class GlobalExceptionHandler(
         {
             DomainValidationException => (StatusCodes.Status400BadRequest, exception.Message),
             ConflictException => (StatusCodes.Status409Conflict, exception.Message),
-            _ => (StatusCodes.Status500InternalServerError, "Wystąpił nieoczekiwany błąd."),
+            _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred."),
         };
 
         if (status >= StatusCodes.Status500InternalServerError)
@@ -34,11 +35,18 @@ public sealed class GlobalExceptionHandler(
                 httpContext.Request.Method, httpContext.Request.Path);
         }
 
+        // A rule about one field gets the same shape as attribute validation: { errors: { field: [message] } }.
+        ProblemDetails body = exception is DomainValidationException { Field: { } field }
+            ? new HttpValidationProblemDetails(new Dictionary<string, string[]> { [field] = [exception.Message] })
+            : new ProblemDetails();
+        body.Status = status;
+        body.Title = title;
+
         httpContext.Response.StatusCode = status;
         return await problemDetails.TryWriteAsync(new ProblemDetailsContext
         {
             HttpContext = httpContext,
-            ProblemDetails = { Status = status, Title = title },
+            ProblemDetails = body,
             Exception = exception,
         });
     }

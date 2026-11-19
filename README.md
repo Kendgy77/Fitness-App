@@ -1,4 +1,4 @@
-# Fitness App
+# Fitness Logger
 
 Webowa aplikacja fitness wspierająca planowanie i monitorowanie aktywności fizycznej
 (praca dyplomowa, WSIiZ Rzeszów).
@@ -83,9 +83,11 @@ The full, always-current list is in Swagger (`/swagger` when running in Developm
 | POST | `/api/auth/login` | anonymous | Log in; 3 wrong passwords lock the account for 15 min (423) |
 | POST | `/api/auth/logout` | user | Logout (the client discards its token) |
 | GET | `/api/auth/me` | user | The logged-in user |
+| GET | `/api/profile` | user | Own profile with age and BMI (empty until first saved) |
+| PUT | `/api/profile` | user | Save own profile: birth date, sex, height, weight, goal, time zone |
 | GET | `/health` | anonymous | `Healthy` when the API can reach the database |
 
-Errors are returned as [ProblemDetails](https://www.rfc-editor.org/rfc/rfc7807) JSON with Polish messages.
+Errors are returned as [ProblemDetails](https://www.rfc-editor.org/rfc/rfc7807) JSON with messages meant for the user.
 
 ## Working on the code
 
