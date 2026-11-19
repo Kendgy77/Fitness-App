@@ -156,3 +156,21 @@ something different from it, the reason is logged here.
 - **Why:** with numbers allowed, `"sex": 7` would be accepted and stored as a value the enum doesn't define.
   Text columns are readable in the database, and reordering an enum in code can't change the meaning of rows
   that already exist.
+
+### D018 · 2026-11-19 · Exercise library: one table, global + custom, archive instead of delete
+
+- **Choice:** one `Exercises` table. `UserId = null` is the global catalog (managed by the admin, visible to
+  all); otherwise it is a user's custom exercise, visible only to them. Exercises are never deleted, only
+  archived: they disappear from the library but stay readable by id. A user who tries to edit a global
+  exercise gets **403** (they can see it, so 404 would be misleading); someone else's custom exercise is
+  **404** (it doesn't exist for them).
+- **Catalog:** 61 exercises with Polish technique descriptions, seeded by a migration (`HasData`) so every
+  environment has the same catalog and ids. Seeded ids are 1–61; ids created at runtime start at 1000.
+- **Search:** `unaccent` + `ILIKE` on name and muscles, so "lawka" finds "ławka" and case doesn't matter.
+  Names sort in Polish alphabetical order (ICU collation `pl-PL-x-icu`).
+- **Names:** unique per owner among active exercises, ignoring case; a custom exercise can't repeat a global
+  name. Checked in the service (friendly 409) and by a partial unique index (guards against races).
+- **Why:** plans and workout history (weeks 3–4) will point at exercises, and history must never change.
+  Archiving keeps those references valid without the delete-cascade problems of the AutoCare project.
+- **Consequences:** the production database must allow the `unaccent` extension and have ICU collations
+  (Azure PostgreSQL and Neon both do; checked again in week 7 when hosting is chosen).

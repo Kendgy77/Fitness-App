@@ -20,6 +20,7 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                 .HasAnnotation("ProductVersion", "10.0.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "unaccent");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("FitnessApp.Api.Features.Auth.AppUser", b =>
@@ -88,6 +89,800 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("FitnessApp.Api.Features.Exercises.Exercise", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<int>("Id"), 1000L, null, null, null, null, null);
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("Difficulty")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("Equipment")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Muscles")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .UseCollation("pl-PL-x-icu");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Name")
+                        .IsUnique()
+                        .HasFilter("\"IsArchived\" = false");
+
+                    NpgsqlIndexBuilderExtensions.AreNullsDistinct(b.HasIndex("UserId", "Name"), false);
+
+                    b.ToTable("Exercises", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Category = "Chest",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Połóż się na ławce, stopy oprzyj o podłogę, łopatki ściągnij i przyciśnij do ławki. Opuść sztangę kontrolowanym ruchem do dolnej części klatki piersiowej, a następnie wypchnij ją w górę do wyprostu łokci. Nie odbijaj sztangi od klatki i nie odrywaj pośladków od ławki.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Barbell",
+                            IsArchived = false,
+                            Muscles = "Klatka piersiowa, triceps, przedni akton barków",
+                            Name = "Wyciskanie sztangi na ławce płaskiej"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Category = "Chest",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Ustaw oparcie ławki pod kątem 30–45°. Opuść sztangę do górnej części klatki piersiowej i wypchnij ją pionowo w górę. Łopatki trzymaj ściągnięte przez całą serię.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Barbell",
+                            IsArchived = false,
+                            Muscles = "Górna część klatki piersiowej, przedni akton barków, triceps",
+                            Name = "Wyciskanie sztangi na ławce skośnej"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Category = "Chest",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Połóż się na ławce z hantlami trzymanymi nad klatką piersiową. Opuszczaj je po łuku na boki, aż łokcie znajdą się nieco poniżej linii ławki, a potem wypchnij je w górę, zbliżając hantle do siebie.",
+                            Difficulty = "Beginner",
+                            Equipment = "Dumbbell",
+                            IsArchived = false,
+                            Muscles = "Klatka piersiowa, triceps, przedni akton barków",
+                            Name = "Wyciskanie hantli na ławce płaskiej"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Category = "Chest",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Ustaw oparcie ławki pod kątem 30–45°. Opuść hantle do wysokości górnej części klatki piersiowej, łokcie prowadź pod kątem około 45° do tułowia. Wypchnij hantle w górę do wyprostu ramion.",
+                            Difficulty = "Beginner",
+                            Equipment = "Dumbbell",
+                            IsArchived = false,
+                            Muscles = "Górna część klatki piersiowej, przedni akton barków, triceps",
+                            Name = "Wyciskanie hantli na ławce skośnej"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Category = "Chest",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Trzymaj hantle nad klatką piersiową z lekko ugiętymi łokciami. Opuszczaj ramiona szeroko na boki, aż poczujesz rozciągnięcie klatki, i wróć tym samym łukiem. Kąt w łokciach nie zmienia się przez cały ruch.",
+                            Difficulty = "Beginner",
+                            Equipment = "Dumbbell",
+                            IsArchived = false,
+                            Muscles = "Klatka piersiowa, przedni akton barków",
+                            Name = "Rozpiętki z hantlami na ławce płaskiej"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Category = "Chest",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Stań w środku bramy z uchwytami górnych wyciągów w dłoniach i pochyl lekko tułów. Prowadź dłonie łukiem w dół i do środka, aż spotkają się przed biodrami. Powoli wróć, kontrolując ciężar.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Cable",
+                            IsArchived = false,
+                            Muscles = "Klatka piersiowa, przedni akton barków",
+                            Name = "Krzyżowanie linek wyciągu na bramie"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Category = "Chest",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Dłonie ustaw nieco szerzej niż barki, ciało trzymaj w jednej linii od głowy do pięt. Opuść się, aż klatka piersiowa znajdzie się tuż nad podłogą, i wypchnij się do wyprostu ramion. Łatwiejsza wersja: z kolanami opartymi o podłogę.",
+                            Difficulty = "Beginner",
+                            Equipment = "Bodyweight",
+                            IsArchived = false,
+                            Muscles = "Klatka piersiowa, triceps, przedni akton barków, mięśnie brzucha",
+                            Name = "Pompki"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Category = "Chest",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Podeprzyj się na poręczach na wyprostowanych ramionach. Pochyl tułów lekko do przodu i opuszczaj się, aż ramiona znajdą się mniej więcej równolegle do podłogi, a potem wypchnij się w górę. Nie schodź głębiej, jeśli czujesz ból barków.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Bodyweight",
+                            IsArchived = false,
+                            Muscles = "Dolna część klatki piersiowej, triceps, przedni akton barków",
+                            Name = "Pompki na poręczach (dipy)"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Category = "Chest",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Ustaw siedzisko tak, aby uchwyty znajdowały się na wysokości środka klatki piersiowej. Wypchnij uchwyty do przodu do prawie pełnego wyprostu łokci i powoli wróć. Plecy i łopatki trzymaj przy oparciu.",
+                            Difficulty = "Beginner",
+                            Equipment = "Machine",
+                            IsArchived = false,
+                            Muscles = "Klatka piersiowa, triceps, przedni akton barków",
+                            Name = "Wyciskanie na maszynie siedząc"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Category = "Back",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Stań ze stopami na szerokość bioder, sztanga nad środkiem stopy. Chwyć gryf, napnij brzuch i plecy, zachowując neutralne ustawienie kręgosłupa. Podnieś sztangę, prostując jednocześnie biodra i kolana i prowadząc gryf blisko nóg; opuść ją tą samą drogą.",
+                            Difficulty = "Advanced",
+                            Equipment = "Barbell",
+                            IsArchived = false,
+                            Muscles = "Prostowniki grzbietu, pośladki, mięśnie dwugłowe ud, czworogłowe ud, przedramiona",
+                            Name = "Martwy ciąg klasyczny"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Category = "Back",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Chwyć drążek nachwytem nieco szerzej niż barki. Z pełnego zwisu podciągnij się, aż broda znajdzie się nad drążkiem, prowadząc łokcie w dół. Opuszczaj się powoli do pełnego wyprostu ramion.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Bodyweight",
+                            IsArchived = false,
+                            Muscles = "Najszerszy grzbietu, biceps, mięśnie obłe",
+                            Name = "Podciąganie na drążku nachwytem"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Category = "Back",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Chwyć drążek podchwytem na szerokość barków. Podciągnij się, aż broda znajdzie się nad drążkiem, prowadząc łokcie wzdłuż tułowia. Opuszczaj się powoli, bez bujania nogami.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Bodyweight",
+                            IsArchived = false,
+                            Muscles = "Najszerszy grzbietu, biceps",
+                            Name = "Podciąganie na drążku podchwytem"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Category = "Back",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Pochyl tułów do około 45° przy prostych plecach i lekko ugiętych kolanach. Przyciągnij sztangę do dolnej części brzucha, ściągając łopatki, a następnie opuść ją do wyprostu ramion. Tułów pozostaje nieruchomy.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Barbell",
+                            IsArchived = false,
+                            Muscles = "Najszerszy grzbietu, mięśnie czworoboczne i równoległoboczne, tylny akton barków",
+                            Name = "Wiosłowanie sztangą w opadzie tułowia"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Category = "Back",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Oprzyj kolano i dłoń o ławkę, plecy trzymaj równolegle do podłogi. Przyciągnij hantel do biodra, prowadząc łokieć blisko tułowia, i powoli go opuść. Nie skręcaj tułowia.",
+                            Difficulty = "Beginner",
+                            Equipment = "Dumbbell",
+                            IsArchived = false,
+                            Muscles = "Najszerszy grzbietu, mięśnie równoległoboczne, tylny akton barków",
+                            Name = "Wiosłowanie hantlem jednorącz"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Category = "Back",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Usiądź z udami zablokowanymi pod wałkami i chwyć drążek szeroko. Ściągnij go do górnej części klatki piersiowej, prowadząc łokcie w dół i lekko odchylając tułów. Powoli wróć do wyprostu ramion.",
+                            Difficulty = "Beginner",
+                            Equipment = "Cable",
+                            IsArchived = false,
+                            Muscles = "Najszerszy grzbietu, biceps, mięśnie obłe",
+                            Name = "Ściąganie drążka wyciągu górnego do klatki"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Category = "Back",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Usiądź z lekko ugiętymi kolanami i wyprostowanymi plecami. Przyciągnij uchwyt do brzucha, ściągając łopatki, i powoli wróć do wyprostu ramion. Nie odchylaj tułowia, aby pomóc sobie w ruchu.",
+                            Difficulty = "Beginner",
+                            Equipment = "Cable",
+                            IsArchived = false,
+                            Muscles = "Mięśnie równoległoboczne, najszerszy grzbietu, czworoboczne",
+                            Name = "Przyciąganie linki wyciągu dolnego siedząc"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Category = "Back",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Oprzyj klatkę piersiową o podkładkę i chwyć uchwyty. Przyciągnij je do tułowia, ściągając łopatki, zatrzymaj ruch na chwilę i powoli wróć.",
+                            Difficulty = "Beginner",
+                            Equipment = "Machine",
+                            IsArchived = false,
+                            Muscles = "Mięśnie równoległoboczne, najszerszy grzbietu, tylny akton barków",
+                            Name = "Wiosłowanie na maszynie"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Category = "Back",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Ustaw biodra tuż nad krawędzią podkładki, a stopy zablokuj pod wałkami. Opuść tułów w dół z prostymi plecami, a następnie unieś go do linii prostej z nogami. Nie przeprostowuj kręgosłupa w górnej fazie.",
+                            Difficulty = "Beginner",
+                            Equipment = "Bodyweight",
+                            IsArchived = false,
+                            Muscles = "Prostowniki grzbietu, pośladki, mięśnie dwugłowe ud",
+                            Name = "Wznosy tułowia na ławce rzymskiej"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Category = "Back",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Stań prosto z hantlami trzymanymi wzdłuż tułowia. Unieś barki pionowo w górę w stronę uszu, zatrzymaj ruch na chwilę i powoli je opuść. Nie krąż barkami.",
+                            Difficulty = "Beginner",
+                            Equipment = "Dumbbell",
+                            IsArchived = false,
+                            Muscles = "Górna część mięśni czworobocznych",
+                            Name = "Szrugsy z hantlami"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Category = "Shoulders",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Stań ze sztangą opartą o przednią część barków, chwyt nieco szerszy niż barki. Napnij pośladki i brzuch, a następnie wypchnij sztangę pionowo nad głowę do wyprostu łokci, odsuwając lekko głowę, by zrobić miejsce dla gryfu. Nie wyginaj pleców w łuk.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Barbell",
+                            IsArchived = false,
+                            Muscles = "Przedni i boczny akton barków, triceps, górna część klatki piersiowej",
+                            Name = "Wyciskanie sztangi nad głowę stojąc"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Category = "Shoulders",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Usiądź na ławce z oparciem ustawionym pionowo, hantle trzymaj na wysokości barków. Wypchnij je nad głowę, aż ramiona się wyprostują, i powoli opuść do wysokości uszu.",
+                            Difficulty = "Beginner",
+                            Equipment = "Dumbbell",
+                            IsArchived = false,
+                            Muscles = "Przedni i boczny akton barków, triceps",
+                            Name = "Wyciskanie hantli nad głowę siedząc"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Category = "Shoulders",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Stań z hantlami przy biodrach i lekko ugiętymi łokciami. Unieś ramiona bokiem do wysokości barków, prowadząc ruch łokciami, i powoli je opuść. Nie bujaj tułowiem.",
+                            Difficulty = "Beginner",
+                            Equipment = "Dumbbell",
+                            IsArchived = false,
+                            Muscles = "Boczny akton barków",
+                            Name = "Wznosy hantli bokiem"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Category = "Shoulders",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Stań prosto z hantlami przed udami. Unieś jedną lub obie ręce przed siebie do wysokości barków, z lekko ugiętymi łokciami, i powoli je opuść.",
+                            Difficulty = "Beginner",
+                            Equipment = "Dumbbell",
+                            IsArchived = false,
+                            Muscles = "Przedni akton barków",
+                            Name = "Wznosy hantli w przód"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Category = "Shoulders",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Pochyl tułów prawie równolegle do podłogi, hantle trzymaj pod klatką piersiową. Unieś ramiona szeroko na boki z lekko ugiętymi łokciami, aż znajdą się w linii z tułowiem, i powoli je opuść.",
+                            Difficulty = "Beginner",
+                            Equipment = "Dumbbell",
+                            IsArchived = false,
+                            Muscles = "Tylny akton barków, mięśnie równoległoboczne",
+                            Name = "Odwrotne rozpiętki w opadzie tułowia"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Category = "Shoulders",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Ustaw linkę wyciągu na wysokości twarzy i chwyć ją oburącz. Przyciągnij końce linki do twarzy, rozchylając dłonie na boki i prowadząc łokcie wysoko. Wróć powoli do wyprostu ramion.",
+                            Difficulty = "Beginner",
+                            Equipment = "Cable",
+                            IsArchived = false,
+                            Muscles = "Tylny akton barków, mięśnie obrotowe barku, czworoboczne",
+                            Name = "Przyciąganie linki do twarzy (face pull)"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Category = "Shoulders",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Usiądź z hantlami przed twarzą, dłonie zwrócone do siebie. Wypychając hantle nad głowę, obróć dłonie na zewnątrz, aby na górze były skierowane do przodu. Wróć tym samym ruchem.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Dumbbell",
+                            IsArchived = false,
+                            Muscles = "Przedni i boczny akton barków, triceps",
+                            Name = "Arnoldki"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Category = "Arms",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Stań prosto, sztangę trzymaj podchwytem na szerokość barków. Uginaj ramiona, nie odsuwając łokci od tułowia, aż sztanga znajdzie się na wysokości barków, a potem powoli ją opuść. Nie bujaj tułowiem.",
+                            Difficulty = "Beginner",
+                            Equipment = "Barbell",
+                            IsArchived = false,
+                            Muscles = "Biceps, mięsień ramienny",
+                            Name = "Uginanie ramion ze sztangą stojąc"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Category = "Arms",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Stań z hantlami trzymanymi wzdłuż tułowia, dłonie zwrócone do ud. Uginając ramię, obracaj dłoń tak, aby na górze była skierowana do barku. Opuszczaj powoli, na przemian lub oburącz.",
+                            Difficulty = "Beginner",
+                            Equipment = "Dumbbell",
+                            IsArchived = false,
+                            Muscles = "Biceps, mięsień ramienny",
+                            Name = "Uginanie ramion z hantlami z supinacją"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Category = "Arms",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Trzymaj hantle chwytem neutralnym, kciukami do przodu. Uginaj ramiona, nie zmieniając ułożenia dłoni i nie odsuwając łokci od tułowia, a następnie powoli je opuść.",
+                            Difficulty = "Beginner",
+                            Equipment = "Dumbbell",
+                            IsArchived = false,
+                            Muscles = "Mięsień ramienny, ramienno-promieniowy, biceps",
+                            Name = "Uginanie ramion z hantlami chwytem młotkowym"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Category = "Arms",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Usiądź przy modlitewniku i oprzyj ramiona o podkładkę. Uginaj ramiona ze sztangą łamaną aż do pełnego skurczu, a potem opuszczaj ją powoli prawie do pełnego wyprostu.",
+                            Difficulty = "Beginner",
+                            Equipment = "Barbell",
+                            IsArchived = false,
+                            Muscles = "Biceps, mięsień ramienny",
+                            Name = "Uginanie ramion na modlitewniku"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            Category = "Arms",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Połóż się na ławce i trzymaj sztangę łamaną nad klatką piersiową na wyprostowanych ramionach. Uginając tylko łokcie, opuść sztangę w stronę czoła, a następnie wyprostuj ramiona. Łokcie trzymaj skierowane w górę.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Barbell",
+                            IsArchived = false,
+                            Muscles = "Triceps",
+                            Name = "Wyciskanie francuskie leżąc"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            Category = "Arms",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Stań przed wyciągiem górnym i chwyć drążek lub linkę. Trzymając łokcie przy tułowiu, wyprostuj ramiona w dół, a następnie powoli wróć do zgięcia pod kątem około 90°.",
+                            Difficulty = "Beginner",
+                            Equipment = "Cable",
+                            IsArchived = false,
+                            Muscles = "Triceps",
+                            Name = "Prostowanie ramion na wyciągu górnym"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            Category = "Arms",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Połóż się na ławce i chwyć sztangę na szerokość barków. Opuść ją do dolnej części klatki piersiowej, prowadząc łokcie blisko tułowia, i wypchnij w górę.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Barbell",
+                            IsArchived = false,
+                            Muscles = "Triceps, klatka piersiowa, przedni akton barków",
+                            Name = "Wyciskanie sztangi wąskim chwytem"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            Category = "Arms",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Oprzyj się dłonią i kolanem o ławkę, ramię z hantlem trzymaj wzdłuż tułowia, z łokciem zgiętym. Wyprostuj ramię do tyłu, nie ruszając łokciem, i powoli wróć.",
+                            Difficulty = "Beginner",
+                            Equipment = "Dumbbell",
+                            IsArchived = false,
+                            Muscles = "Triceps",
+                            Name = "Prostowanie ramienia z hantlem w opadzie"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            Category = "Arms",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Ułóż dłonie blisko siebie pod klatką piersiową, tak by kciuki i palce wskazujące tworzyły romb. Opuść się, prowadząc łokcie wzdłuż tułowia, i wypchnij się do wyprostu ramion.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Bodyweight",
+                            IsArchived = false,
+                            Muscles = "Triceps, klatka piersiowa",
+                            Name = "Pompki diamentowe"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            Category = "Legs",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Połóż sztangę na górnej części mięśni czworobocznych, stopy ustaw na szerokość barków. Napnij brzuch i schodź w dół, cofając biodra i kierując kolana w stronę palców, aż uda będą co najmniej równoległe do podłogi. Wstań, wypychając się całą stopą.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Barbell",
+                            IsArchived = false,
+                            Muscles = "Mięśnie czworogłowe ud, pośladki, przywodziciele, prostowniki grzbietu",
+                            Name = "Przysiad ze sztangą na plecach"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            Category = "Legs",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Oprzyj sztangę na przedniej części barków, łokcie unieś wysoko. Zejdź do głębokiego przysiadu z wyprostowanym tułowiem, a następnie wstań. Łokcie nie mogą opaść w trakcie ruchu.",
+                            Difficulty = "Advanced",
+                            Equipment = "Barbell",
+                            IsArchived = false,
+                            Muscles = "Mięśnie czworogłowe ud, pośladki, mięśnie brzucha",
+                            Name = "Przysiad przedni ze sztangą"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            Category = "Legs",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Trzymaj kettlebell lub hantel pionowo przy klatce piersiowej. Zejdź do przysiadu, utrzymując wyprostowane plecy i łokcie między kolanami, a następnie wstań. Dobre ćwiczenie do nauki techniki przysiadu.",
+                            Difficulty = "Beginner",
+                            Equipment = "Kettlebell",
+                            IsArchived = false,
+                            Muscles = "Mięśnie czworogłowe ud, pośladki",
+                            Name = "Przysiad goblet"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            Category = "Legs",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Usiądź na maszynie i ustaw stopy na platformie na szerokość bioder. Opuszczaj platformę, aż kolana zegną się do około 90°, a potem wypchnij ją, nie blokując kolan w pełnym wyproście. Odcinek lędźwiowy trzymaj przy oparciu.",
+                            Difficulty = "Beginner",
+                            Equipment = "Machine",
+                            IsArchived = false,
+                            Muscles = "Mięśnie czworogłowe ud, pośladki",
+                            Name = "Wypychanie nóg na suwnicy"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            Category = "Legs",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Stań prosto z hantlami w dłoniach. Zrób duży krok do przodu i opuść się, aż tylne kolano znajdzie się tuż nad podłogą, a następnie odepchnij się przednią nogą i wróć. Ćwicz na przemian.",
+                            Difficulty = "Beginner",
+                            Equipment = "Dumbbell",
+                            IsArchived = false,
+                            Muscles = "Mięśnie czworogłowe ud, pośladki",
+                            Name = "Wykroki z hantlami"
+                        },
+                        new
+                        {
+                            Id = 41,
+                            Category = "Legs",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Oprzyj stopę tylnej nogi o ławkę za sobą, przednią ustaw około metra przed ławką. Opuść się na przedniej nodze, aż udo będzie prawie równoległe do podłogi, i wstań. Wykonaj serię na jedną nogę, potem na drugą.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Dumbbell",
+                            IsArchived = false,
+                            Muscles = "Mięśnie czworogłowe ud, pośladki",
+                            Name = "Przysiad bułgarski"
+                        },
+                        new
+                        {
+                            Id = 42,
+                            Category = "Legs",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Stań ze sztangą trzymaną przed udami. Przy lekko ugiętych kolanach cofaj biodra, prowadząc sztangę blisko nóg, aż poczujesz mocne rozciągnięcie tyłu ud. Wróć, wypychając biodra do przodu; plecy cały czas proste.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Barbell",
+                            IsArchived = false,
+                            Muscles = "Mięśnie dwugłowe ud, pośladki, prostowniki grzbietu",
+                            Name = "Rumuński martwy ciąg"
+                        },
+                        new
+                        {
+                            Id = 43,
+                            Category = "Legs",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Połóż się na brzuchu, wałek ustaw tuż nad piętami. Ugnij nogi, przyciągając wałek do pośladków, i powoli je wyprostuj. Biodra trzymaj przy podkładce.",
+                            Difficulty = "Beginner",
+                            Equipment = "Machine",
+                            IsArchived = false,
+                            Muscles = "Mięśnie dwugłowe ud",
+                            Name = "Uginanie nóg leżąc na maszynie"
+                        },
+                        new
+                        {
+                            Id = 44,
+                            Category = "Legs",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Usiądź na maszynie z wałkiem opartym o przód kostek. Wyprostuj nogi w kolanach, zatrzymaj ruch na chwilę i powoli je opuść.",
+                            Difficulty = "Beginner",
+                            Equipment = "Machine",
+                            IsArchived = false,
+                            Muscles = "Mięśnie czworogłowe ud",
+                            Name = "Prostowanie nóg siedząc na maszynie"
+                        },
+                        new
+                        {
+                            Id = 45,
+                            Category = "Legs",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Oprzyj górną część pleców o ławkę, sztangę połóż na biodrach (najlepiej na podkładce). Wypchnij biodra w górę, aż tułów i uda utworzą linię prostą, zaciśnij pośladki i powoli opuść biodra.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Barbell",
+                            IsArchived = false,
+                            Muscles = "Pośladki, mięśnie dwugłowe ud",
+                            Name = "Unoszenie bioder ze sztangą (hip thrust)"
+                        },
+                        new
+                        {
+                            Id = 46,
+                            Category = "Legs",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Stań przodostopiem na krawędzi podwyższenia, z ramionami maszyny na barkach. Opuść pięty jak najniżej, a następnie wspinaj się na palce jak najwyżej. Ruch wykonuj powoli, bez sprężynowania.",
+                            Difficulty = "Beginner",
+                            Equipment = "Machine",
+                            IsArchived = false,
+                            Muscles = "Mięśnie łydek",
+                            Name = "Wspięcia na palce stojąc"
+                        },
+                        new
+                        {
+                            Id = 47,
+                            Category = "Legs",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Stań ze stopami na szerokość barków, ręce wyciągnij przed siebie. Zejdź do przysiadu, cofając biodra i utrzymując pięty na podłodze, a następnie wstań.",
+                            Difficulty = "Beginner",
+                            Equipment = "Bodyweight",
+                            IsArchived = false,
+                            Muscles = "Mięśnie czworogłowe ud, pośladki",
+                            Name = "Przysiad bez obciążenia"
+                        },
+                        new
+                        {
+                            Id = 48,
+                            Category = "Legs",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Stań w lekkim rozkroku z kettlebell trzymanym oburącz. Cofnij biodra, przenosząc odważnik między nogami, a następnie dynamicznie wypchnij biodra do przodu, aby odważnik wzniósł się do wysokości klatki piersiowej. Siła pochodzi z bioder, nie z ramion.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Kettlebell",
+                            IsArchived = false,
+                            Muscles = "Pośladki, mięśnie dwugłowe ud, prostowniki grzbietu, barki",
+                            Name = "Swing z kettlebell"
+                        },
+                        new
+                        {
+                            Id = 49,
+                            Category = "Core",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Oprzyj się na przedramionach i palcach stóp, łokcie ustaw pod barkami. Utrzymuj ciało w jednej linii, napinając brzuch i pośladki, i nie unoś ani nie opuszczaj bioder. Wytrzymaj zaplanowany czas.",
+                            Difficulty = "Beginner",
+                            Equipment = "Bodyweight",
+                            IsArchived = false,
+                            Muscles = "Mięsień poprzeczny brzucha, prosty brzucha, skośne brzucha",
+                            Name = "Deska (plank)"
+                        },
+                        new
+                        {
+                            Id = 50,
+                            Category = "Core",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Połóż się na boku i oprzyj na przedramieniu, z łokciem pod barkiem. Unieś biodra tak, aby ciało tworzyło linię prostą, i utrzymaj pozycję. Wykonaj na obie strony.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Bodyweight",
+                            IsArchived = false,
+                            Muscles = "Mięśnie skośne brzucha, mięsień poprzeczny brzucha",
+                            Name = "Deska bokiem"
+                        },
+                        new
+                        {
+                            Id = 51,
+                            Category = "Core",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Połóż się na plecach z ugiętymi nogami, dłonie umieść przy skroniach. Unieś łopatki od podłogi, zbliżając żebra do miednicy, i powoli wróć. Nie ciągnij głowy rękami.",
+                            Difficulty = "Beginner",
+                            Equipment = "Bodyweight",
+                            IsArchived = false,
+                            Muscles = "Mięsień prosty brzucha",
+                            Name = "Spięcia brzucha (brzuszki)"
+                        },
+                        new
+                        {
+                            Id = 52,
+                            Category = "Core",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Zawiśnij na drążku na wyprostowanych ramionach. Unieś nogi przed siebie co najmniej do poziomu, podwijając lekko miednicę, i powoli je opuść. Nie bujaj się.",
+                            Difficulty = "Advanced",
+                            Equipment = "Bodyweight",
+                            IsArchived = false,
+                            Muscles = "Mięsień prosty brzucha, zginacze bioder",
+                            Name = "Unoszenie nóg w zwisie na drążku"
+                        },
+                        new
+                        {
+                            Id = 53,
+                            Category = "Core",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Usiądź z ugiętymi kolanami i odchyl tułów do tyłu, utrzymując proste plecy. Skręcaj tułów na przemian w prawo i w lewo, dotykając dłońmi podłogi obok bioder. Utrudnienie: trzymaj w dłoniach obciążenie.",
+                            Difficulty = "Beginner",
+                            Equipment = "Bodyweight",
+                            IsArchived = false,
+                            Muscles = "Mięśnie skośne brzucha",
+                            Name = "Rosyjskie skręty (russian twist)"
+                        },
+                        new
+                        {
+                            Id = 54,
+                            Category = "Core",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Uklęknij przed wyciągiem górnym i trzymaj linkę przy głowie. Zaokrąglając plecy, przyciągnij łokcie w stronę ud, napinając brzuch, i powoli wróć. Biodra pozostają nieruchome.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Cable",
+                            IsArchived = false,
+                            Muscles = "Mięsień prosty brzucha",
+                            Name = "Spięcia brzucha na wyciągu klęcząc"
+                        },
+                        new
+                        {
+                            Id = 55,
+                            Category = "Core",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Uklęknij i chwyć kółko pod barkami. Tocz je do przodu, wydłużając ciało, tak daleko, jak pozwala ci kontrola bez wyginania odcinka lędźwiowego, a następnie wróć, napinając brzuch.",
+                            Difficulty = "Advanced",
+                            Equipment = "Other",
+                            IsArchived = false,
+                            Muscles = "Mięsień prosty brzucha, mięsień poprzeczny brzucha, najszerszy grzbietu",
+                            Name = "Wyjścia z kółkiem (ab rollout)"
+                        },
+                        new
+                        {
+                            Id = 56,
+                            Category = "Core",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Połóż się na plecach z rękami wyciągniętymi w górę i nogami ugiętymi pod kątem 90°. Powoli opuść przeciwną rękę i nogę w stronę podłogi, utrzymując lędźwie przyciśnięte do podłogi, i wróć. Ćwicz na przemian.",
+                            Difficulty = "Beginner",
+                            Equipment = "Bodyweight",
+                            IsArchived = false,
+                            Muscles = "Mięsień poprzeczny brzucha, prosty brzucha",
+                            Name = "Martwy robak (dead bug)"
+                        },
+                        new
+                        {
+                            Id = 57,
+                            Category = "Cardio",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Z pozycji stojącej zejdź do przysiadu i oprzyj dłonie o podłogę. Wyrzuć nogi do tyłu do podporu, wykonaj pompkę, przyciągnij nogi z powrotem i wyskocz w górę z rękami nad głową.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Bodyweight",
+                            IsArchived = false,
+                            Muscles = "Całe ciało",
+                            Name = "Burpees"
+                        },
+                        new
+                        {
+                            Id = 58,
+                            Category = "Cardio",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Stań prosto ze złączonymi nogami. W podskoku rozstaw nogi na boki i unieś ręce nad głowę, a w kolejnym podskoku wróć do pozycji wyjściowej. Utrzymuj stałe tempo.",
+                            Difficulty = "Beginner",
+                            Equipment = "Bodyweight",
+                            IsArchived = false,
+                            Muscles = "Całe ciało, mięśnie łydek",
+                            Name = "Pajacyki"
+                        },
+                        new
+                        {
+                            Id = 59,
+                            Category = "Cardio",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Przyjmij pozycję podporu na wyprostowanych ramionach. Na przemian przyciągaj kolana do klatki piersiowej w szybkim tempie, utrzymując biodra nisko.",
+                            Difficulty = "Beginner",
+                            Equipment = "Bodyweight",
+                            IsArchived = false,
+                            Muscles = "Mięśnie brzucha, zginacze bioder, barki",
+                            Name = "Wspinaczka (mountain climbers)"
+                        },
+                        new
+                        {
+                            Id = 60,
+                            Category = "Cardio",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Trzymaj uchwyty skakanki przy biodrach i kręć nią ruchem nadgarstków, nie całych ramion. Skacz nisko, lądując miękko na przodostopiu.",
+                            Difficulty = "Beginner",
+                            Equipment = "Other",
+                            IsArchived = false,
+                            Muscles = "Mięśnie łydek, barki",
+                            Name = "Skoki na skakance"
+                        },
+                        new
+                        {
+                            Id = 61,
+                            Category = "Cardio",
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Stań przed stabilną skrzynią. Wykonaj zamach rękami i wskocz obunóż na skrzynię, lądując miękko w półprzysiadzie. Zejdź ze skrzyni krokiem, nie zeskakuj tyłem.",
+                            Difficulty = "Intermediate",
+                            Equipment = "Other",
+                            IsArchived = false,
+                            Muscles = "Mięśnie czworogłowe ud, pośladki, mięśnie łydek",
+                            Name = "Wskoki na skrzynię"
+                        });
                 });
 
             modelBuilder.Entity("FitnessApp.Api.Features.Profile.UserProfile", b =>
@@ -273,6 +1068,14 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("FitnessApp.Api.Features.Exercises.Exercise", b =>
+                {
+                    b.HasOne("FitnessApp.Api.Features.Auth.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("FitnessApp.Api.Features.Profile.UserProfile", b =>

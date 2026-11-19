@@ -85,6 +85,12 @@ The full, always-current list is in Swagger (`/swagger` when running in Developm
 | GET | `/api/auth/me` | user | The logged-in user |
 | GET | `/api/profile` | user | Own profile with age and BMI (empty until first saved) |
 | PUT | `/api/profile` | user | Save own profile: birth date, sex, height, weight, goal, time zone |
+| GET | `/api/exercises` | user | Library: global + own custom; `search`, `category`, `difficulty`, `equipment`, `onlyCustom`, paging |
+| GET | `/api/exercises/{id}` | user | One exercise (also archived ones) |
+| POST | `/api/exercises` | user | Add a custom exercise (only this user sees it) |
+| PUT | `/api/exercises/{id}` | user | Edit own custom exercise (global ones: 403) |
+| DELETE | `/api/exercises/{id}` | user | Archive own custom exercise |
+| POST, PUT, DELETE | `/api/admin/exercises[/{id}]` | admin | Manage the global catalog |
 | GET | `/health` | anonymous | `Healthy` when the API can reach the database |
 
 Errors are returned as [ProblemDetails](https://www.rfc-editor.org/rfc/rfc7807) JSON with Polish messages.

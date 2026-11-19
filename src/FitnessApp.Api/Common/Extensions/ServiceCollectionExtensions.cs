@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using FitnessApp.Api.Common.Errors;
+using FitnessApp.Api.Features.Exercises;
 using FitnessApp.Api.Features.Profile;
 using FitnessApp.Api.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -53,6 +54,7 @@ public static class ServiceCollectionExtensions
     /// <summary>One line per feature service. Auth registers its own in AddAuth.</summary>
     public static IServiceCollection AddFeatures(this IServiceCollection services)
     {
+        services.AddScoped<IExerciseService, ExerciseService>();
         services.AddScoped<IProfileService, ProfileService>();
         return services;
     }
