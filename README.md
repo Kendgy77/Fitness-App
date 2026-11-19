@@ -6,7 +6,7 @@ Webowa aplikacja fitness wspierająca planowanie i monitorowanie aktywności fiz
 A web app for planning and tracking workouts: exercise library, training plans, workout logging,
 progress charts, body weight and BMI, goals and reminders. It runs in any browser, with nothing to install.
 
-**Status:** week 1 of 8. Accounts work (register, login, lockout). See [docs/PLAN.md](docs/PLAN.md).
+**Status:** week 2 of 8. Accounts, profile with BMI and the exercise library work in the API and the web app. See [docs/PLAN.md](docs/PLAN.md).
 
 ## Stack
 
@@ -15,9 +15,9 @@ progress charts, body weight and BMI, goals and reminders. It runs in any browse
 | API | .NET 10, ASP.NET Core Web API (controllers), EF Core 10 |
 | Database | PostgreSQL 16 |
 | Auth | ASP.NET Core Identity + JWT bearer tokens |
-| Frontend | React + TypeScript + Vite, Tailwind CSS, Chart.js (from week 2) |
-| Tests | xUnit v3, Shouldly, Testcontainers (real PostgreSQL in Docker) |
-| CI | GitHub Actions: format check, build, tests, vulnerable package scan |
+| Frontend | React 19 + TypeScript + Vite, Tailwind CSS 4, React Router, TanStack Query, Axios |
+| Tests | xUnit v3, Shouldly, Testcontainers (real PostgreSQL in Docker); Vitest + Testing Library |
+| CI | GitHub Actions: backend (format, build, migrations check, tests, package scan) and frontend (lint, typecheck, tests, build, audit) |
 
 Why these choices, and where the code differs from the thesis: [docs/DECISIONS.md](docs/DECISIONS.md).
 
@@ -33,10 +33,18 @@ src/FitnessApp.Api/
 │   ├── Auth/                  # JWT, Identity setup, rate limiting
 │   └── Data/                  # AppDbContext, entity configurations, migrations, seeding
 └── Features/
-    └── Auth/                  # AppUser, DTOs, AuthService, AuthController
+    ├── Auth/                  # AppUser, DTOs, AuthService, AuthController
+    ├── Profile/               # UserProfile, BmiCalculator, AgeCalculator, ProfileService
+    └── Exercises/             # Exercise, ExerciseService, user + admin controllers
 tests/
 ├── FitnessApp.UnitTests/          # pure logic, no database
 └── FitnessApp.IntegrationTests/   # real HTTP calls against a real PostgreSQL
+web/src/
+├── api/                       # HTTP client, one function per endpoint, DTO types, error mapping
+├── auth/                      # login state (token in localStorage), protected routes
+├── components/                # layout and shared UI (buttons, fields, BMI card)
+├── lib/                       # Polish labels, React Query setup
+└── pages/                     # one file per screen, with its tests next to it
 ```
 
 A request goes **Controller → Service → AppDbContext → PostgreSQL**. Controllers only handle HTTP;
@@ -64,10 +72,27 @@ dotnet run --project src/FitnessApp.Api --launch-profile http
 In Swagger: call `POST /api/auth/register`, copy `accessToken` from the response, click **Authorize**,
 paste it, then call `GET /api/auth/me`.
 
+### The web app
+
+Requirements: [Node.js 26](https://nodejs.org/). With the API running (step 4):
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+Open http://localhost:5173. In development the web app sends `/api` calls to the API on port 5080
+(Vite proxy), so no CORS setup is needed.
+
 ## Tests
 
 ```bash
 dotnet test
+```
+
+```bash
+cd web && npm test     # frontend: Vitest + Testing Library, no API needed
 ```
 
 Integration tests start their own PostgreSQL container, so Docker must be running. They don't touch your
