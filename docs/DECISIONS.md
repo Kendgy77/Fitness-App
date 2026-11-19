@@ -135,3 +135,24 @@ something different from it, the reason is logged here.
 - **Why:** everyone (and CI) uses the same EF tool version. Migrations are created locally with
   `dotnet ef`, so the playbook's "add-migration" CI workflow isn't needed. CI checks
   `has-pending-model-changes` so a forgotten migration fails the build.
+
+### D016 · 2026-11-19 · Profile: birth date instead of age; current weight in the profile; BMI never stored
+
+- **Context:** the thesis (WF03, class ProfilUzytkownika) lists age, sex, body weight, height and goal, and a
+  method that calculates BMI (WF10).
+- **Choice:** `UserProfile` stores the **birth date** and calculates age when read. It stores the **current
+  weight**; the weight history (thesis class Postep) is a separate `BodyMeasurement` feature in week 5. BMI and
+  its WHO category are calculated on every read by the pure `BmiCalculator`, never saved. The profile row is
+  created on the first save; until then `GET /api/profile` returns an empty profile (GETs never write).
+- **Why:** a stored age goes stale on every birthday, and a stored BMI goes stale on every weight change.
+  Values that can be derived are derived. When height or weight is missing, the response has `bmi: null` and
+  `missingForBmi` names the fields, which is what thesis T17 expects ("ask the user to fill in the data").
+- **Consequences:** in week 5, saving a weight measurement also updates the profile's current weight.
+
+### D017 · 2026-11-19 · Enums: names only, stored as text
+
+- **Choice:** the API accepts enum values by name only (`"Male"`); numbers are rejected with 400.
+  In the database, enum columns are `varchar` holding the name.
+- **Why:** with numbers allowed, `"sex": 7` would be accepted and stored as a value the enum doesn't define.
+  Text columns are readable in the database, and reordering an enum in code can't change the meaning of rows
+  that already exist.

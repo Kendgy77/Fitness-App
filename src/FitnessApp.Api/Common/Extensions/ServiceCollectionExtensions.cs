@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using FitnessApp.Api.Common.Errors;
+using FitnessApp.Api.Features.Profile;
 using FitnessApp.Api.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
@@ -35,8 +36,10 @@ public static class ServiceCollectionExtensions
     {
         services.AddControllers()
             // Enums travel as strings ("Strength", not 0). An unknown value is rejected with 400 by
-            // model binding, instead of crashing later in an Enum.Parse.
-            .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+            // model binding, instead of crashing later in an Enum.Parse. Numbers are refused too: otherwise
+            // "sex": 7 would be accepted and stored as a value the enum doesn't define.
+            .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(
+                new JsonStringEnumConverter(namingPolicy: null, allowIntegerValues: false)));
 
         services.AddProblemDetails(o => o.CustomizeProblemDetails = ctx =>
             ctx.ProblemDetails.Extensions["traceId"] = ctx.HttpContext.TraceIdentifier);
@@ -44,6 +47,13 @@ public static class ServiceCollectionExtensions
 
         // Services ask for TimeProvider instead of calling DateTime.UtcNow, so tests can control time.
         services.AddSingleton(TimeProvider.System);
+        return services;
+    }
+
+    /// <summary>One line per feature service. Auth registers its own in AddAuth.</summary>
+    public static IServiceCollection AddFeatures(this IServiceCollection services)
+    {
+        services.AddScoped<IProfileService, ProfileService>();
         return services;
     }
 
