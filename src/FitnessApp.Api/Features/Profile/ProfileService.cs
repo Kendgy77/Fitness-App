@@ -52,7 +52,7 @@ public sealed class ProfileService(AppDbContext db, TimeProvider clock) : IProfi
         if (birthDate is { } date && AgeCalculator.AgeOn(date, today) is < MinAgeYears or > MaxAgeYears)
         {
             throw new DomainValidationException(
-                $"Podaj poprawną datę urodzenia (wiek od {MinAgeYears} do {MaxAgeYears} lat).", "birthDate");
+                $"Enter a valid birth date (age {MinAgeYears} to {MaxAgeYears} years).", "birthDate");
         }
     }
 
@@ -67,7 +67,7 @@ public sealed class ProfileService(AppDbContext db, TimeProvider clock) : IProfi
         var id = timeZone.Trim();
         if (!TimeZoneInfo.TryFindSystemTimeZoneById(id, out var zone) || !zone.HasIanaId)
         {
-            throw new DomainValidationException("Nieprawidłowa strefa czasowa.", "timeZone");
+            throw new DomainValidationException("Unknown time zone.", "timeZone");
         }
 
         return id;

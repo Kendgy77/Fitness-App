@@ -46,7 +46,7 @@ public sealed class AuthTests(ApiFactory factory)
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(_ct);
-        problem!.Errors["email"].ShouldBe(["Konto z tym adresem e-mail już istnieje."]);
+        problem!.Errors["email"].ShouldBe(["An account with this email already exists."]);
     }
 
     [Theory]
@@ -98,7 +98,7 @@ public sealed class AuthTests(ApiFactory factory)
 
         third.StatusCode.ShouldBe(HttpStatusCode.Locked);
         var problem = await third.Content.ReadFromJsonAsync<JsonElement>(_ct);
-        problem.GetProperty("title").GetString().ShouldBe("Konto zablokowane");
+        problem.GetProperty("title").GetString().ShouldBe("Account locked");
         problem.GetProperty("retryAfter").GetInt32().ShouldBeInRange(14 * 60, 15 * 60);
         third.Headers.RetryAfter.ShouldNotBeNull();
 

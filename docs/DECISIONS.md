@@ -156,3 +156,17 @@ something different from it, the reason is logged here.
 - **Why:** with numbers allowed, `"sex": 7` would be accepted and stored as a value the enum doesn't define.
   Text columns are readable in the database, and reordering an enum in code can't change the meaning of rows
   that already exist.
+
+### D021 · 2026-11-19 · English UI, app name "Fitness Logger", time zone taken from the browser
+
+- **Context:** the plan said "UI in Polish". Ostap asked for English and a clearer product name.
+- **Choice:** the whole app is in English: screens, API error messages and the exercise catalog. The product
+  is called **Fitness Logger**. Code names (`FitnessApp.Api`, namespaces) stay as they are: renaming them
+  would touch every file and change nothing for the user. The time zone is no longer a field on the
+  profile page: the web app sends the browser's time zone (e.g. "Europe/Warsaw") with every profile save.
+- **Why:** English is easier to maintain next to English code, and every thesis screenshot uses the same language.
+  The time zone is still needed (a workout at 00:30 belongs to the right day; a reminder set for 18:00 fires at
+  18:00 local time), but users shouldn't have to know about it.
+- **Consequences:** the thesis text stays in Polish, and chapter 6 (mock-ups) mentions that the final UI is
+  in English. The API still accepts and validates `timeZone`, so a user who travels gets the zone of the
+  browser they used last.

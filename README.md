@@ -1,4 +1,4 @@
-# Fitness App
+# Fitness Logger
 
 Webowa aplikacja fitness wspierająca planowanie i monitorowanie aktywności fizycznej
 (praca dyplomowa, WSIiZ Rzeszów).
@@ -87,7 +87,7 @@ The full, always-current list is in Swagger (`/swagger` when running in Developm
 | PUT | `/api/profile` | user | Save own profile: birth date, sex, height, weight, goal, time zone |
 | GET | `/health` | anonymous | `Healthy` when the API can reach the database |
 
-Errors are returned as [ProblemDetails](https://www.rfc-editor.org/rfc/rfc7807) JSON with Polish messages.
+Errors are returned as [ProblemDetails](https://www.rfc-editor.org/rfc/rfc7807) JSON with messages meant for the user.
 
 ## Working on the code
 

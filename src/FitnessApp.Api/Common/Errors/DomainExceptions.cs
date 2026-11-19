@@ -1,7 +1,7 @@
 namespace FitnessApp.Api.Common.Errors;
 
 /// <summary>
-/// A business rule was broken by the request (400). The message is shown to the user, in Polish.
+/// A business rule was broken by the request (400). The message is shown to the user as it is.
 /// When <paramref name="field"/> is set (the JSON name, e.g. "birthDate"), the response carries it in
 /// <c>errors</c> like attribute validation does, so the UI can show the message next to that input.
 /// </summary>

@@ -39,7 +39,7 @@ public static class AuthSetup
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddSignInManager()
-            .AddErrorDescriber<PolishIdentityErrorDescriber>();
+            .AddErrorDescriber<AppIdentityErrorDescriber>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
         services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)

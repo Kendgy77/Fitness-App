@@ -75,7 +75,7 @@ public static class ServiceCollectionExtensions
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(o =>
         {
-            o.SwaggerDoc("v1", new() { Title = "Fitness App API", Version = "v1" });
+            o.SwaggerDoc("v1", new() { Title = "Fitness Logger API", Version = "v1" });
 
             // "Authorize" button in Swagger UI: paste the accessToken from login to call protected endpoints.
             o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -83,7 +83,7 @@ public static class ServiceCollectionExtensions
                 Type = SecuritySchemeType.Http,
                 Scheme = "bearer",
                 BearerFormat = "JWT",
-                Description = "Wklej accessToken z /api/auth/login.",
+                Description = "Paste the accessToken from /api/auth/login.",
             });
             o.AddSecurityRequirement(document => new OpenApiSecurityRequirement
             {
