@@ -218,3 +218,21 @@ something different from it, the reason is logged here.
 - **Consequences:** the thesis text stays in Polish, and chapter 6 (mock-ups) mentions that the final UI is
   in English. The API still accepts and validates `timeZone`, so a user who travels gets the zone of the
   browser they used last.
+
+### D022 · 2026-11-20 · Training plans: status rules, templates, whole-plan saves
+
+- **Model:** `TrainingPlan` (name, description, status) with an ordered list of `PlanExercise` rows (exercise,
+  target sets, target reps, optional starting weight, notes). The same exercise may appear twice in a plan.
+  Rows carry an explicit `Order`, unique within the plan.
+- **Status** (`PlanStateMachine`, unit-tested): Draft → Active → Archived, Draft → Archived, and Archived →
+  Draft to restore. An empty plan can't be activated. Active plans can still be edited: workouts (week 4)
+  copy a plan's exercises, so editing a plan never changes past workouts. Archived plans are read-only.
+  Only drafts can be deleted; a plan that was ever active is archived instead, because workouts may point at it.
+- **Templates:** three seeded plans (`UserId = null`, ids 1–3) visible to everyone. Users can't change them
+  (403) but can copy them into their own draft. Several plans may be active at once (e.g. "Upper" and "Lower").
+- **Saving:** `PUT` replaces the whole plan, including the exercise list in its new order. The editor sends
+  the plan as it should look, which is simpler and safer than separate add/move/remove endpoints.
+- **Privacy:** a plan can only use exercises the user can see (global or their own, not archived). Another
+  user's plan is 404 everywhere, including copy.
+- **Delete rules:** user → plans cascade; plan → its rows cascade; plan row → exercise is NO ACTION (checked at
+  the end of the statement, so deleting an account removes plans and custom exercises in any order).

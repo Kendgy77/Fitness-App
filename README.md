@@ -6,7 +6,7 @@ Webowa aplikacja fitness wspierająca planowanie i monitorowanie aktywności fiz
 A web app for planning and tracking workouts: exercise library, training plans, workout logging,
 progress charts, body weight and BMI, goals and reminders. It runs in any browser, with nothing to install.
 
-**Status:** week 2 of 8. Accounts, profile with BMI and the exercise library work in the API and the web app. See [docs/PLAN.md](docs/PLAN.md).
+**Status:** week 3 of 8. Accounts, profile with BMI, the exercise library and training plans.
 
 ## Stack
 
@@ -35,7 +35,8 @@ src/FitnessApp.Api/
 └── Features/
     ├── Auth/                  # AppUser, DTOs, AuthService, AuthController
     ├── Profile/               # UserProfile, BmiCalculator, AgeCalculator, ProfileService
-    └── Exercises/             # Exercise, ExerciseService, user + admin controllers
+    ├── Exercises/             # Exercise, ExerciseService, user + admin controllers
+    └── Plans/                 # TrainingPlan, PlanExercise, PlanStateMachine, PlanService
 tests/
 ├── FitnessApp.UnitTests/          # pure logic, no database
 └── FitnessApp.IntegrationTests/   # real HTTP calls against a real PostgreSQL
@@ -116,6 +117,14 @@ The full, always-current list is in Swagger (`/swagger` when running in Developm
 | PUT | `/api/exercises/{id}` | user | Edit own custom exercise (global ones: 403) |
 | DELETE | `/api/exercises/{id}` | user | Archive own custom exercise |
 | POST, PUT, DELETE | `/api/admin/exercises[/{id}]` | admin | Manage the global catalog |
+| GET | `/api/plans` | user | Own plans, newest change first; `status` filter, paging |
+| GET | `/api/plans/templates` | user | Ready-made template plans |
+| GET | `/api/plans/{id}` | user | One plan with its exercises (own or template) |
+| POST | `/api/plans` | user | Create a draft plan with exercises |
+| PUT | `/api/plans/{id}` | user | Save a plan (name, description, exercises in order) |
+| POST | `/api/plans/{id}/status` | user | Activate, archive or restore |
+| POST | `/api/plans/{id}/copy` | user | Copy a template or own plan into a new draft |
+| DELETE | `/api/plans/{id}` | user | Delete a draft |
 | GET | `/health` | anonymous | `Healthy` when the API can reach the database |
 
 Errors are returned as [ProblemDetails](https://www.rfc-editor.org/rfc/rfc7807) JSON with messages meant for the user.

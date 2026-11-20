@@ -1,5 +1,6 @@
 using FitnessApp.Api.Features.Auth;
 using FitnessApp.Api.Features.Exercises;
+using FitnessApp.Api.Features.Plans;
 using FitnessApp.Api.Features.Profile;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,10 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : Ident
     public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
 
     public DbSet<Exercise> Exercises => Set<Exercise>();
+
+    public DbSet<TrainingPlan> TrainingPlans => Set<TrainingPlan>();
+
+    public DbSet<PlanExercise> PlanExercises => Set<PlanExercise>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
