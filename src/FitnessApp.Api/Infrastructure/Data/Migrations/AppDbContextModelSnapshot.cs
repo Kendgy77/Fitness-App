@@ -885,6 +885,300 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("FitnessApp.Api.Features.Plans.PlanExercise", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<int>("Id"), 1000L, null, null, null, null, null);
+
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TargetReps")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TargetSets")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("TargetWeightKg")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("numeric(6,2)");
+
+                    b.Property<int>("TrainingPlanId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.HasIndex("TrainingPlanId", "Order")
+                        .IsUnique();
+
+                    b.ToTable("PlanExercises", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 101,
+                            ExerciseId = 38,
+                            Notes = "",
+                            Order = 1,
+                            TargetReps = 10,
+                            TargetSets = 3,
+                            TrainingPlanId = 1
+                        },
+                        new
+                        {
+                            Id = 102,
+                            ExerciseId = 7,
+                            Notes = "",
+                            Order = 2,
+                            TargetReps = 10,
+                            TargetSets = 3,
+                            TrainingPlanId = 1
+                        },
+                        new
+                        {
+                            Id = 103,
+                            ExerciseId = 14,
+                            Notes = "",
+                            Order = 3,
+                            TargetReps = 10,
+                            TargetSets = 3,
+                            TrainingPlanId = 1
+                        },
+                        new
+                        {
+                            Id = 104,
+                            ExerciseId = 21,
+                            Notes = "",
+                            Order = 4,
+                            TargetReps = 10,
+                            TargetSets = 3,
+                            TrainingPlanId = 1
+                        },
+                        new
+                        {
+                            Id = 105,
+                            ExerciseId = 43,
+                            Notes = "",
+                            Order = 5,
+                            TargetReps = 12,
+                            TargetSets = 3,
+                            TrainingPlanId = 1
+                        },
+                        new
+                        {
+                            Id = 106,
+                            ExerciseId = 56,
+                            Notes = "",
+                            Order = 6,
+                            TargetReps = 10,
+                            TargetSets = 3,
+                            TrainingPlanId = 1
+                        },
+                        new
+                        {
+                            Id = 201,
+                            ExerciseId = 1,
+                            Notes = "",
+                            Order = 1,
+                            TargetReps = 8,
+                            TargetSets = 4,
+                            TrainingPlanId = 2
+                        },
+                        new
+                        {
+                            Id = 202,
+                            ExerciseId = 13,
+                            Notes = "",
+                            Order = 2,
+                            TargetReps = 8,
+                            TargetSets = 4,
+                            TrainingPlanId = 2
+                        },
+                        new
+                        {
+                            Id = 203,
+                            ExerciseId = 20,
+                            Notes = "",
+                            Order = 3,
+                            TargetReps = 8,
+                            TargetSets = 3,
+                            TrainingPlanId = 2
+                        },
+                        new
+                        {
+                            Id = 204,
+                            ExerciseId = 15,
+                            Notes = "",
+                            Order = 4,
+                            TargetReps = 10,
+                            TargetSets = 3,
+                            TrainingPlanId = 2
+                        },
+                        new
+                        {
+                            Id = 205,
+                            ExerciseId = 27,
+                            Notes = "",
+                            Order = 5,
+                            TargetReps = 10,
+                            TargetSets = 3,
+                            TrainingPlanId = 2
+                        },
+                        new
+                        {
+                            Id = 206,
+                            ExerciseId = 32,
+                            Notes = "",
+                            Order = 6,
+                            TargetReps = 12,
+                            TargetSets = 3,
+                            TrainingPlanId = 2
+                        },
+                        new
+                        {
+                            Id = 301,
+                            ExerciseId = 36,
+                            Notes = "",
+                            Order = 1,
+                            TargetReps = 6,
+                            TargetSets = 4,
+                            TrainingPlanId = 3
+                        },
+                        new
+                        {
+                            Id = 302,
+                            ExerciseId = 42,
+                            Notes = "",
+                            Order = 2,
+                            TargetReps = 8,
+                            TargetSets = 3,
+                            TrainingPlanId = 3
+                        },
+                        new
+                        {
+                            Id = 303,
+                            ExerciseId = 41,
+                            Notes = "",
+                            Order = 3,
+                            TargetReps = 10,
+                            TargetSets = 3,
+                            TrainingPlanId = 3
+                        },
+                        new
+                        {
+                            Id = 304,
+                            ExerciseId = 39,
+                            Notes = "",
+                            Order = 4,
+                            TargetReps = 12,
+                            TargetSets = 3,
+                            TrainingPlanId = 3
+                        },
+                        new
+                        {
+                            Id = 305,
+                            ExerciseId = 46,
+                            Notes = "",
+                            Order = 5,
+                            TargetReps = 12,
+                            TargetSets = 4,
+                            TrainingPlanId = 3
+                        },
+                        new
+                        {
+                            Id = 306,
+                            ExerciseId = 52,
+                            Notes = "",
+                            Order = 6,
+                            TargetReps = 10,
+                            TargetSets = 3,
+                            TrainingPlanId = 3
+                        });
+                });
+
+            modelBuilder.Entity("FitnessApp.Api.Features.Plans.TrainingPlan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<int>("Id"), 1000L, null, null, null, null, null);
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "UpdatedAtUtc");
+
+                    b.ToTable("TrainingPlans", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Three times a week, with a rest day in between. Every main muscle group in one session, with simple exercises to learn the technique. Add weight when all sets feel easy.",
+                            Name = "Full Body – Beginner",
+                            Status = "Active",
+                            UpdatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Chest, back, shoulders and arms. Pair it with \"Lower Body – Intermediate\" for a four-day upper/lower split. Rest 2–3 minutes between heavy sets.",
+                            Name = "Upper Body – Intermediate",
+                            Status = "Active",
+                            UpdatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Legs, glutes and core. Pair it with \"Upper Body – Intermediate\". Warm up with a few light sets of squats before the working sets.",
+                            Name = "Lower Body – Intermediate",
+                            Status = "Active",
+                            UpdatedAtUtc = new DateTimeOffset(new DateTime(2026, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        });
+                });
+
             modelBuilder.Entity("FitnessApp.Api.Features.Profile.UserProfile", b =>
                 {
                     b.Property<string>("UserId")
@@ -1078,6 +1372,31 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("FitnessApp.Api.Features.Plans.PlanExercise", b =>
+                {
+                    b.HasOne("FitnessApp.Api.Features.Exercises.Exercise", "Exercise")
+                        .WithMany()
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("FitnessApp.Api.Features.Plans.TrainingPlan", null)
+                        .WithMany("Exercises")
+                        .HasForeignKey("TrainingPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exercise");
+                });
+
+            modelBuilder.Entity("FitnessApp.Api.Features.Plans.TrainingPlan", b =>
+                {
+                    b.HasOne("FitnessApp.Api.Features.Auth.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("FitnessApp.Api.Features.Profile.UserProfile", b =>
                 {
                     b.HasOne("FitnessApp.Api.Features.Auth.AppUser", null)
@@ -1136,6 +1455,11 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FitnessApp.Api.Features.Plans.TrainingPlan", b =>
+                {
+                    b.Navigation("Exercises");
                 });
 #pragma warning restore 612, 618
         }

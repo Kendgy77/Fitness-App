@@ -3,7 +3,7 @@ using FitnessApp.Api.Common;
 
 namespace FitnessApp.Api.Features.Exercises;
 
-/// <summary>Filters for the library: <c>/api/exercises?search=wyciskanie&amp;category=Chest&amp;page=1</c>.</summary>
+/// <summary>Filters for the library: <c>/api/exercises?search=squat&amp;category=Legs&amp;page=1</c>.</summary>
 public sealed record ExerciseQuery : PageQuery
 {
     /// <summary>Part of the name or of the muscles; case and accents are ignored ("wioslowanie" finds "Wiosłowanie").</summary>
