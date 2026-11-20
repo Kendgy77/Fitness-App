@@ -29,7 +29,7 @@ The full plan with dates, risks and a detailed step-by-step playbook lives in th
 ## Week 3 · 30 Nov–6 Dec · Training plans (WF05)
 
 - [x] PR feat/plans-api: TrainingPlan, PlanExercise, PlanStateMachine (Draft → Active → Archived); T09, T10
-- [ ] PR feat/plans-web: plan list and editor with exercise picker
+- [x] PR feat/plans-web: plan list and editor with exercise picker
 - [x] Three template plans in the seed
 - [ ] Ostap: built his real plan in the app
 

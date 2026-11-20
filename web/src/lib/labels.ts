@@ -1,4 +1,4 @@
-import type { BmiCategory, Difficulty, Equipment, ExerciseCategory, Sex, TrainingGoal } from "../api/types";
+import type { BmiCategory, Difficulty, Equipment, ExerciseCategory, PlanStatus, Sex, TrainingGoal } from "../api/types";
 
 // Display names for the API's enum values. Records (not switch statements) so TypeScript reports a missing
 // label the moment a value is added to the API types.
@@ -48,6 +48,12 @@ export const equipmentLabels: Record<Equipment, string> = {
   Cable: "Cable",
   Bodyweight: "Bodyweight",
   Other: "Other equipment",
+};
+
+export const planStatusLabels: Record<PlanStatus, string> = {
+  Draft: "Draft",
+  Active: "Active",
+  Archived: "Archived",
 };
 
 /** Entries of a label record, for building <select> options in a stable order. */
