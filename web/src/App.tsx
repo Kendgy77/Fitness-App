@@ -7,6 +7,9 @@ import { ExerciseFormPage } from "./pages/ExerciseFormPage";
 import { ExercisesPage } from "./pages/ExercisesPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { PlanDetailPage } from "./pages/PlanDetailPage";
+import { PlanEditorPage } from "./pages/PlanEditorPage";
+import { PlansPage } from "./pages/PlansPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { RegisterPage } from "./pages/RegisterPage";
 
@@ -42,6 +45,10 @@ export const routes: RouteObject[] = [
       { path: "exercises/new", element: <ExerciseFormPage /> },
       { path: "exercises/:id", element: <ExerciseDetailPage /> },
       { path: "exercises/:id/edit", element: <ExerciseFormPage /> },
+      { path: "plans", element: <PlansPage /> },
+      { path: "plans/new", element: <PlanEditorPage /> },
+      { path: "plans/:id", element: <PlanDetailPage /> },
+      { path: "plans/:id/edit", element: <PlanEditorPage /> },
       { path: "*", element: <NotFoundPage /> },
     ],
   },

@@ -5,6 +5,7 @@ import { useAuth } from "../auth/authContext";
 // bottom tab bar, where thumbs reach them (WNF05). Plans, workouts and progress join this list as they are built.
 const navItems = [
   { to: "/", label: "Dashboard", icon: "M3 12l9-8 9 8M5 10v10h5v-6h4v6h5V10", end: true },
+  { to: "/plans", label: "Plans", icon: "M9 5h10M9 12h10M9 19h10M5 5h.01M5 12h.01M5 19h.01", end: false },
   { to: "/exercises", label: "Exercises", icon: "M6 9v6M9 7v10M15 7v10M18 9v6M9 12h6", end: false },
   { to: "/profile", label: "Profile", icon: "M12 12a4 4 0 100-8 4 4 0 000 8zm-7 9a7 7 0 0114 0", end: false },
 ];
@@ -70,7 +71,7 @@ export function Layout() {
       </div>
 
       <nav aria-label="Main menu" className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden">
-        <ul className="grid grid-cols-3">
+        <ul className="grid grid-cols-4">
           {navItems.map((item) => (
             <li key={item.to}>
               <NavLink

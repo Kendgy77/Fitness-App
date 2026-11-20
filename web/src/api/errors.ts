@@ -55,7 +55,11 @@ export function toApiError(error: unknown): ApiError {
   return { status, message, fieldErrors, retryAfter: problem.retryAfter };
 }
 
+// "Exercises[0].TargetSets" → "exercises[0].targetSets": every part of the path in camelCase.
 function toFieldName(key: string): string {
-  const name = key.startsWith("$.") ? key.slice(2) : key;
-  return name.charAt(0).toLowerCase() + name.slice(1);
+  const path = key.startsWith("$.") ? key.slice(2) : key;
+  return path
+    .split(".")
+    .map((part) => part.charAt(0).toLowerCase() + part.slice(1))
+    .join(".");
 }

@@ -86,3 +86,59 @@ export interface Paged<T> {
   totalCount: number;
   totalPages: number;
 }
+
+export type PlanStatus = "Draft" | "Active" | "Archived";
+
+export interface PlanSummary {
+  id: number;
+  name: string;
+  description: string;
+  status: PlanStatus;
+  isTemplate: boolean;
+  exerciseCount: number;
+  updatedAtUtc: string;
+}
+
+export interface PlanExercise {
+  order: number;
+  exerciseId: number;
+  exerciseName: string;
+  category: ExerciseCategory;
+  equipment: Equipment;
+  exerciseIsArchived: boolean;
+  targetSets: number;
+  targetReps: number;
+  targetWeightKg: number | null;
+  notes: string;
+}
+
+export interface Plan {
+  id: number;
+  name: string;
+  description: string;
+  status: PlanStatus;
+  isTemplate: boolean;
+  createdAtUtc: string;
+  updatedAtUtc: string;
+  exercises: PlanExercise[];
+}
+
+export interface PlanExerciseRequest {
+  exerciseId: number;
+  targetSets: number;
+  targetReps: number;
+  targetWeightKg: number | null;
+  notes: string;
+}
+
+export interface PlanRequest {
+  name: string;
+  description: string;
+  exercises: PlanExerciseRequest[];
+}
+
+export interface PlanQuery {
+  status?: PlanStatus;
+  page?: number;
+  pageSize?: number;
+}
