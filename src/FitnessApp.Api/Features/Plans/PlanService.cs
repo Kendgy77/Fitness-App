@@ -1,5 +1,6 @@
 using FitnessApp.Api.Common;
 using FitnessApp.Api.Common.Errors;
+using FitnessApp.Api.Features.Exercises;
 using FitnessApp.Api.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -219,8 +220,7 @@ public sealed class PlanService(AppDbContext db, TimeProvider clock) : IPlanServ
             return;
         }
 
-        var usable = await db.Exercises.AsNoTracking()
-            .CountAsync(e => ids.Contains(e.Id) && !e.IsArchived && (e.UserId == null || e.UserId == userId), ct);
+        var usable = await db.Exercises.AsNoTracking().UsableBy(userId).CountAsync(e => ids.Contains(e.Id), ct);
         if (usable != ids.Count)
         {
             throw new DomainValidationException("One or more exercises don't exist or were removed from the library.", "exercises");

@@ -3,6 +3,7 @@ using FitnessApp.Api.Common.Errors;
 using FitnessApp.Api.Features.Exercises;
 using FitnessApp.Api.Features.Plans;
 using FitnessApp.Api.Features.Profile;
+using FitnessApp.Api.Features.Sessions;
 using FitnessApp.Api.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
@@ -58,6 +59,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IExerciseService, ExerciseService>();
         services.AddScoped<IPlanService, PlanService>();
         services.AddScoped<IProfileService, ProfileService>();
+        services.AddScoped<ISessionService, SessionService>();
         return services;
     }
 
