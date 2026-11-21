@@ -26,7 +26,8 @@ public static class PlanMappings
                 e.Exercise.Equipment,
                 e.Exercise.IsArchived,
                 e.TargetSets,
-                e.TargetReps,
+                e.TargetRepsMin,
+                e.TargetRepsMax,
                 e.TargetWeightKg,
                 e.Notes))
             .ToList());

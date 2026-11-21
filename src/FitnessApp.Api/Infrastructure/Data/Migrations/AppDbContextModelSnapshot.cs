@@ -905,7 +905,10 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TargetReps")
+                    b.Property<int>("TargetRepsMax")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TargetRepsMin")
                         .HasColumnType("integer");
 
                     b.Property<int>("TargetSets")
@@ -925,7 +928,10 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                     b.HasIndex("TrainingPlanId", "Order")
                         .IsUnique();
 
-                    b.ToTable("PlanExercises", (string)null);
+                    b.ToTable("PlanExercises", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_PlanExercises_RepRange", "\"TargetRepsMin\" >= 1 AND \"TargetRepsMax\" >= \"TargetRepsMin\"");
+                        });
 
                     b.HasData(
                         new
@@ -934,7 +940,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 38,
                             Notes = "",
                             Order = 1,
-                            TargetReps = 10,
+                            TargetRepsMax = 12,
+                            TargetRepsMin = 10,
                             TargetSets = 3,
                             TrainingPlanId = 1
                         },
@@ -944,7 +951,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 7,
                             Notes = "",
                             Order = 2,
-                            TargetReps = 10,
+                            TargetRepsMax = 12,
+                            TargetRepsMin = 8,
                             TargetSets = 3,
                             TrainingPlanId = 1
                         },
@@ -954,7 +962,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 14,
                             Notes = "",
                             Order = 3,
-                            TargetReps = 10,
+                            TargetRepsMax = 12,
+                            TargetRepsMin = 10,
                             TargetSets = 3,
                             TrainingPlanId = 1
                         },
@@ -964,7 +973,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 21,
                             Notes = "",
                             Order = 4,
-                            TargetReps = 10,
+                            TargetRepsMax = 12,
+                            TargetRepsMin = 10,
                             TargetSets = 3,
                             TrainingPlanId = 1
                         },
@@ -974,7 +984,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 43,
                             Notes = "",
                             Order = 5,
-                            TargetReps = 12,
+                            TargetRepsMax = 12,
+                            TargetRepsMin = 10,
                             TargetSets = 3,
                             TrainingPlanId = 1
                         },
@@ -984,7 +995,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 56,
                             Notes = "",
                             Order = 6,
-                            TargetReps = 10,
+                            TargetRepsMax = 10,
+                            TargetRepsMin = 10,
                             TargetSets = 3,
                             TrainingPlanId = 1
                         },
@@ -994,7 +1006,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 1,
                             Notes = "",
                             Order = 1,
-                            TargetReps = 8,
+                            TargetRepsMax = 8,
+                            TargetRepsMin = 6,
                             TargetSets = 4,
                             TrainingPlanId = 2
                         },
@@ -1004,7 +1017,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 13,
                             Notes = "",
                             Order = 2,
-                            TargetReps = 8,
+                            TargetRepsMax = 8,
+                            TargetRepsMin = 6,
                             TargetSets = 4,
                             TrainingPlanId = 2
                         },
@@ -1014,7 +1028,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 20,
                             Notes = "",
                             Order = 3,
-                            TargetReps = 8,
+                            TargetRepsMax = 8,
+                            TargetRepsMin = 6,
                             TargetSets = 3,
                             TrainingPlanId = 2
                         },
@@ -1024,7 +1039,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 15,
                             Notes = "",
                             Order = 4,
-                            TargetReps = 10,
+                            TargetRepsMax = 10,
+                            TargetRepsMin = 8,
                             TargetSets = 3,
                             TrainingPlanId = 2
                         },
@@ -1034,7 +1050,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 27,
                             Notes = "",
                             Order = 5,
-                            TargetReps = 10,
+                            TargetRepsMax = 12,
+                            TargetRepsMin = 8,
                             TargetSets = 3,
                             TrainingPlanId = 2
                         },
@@ -1044,7 +1061,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 32,
                             Notes = "",
                             Order = 6,
-                            TargetReps = 12,
+                            TargetRepsMax = 12,
+                            TargetRepsMin = 10,
                             TargetSets = 3,
                             TrainingPlanId = 2
                         },
@@ -1054,7 +1072,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 36,
                             Notes = "",
                             Order = 1,
-                            TargetReps = 6,
+                            TargetRepsMax = 6,
+                            TargetRepsMin = 5,
                             TargetSets = 4,
                             TrainingPlanId = 3
                         },
@@ -1064,7 +1083,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 42,
                             Notes = "",
                             Order = 2,
-                            TargetReps = 8,
+                            TargetRepsMax = 8,
+                            TargetRepsMin = 6,
                             TargetSets = 3,
                             TrainingPlanId = 3
                         },
@@ -1074,7 +1094,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 41,
                             Notes = "",
                             Order = 3,
-                            TargetReps = 10,
+                            TargetRepsMax = 10,
+                            TargetRepsMin = 8,
                             TargetSets = 3,
                             TrainingPlanId = 3
                         },
@@ -1084,7 +1105,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 39,
                             Notes = "",
                             Order = 4,
-                            TargetReps = 12,
+                            TargetRepsMax = 12,
+                            TargetRepsMin = 10,
                             TargetSets = 3,
                             TrainingPlanId = 3
                         },
@@ -1094,7 +1116,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 46,
                             Notes = "",
                             Order = 5,
-                            TargetReps = 12,
+                            TargetRepsMax = 15,
+                            TargetRepsMin = 12,
                             TargetSets = 4,
                             TrainingPlanId = 3
                         },
@@ -1104,7 +1127,8 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                             ExerciseId = 52,
                             Notes = "",
                             Order = 6,
-                            TargetReps = 10,
+                            TargetRepsMax = 12,
+                            TargetRepsMin = 8,
                             TargetSets = 3,
                             TrainingPlanId = 3
                         });

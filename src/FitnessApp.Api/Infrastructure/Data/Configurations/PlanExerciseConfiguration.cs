@@ -9,7 +9,9 @@ public sealed class PlanExerciseConfiguration : IEntityTypeConfiguration<PlanExe
 {
     public void Configure(EntityTypeBuilder<PlanExercise> builder)
     {
-        builder.ToTable("PlanExercises");
+        // The API checks this too; the database check is the last line of defence for every other way in.
+        builder.ToTable("PlanExercises", t => t.HasCheckConstraint(
+            "CK_PlanExercises_RepRange", "\"TargetRepsMin\" >= 1 AND \"TargetRepsMax\" >= \"TargetRepsMin\""));
 
         builder.Property(e => e.Id)
             .UseIdentityByDefaultColumn()

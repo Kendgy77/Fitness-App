@@ -47,7 +47,13 @@ public sealed class PlanExercise
 
     public int TargetSets { get; set; }
 
-    public int TargetReps { get; set; }
+    /// <summary>
+    /// The rep target is a range, like 8–10: aim for the bottom, add weight once every set reaches the top.
+    /// A fixed number is a range with both ends equal (10–10, shown as "10").
+    /// </summary>
+    public int TargetRepsMin { get; set; }
+
+    public int TargetRepsMax { get; set; }
 
     /// <summary>Optional starting weight; null for bodyweight exercises or "decide on the day".</summary>
     public decimal? TargetWeightKg { get; set; }

@@ -27,32 +27,32 @@ public static class PlanTemplates
 
     public static IReadOnlyList<PlanExercise> Exercises { get; } =
     [
-        // Full Body – Beginner
+        // Full Body – Beginner: one wide range everywhere, so the rule "add weight at the top" is easy to learn.
         .. Rows(1,
-            (38, 3, 10), // Goblet Squat
-            (7, 3, 10),  // Push-Up
-            (14, 3, 10), // One-Arm Dumbbell Row
-            (21, 3, 10), // Seated Dumbbell Shoulder Press
-            (43, 3, 12), // Lying Leg Curl
-            (56, 3, 10)), // Dead Bug
+            (38, 3, 10, 12), // Goblet Squat
+            (7, 3, 8, 12),   // Push-Up
+            (14, 3, 10, 12), // One-Arm Dumbbell Row
+            (21, 3, 10, 12), // Seated Dumbbell Shoulder Press
+            (43, 3, 10, 12), // Lying Leg Curl
+            (56, 3, 10, 10)), // Dead Bug (per side)
 
-        // Upper Body – Intermediate
+        // Upper Body – Intermediate: heavy compound lifts first in low ranges, accessories higher.
         .. Rows(2,
-            (1, 4, 8),   // Barbell Bench Press
-            (13, 4, 8),  // Bent-Over Barbell Row
-            (20, 3, 8),  // Overhead Press
-            (15, 3, 10), // Lat Pulldown
-            (27, 3, 10), // Barbell Curl
-            (32, 3, 12)), // Triceps Pushdown
+            (1, 4, 6, 8),    // Barbell Bench Press
+            (13, 4, 6, 8),   // Bent-Over Barbell Row
+            (20, 3, 6, 8),   // Overhead Press
+            (15, 3, 8, 10),  // Lat Pulldown
+            (27, 3, 8, 12),  // Barbell Curl
+            (32, 3, 10, 12)), // Triceps Pushdown
 
         // Lower Body – Intermediate
         .. Rows(3,
-            (36, 4, 6),  // Barbell Back Squat
-            (42, 3, 8),  // Romanian Deadlift
-            (41, 3, 10), // Bulgarian Split Squat
-            (39, 3, 12), // Leg Press
-            (46, 4, 12), // Standing Calf Raise
-            (52, 3, 10)), // Hanging Leg Raise
+            (36, 4, 5, 6),   // Barbell Back Squat
+            (42, 3, 6, 8),   // Romanian Deadlift
+            (41, 3, 8, 10),  // Bulgarian Split Squat (per leg)
+            (39, 3, 10, 12), // Leg Press
+            (46, 4, 12, 15), // Standing Calf Raise
+            (52, 3, 8, 12)), // Hanging Leg Raise
     ];
 
     private static TrainingPlan Plan(int id, string name, string description) => new()
@@ -66,7 +66,7 @@ public static class PlanTemplates
         UpdatedAtUtc = SeededAt,
     };
 
-    private static IEnumerable<PlanExercise> Rows(int planId, params (int ExerciseId, int Sets, int Reps)[] rows) =>
+    private static IEnumerable<PlanExercise> Rows(int planId, params (int ExerciseId, int Sets, int RepsMin, int RepsMax)[] rows) =>
         rows.Select((row, index) => new PlanExercise
         {
             // 101, 102, … for plan 1; 201, … for plan 2: fixed and readable, below the runtime range.
@@ -75,7 +75,8 @@ public static class PlanTemplates
             ExerciseId = row.ExerciseId,
             Order = index + 1,
             TargetSets = row.Sets,
-            TargetReps = row.Reps,
+            TargetRepsMin = row.RepsMin,
+            TargetRepsMax = row.RepsMax,
             TargetWeightKg = null,
             Notes = "",
         });

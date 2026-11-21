@@ -15,16 +15,29 @@ public sealed record PlanRequest(
     [MaxLength(30, ErrorMessage = "A plan can have at most 30 exercises.")]
     IReadOnlyList<PlanExerciseRequest> Exercises);
 
+/// <summary>Reps are a range: 8 and 10 mean "8–10"; for a fixed number send it twice (10 and 10).</summary>
 public sealed record PlanExerciseRequest(
     int ExerciseId,
     [Range(1, 20, ErrorMessage = "Sets must be between 1 and 20.")]
     int TargetSets,
     [Range(1, 100, ErrorMessage = "Reps must be between 1 and 100.")]
-    int TargetReps,
+    int TargetRepsMin,
+    [Range(1, 100, ErrorMessage = "Reps must be between 1 and 100.")]
+    int TargetRepsMax,
     [Range(0.0, 1000.0, ErrorMessage = "Weight must be between 0 and 1000 kg.")]
     decimal? TargetWeightKg,
     [StringLength(200, ErrorMessage = "Notes can be at most 200 characters long.")]
-    string? Notes);
+    string? Notes) : IValidatableObject
+{
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (TargetRepsMax < TargetRepsMin)
+        {
+            yield return new ValidationResult(
+                "The top of the rep range can't be lower than the bottom.", [nameof(TargetRepsMax)]);
+        }
+    }
+}
 
 public sealed record ChangePlanStatusRequest([Required(ErrorMessage = "Choose a status.")] PlanStatus? Status);
 
@@ -63,6 +76,7 @@ public sealed record PlanExerciseResponse(
     Equipment Equipment,
     bool ExerciseIsArchived,
     int TargetSets,
-    int TargetReps,
+    int TargetRepsMin,
+    int TargetRepsMax,
     decimal? TargetWeightKg,
     string Notes);
