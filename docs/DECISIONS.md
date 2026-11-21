@@ -236,3 +236,15 @@ something different from it, the reason is logged here.
   user's plan is 404 everywhere, including copy.
 - **Delete rules:** user → plans cascade; plan → its rows cascade; plan row → exercise is NO ACTION (checked at
   the end of the statement, so deleting an account removes plans and custom exercises in any order).
+
+### D023 · 2026-11-21 · Rep targets are ranges
+
+- **Why:** Ostap's plan (8-week plan doc, week 3) asks for rep ranges like 8–9. A range is how most lifters
+  train: work at the bottom, add weight once every set reaches the top ("double progression").
+- **Model:** `PlanExercise.TargetReps` became `TargetRepsMin` + `TargetRepsMax`. A fixed number is a range with
+  equal ends (10–10, shown as "10"). The API checks max ≥ min (400 on `exercises[i].targetRepsMax`) and so does
+  a database check constraint.
+- **Migration:** existing rows got max = min with one hand-written `UPDATE`, so no plan changed meaning. The
+  templates got real ranges (e.g. bench press 6–8, curls 8–12).
+- **Editor:** two small boxes, "Reps from" and "Reps to" (empty = fixed number), not one "8–10" text box,
+  because a phone's number keyboard often has no dash.

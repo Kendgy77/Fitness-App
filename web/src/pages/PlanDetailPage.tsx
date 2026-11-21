@@ -4,7 +4,7 @@ import { changePlanStatus, copyPlan, deletePlan, getPlan } from "../api/endpoint
 import { toApiError } from "../api/errors";
 import type { Plan, PlanStatus } from "../api/types";
 import { Alert, Badge, Button, Card, Loading } from "../components/ui";
-import { categoryLabels, formatDecimal, planStatusLabels } from "../lib/labels";
+import { categoryLabels, formatDecimal, formatReps, planStatusLabels } from "../lib/labels";
 import { queryKeys } from "../lib/queryKeys";
 
 /** One plan with its exercises, and the actions its status allows (see PlanStateMachine in the API). */
@@ -53,7 +53,7 @@ function PlanView({ plan }: { plan: Plan }) {
                 {e.notes && <p className="mt-0.5 text-sm text-slate-600">{e.notes}</p>}
               </div>
               <p className="text-sm font-semibold whitespace-nowrap text-slate-800">
-                {e.targetSets} × {e.targetReps}
+                {e.targetSets} × {formatReps(e.targetRepsMin, e.targetRepsMax)}
                 {e.targetWeightKg !== null && <span className="font-normal text-slate-600"> @ {formatDecimal(e.targetWeightKg)} kg</span>}
               </p>
             </li>

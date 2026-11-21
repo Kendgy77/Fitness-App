@@ -28,7 +28,7 @@ const plan = (status: Plan["status"], isTemplate = false): Plan => ({
   createdAtUtc: "2026-11-20T10:00:00Z",
   updatedAtUtc: "2026-11-20T10:00:00Z",
   exercises: [
-    { order: 1, exerciseId: 1, exerciseName: "Barbell Bench Press", category: "Chest", equipment: "Barbell", exerciseIsArchived: false, targetSets: 4, targetReps: 8, targetWeightKg: 60, notes: "" },
+    { order: 1, exerciseId: 1, exerciseName: "Barbell Bench Press", category: "Chest", equipment: "Barbell", exerciseIsArchived: false, targetSets: 4, targetRepsMin: 6, targetRepsMax: 8, targetWeightKg: 60, notes: "" },
   ],
 });
 
@@ -80,7 +80,7 @@ describe("PlanDetailPage (WF05)", () => {
     renderApp("/plans/1000");
     const user = userEvent.setup();
 
-    expect(await screen.findByText("4 × 8")).toBeInTheDocument();
+    expect(await screen.findByText("4 × 6–8")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Delete draft" })).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Activate" }));
 

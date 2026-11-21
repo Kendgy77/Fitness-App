@@ -23,7 +23,7 @@ public sealed class PlansTests(ApiFactory factory)
         name,
         "Chest, shoulders, triceps.",
         [.. (exerciseIds.Length == 0 ? [BenchPress, BackSquat] : exerciseIds)
-            .Select(id => new PlanExerciseRequest(id, TargetSets: 4, TargetReps: 8, TargetWeightKg: 60m, Notes: "Slow down"))]);
+            .Select(id => new PlanExerciseRequest(id, TargetSets: 4, TargetRepsMin: 8, TargetRepsMax: 10, TargetWeightKg: 60m, Notes: "Slow down"))]);
 
     private async Task<PlanResponse> CreateAsync(HttpClient client, PlanRequest? request = null)
     {
@@ -57,7 +57,8 @@ public sealed class PlansTests(ApiFactory factory)
         var first = plan.Exercises[0];
         first.ExerciseName.ShouldBe("Barbell Bench Press");
         first.Category.ShouldBe(ExerciseCategory.Chest);
-        (first.TargetSets, first.TargetReps, first.TargetWeightKg, first.Notes).ShouldBe((4, 8, 60m, "Slow down"));
+        (first.TargetSets, first.TargetRepsMin, first.TargetRepsMax, first.TargetWeightKg, first.Notes)
+            .ShouldBe((4, 8, 10, 60m, "Slow down"));
     }
 
     [Theory]
@@ -80,13 +81,56 @@ public sealed class PlansTests(ApiFactory factory)
     public async Task Invalid_sets_or_reps_return_400_naming_the_row()
     {
         var client = await factory.CreateAuthenticatedClientAsync(ct: _ct);
-        var request = NewPlan() with { Exercises = [new PlanExerciseRequest(BenchPress, 0, 8, null, null)] };
+        var request = NewPlan() with { Exercises = [new PlanExerciseRequest(BenchPress, 0, 8, 8, null, null)] };
 
         var response = await client.PostAsJsonAsync(Url, request, TestJson.Options, _ct);
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(_ct);
         problem!.Errors["Exercises[0].TargetSets"].ShouldBe(["Sets must be between 1 and 20."]);
+    }
+
+    [Fact]
+    public async Task A_rep_range_upside_down_returns_400_on_the_top_of_the_range()
+    {
+        var client = await factory.CreateAuthenticatedClientAsync(ct: _ct);
+        var request = NewPlan() with
+        {
+            Exercises =
+            [
+                new PlanExerciseRequest(BenchPress, 3, 8, 10, null, null),
+                new PlanExerciseRequest(BackSquat, 3, 12, 8, null, null),
+            ],
+        };
+
+        var response = await client.PostAsJsonAsync(Url, request, TestJson.Options, _ct);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(_ct);
+        problem!.Errors["Exercises[1].TargetRepsMax"].ShouldBe(["The top of the rep range can't be lower than the bottom."]);
+    }
+
+    [Fact]
+    public async Task A_fixed_rep_count_is_a_range_with_equal_ends()
+    {
+        var client = await factory.CreateAuthenticatedClientAsync(ct: _ct);
+        var request = NewPlan() with { Exercises = [new PlanExerciseRequest(BenchPress, 5, 5, 5, 100m, null)] };
+
+        var plan = await CreateAsync(client, request);
+
+        (plan.Exercises[0].TargetRepsMin, plan.Exercises[0].TargetRepsMax).ShouldBe((5, 5));
+    }
+
+    [Fact]
+    public async Task Templates_come_with_rep_ranges_and_copies_keep_them()
+    {
+        var client = await factory.CreateAuthenticatedClientAsync(ct: _ct);
+
+        var response = await client.PostAsync($"{Url}/{FullBodyTemplateId}/copy", null, _ct);
+
+        var copy = await response.Content.ReadFromJsonAsync<PlanResponse>(TestJson.Options, _ct);
+        var gobletSquat = copy!.Exercises[0];
+        (gobletSquat.TargetRepsMin, gobletSquat.TargetRepsMax).ShouldBe((10, 12));
     }
 
     [Fact]

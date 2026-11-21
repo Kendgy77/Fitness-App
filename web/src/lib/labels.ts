@@ -67,3 +67,8 @@ const decimal = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 1 });
 export function formatDecimal(value: number) {
   return decimal.format(value);
 }
+
+/** "8–10" for a range, "10" when both ends are equal. */
+export function formatReps(min: number, max: number) {
+  return min === max ? String(min) : `${min}–${max}`;
+}

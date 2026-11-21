@@ -107,7 +107,9 @@ export interface PlanExercise {
   equipment: Equipment;
   exerciseIsArchived: boolean;
   targetSets: number;
-  targetReps: number;
+  /** Reps are a range (8–10); a fixed number has both ends equal. */
+  targetRepsMin: number;
+  targetRepsMax: number;
   targetWeightKg: number | null;
   notes: string;
 }
@@ -126,7 +128,8 @@ export interface Plan {
 export interface PlanExerciseRequest {
   exerciseId: number;
   targetSets: number;
-  targetReps: number;
+  targetRepsMin: number;
+  targetRepsMax: number;
   targetWeightKg: number | null;
   notes: string;
 }

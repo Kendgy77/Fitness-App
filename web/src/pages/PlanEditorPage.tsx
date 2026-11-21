@@ -33,7 +33,9 @@ interface Row {
   exerciseName: string;
   category: Exercise["category"];
   sets: string;
-  reps: string;
+  repsMin: string;
+  /** Empty means "same as repsMin": a fixed number of reps. */
+  repsMax: string;
   weight: string;
   notes: string;
 }
@@ -47,7 +49,8 @@ function toRows(plan?: Plan): Row[] {
     exerciseName: e.exerciseName,
     category: e.category,
     sets: String(e.targetSets),
-    reps: String(e.targetReps),
+    repsMin: String(e.targetRepsMin),
+    repsMax: e.targetRepsMax === e.targetRepsMin ? "" : String(e.targetRepsMax),
     weight: e.targetWeightKg?.toString() ?? "",
     notes: e.notes,
   }));
@@ -75,7 +78,7 @@ function PlanForm({ plan }: { plan?: Plan }) {
   function addExercise(exercise: Exercise) {
     setRows((current) => [
       ...current,
-      { key: nextKey++, exerciseId: exercise.id, exerciseName: exercise.name, category: exercise.category, sets: "3", reps: "10", weight: "", notes: "" },
+      { key: nextKey++, exerciseId: exercise.id, exerciseName: exercise.name, category: exercise.category, sets: "3", repsMin: "8", repsMax: "12", weight: "", notes: "" },
     ]);
   }
 
@@ -100,12 +103,16 @@ function PlanForm({ plan }: { plan?: Plan }) {
 
     const exercises = rows.map((r, i) => {
       const sets = Number(r.sets);
-      const reps = Number(r.reps);
+      const repsMin = Number(r.repsMin);
+      const repsMax = r.repsMax.trim() === "" ? repsMin : Number(r.repsMax);
       const weight = r.weight.trim() === "" ? null : Number(r.weight.replace(",", "."));
+      const isReps = (n: number) => Number.isInteger(n) && n >= 1 && n <= 100;
       if (!Number.isInteger(sets) || sets < 1 || sets > 20) fieldErrors[`exercises[${i}].targetSets`] = "1–20";
-      if (!Number.isInteger(reps) || reps < 1 || reps > 100) fieldErrors[`exercises[${i}].targetReps`] = "1–100";
+      if (r.repsMin.trim() === "" || !isReps(repsMin)) fieldErrors[`exercises[${i}].targetRepsMin`] = "1–100";
+      else if (!isReps(repsMax)) fieldErrors[`exercises[${i}].targetRepsMax`] = "1–100";
+      else if (repsMax < repsMin) fieldErrors[`exercises[${i}].targetRepsMax`] = `At least ${repsMin}`;
       if (weight !== null && (Number.isNaN(weight) || weight < 0 || weight > 1000)) fieldErrors[`exercises[${i}].targetWeightKg`] = "0–1000";
-      return { exerciseId: r.exerciseId, targetSets: sets, targetReps: reps, targetWeightKg: weight, notes: r.notes };
+      return { exerciseId: r.exerciseId, targetSets: sets, targetRepsMin: repsMin, targetRepsMax: repsMax, targetWeightKg: weight, notes: r.notes };
     });
 
     if (Object.keys(fieldErrors).length > 0) {
@@ -136,6 +143,11 @@ function PlanForm({ plan }: { plan?: Plan }) {
             Add exercise
           </Button>
         </div>
+        {rows.length > 0 && (
+          <p className="mb-4 text-sm text-slate-500">
+            Reps are a range, like 8 to 12: add weight once every set reaches the top. Leave "Reps to" empty for a fixed number.
+          </p>
+        )}
         {fieldErrors.exercises && (
           <div className="mb-4">
             <Alert>{fieldErrors.exercises}</Alert>
@@ -160,9 +172,11 @@ function PlanForm({ plan }: { plan?: Plan }) {
                     <IconButton label={`Remove ${row.exerciseName}`} onClick={() => setRows((rs) => rs.filter((r) => r.key !== row.key))} path="M6 6l12 12M18 6L6 18" />
                   </div>
                 </div>
-                <div className="mt-3 grid grid-cols-3 gap-3">
+                {/* Two small boxes, not one "8–10" box: a phone's number keyboard often has no dash. */}
+                <div className="mt-3 grid grid-cols-4 items-end gap-2 sm:gap-3">
                   <TextField label="Sets" inputMode="numeric" value={row.sets} onChange={(e) => updateRow(row.key, { sets: e.target.value })} error={rowError(i, "targetSets")} />
-                  <TextField label="Reps" inputMode="numeric" value={row.reps} onChange={(e) => updateRow(row.key, { reps: e.target.value })} error={rowError(i, "targetReps")} />
+                  <TextField label="Reps from" inputMode="numeric" value={row.repsMin} onChange={(e) => updateRow(row.key, { repsMin: e.target.value })} error={rowError(i, "targetRepsMin")} />
+                  <TextField label="Reps to" inputMode="numeric" placeholder="—" value={row.repsMax} onChange={(e) => updateRow(row.key, { repsMax: e.target.value })} error={rowError(i, "targetRepsMax")} />
                   <TextField label="Weight (kg)" inputMode="decimal" placeholder="—" value={row.weight} onChange={(e) => updateRow(row.key, { weight: e.target.value })} error={rowError(i, "targetWeightKg")} />
                 </div>
                 <TextField className="mt-3" label="Notes" maxLength={200} value={row.notes} onChange={(e) => updateRow(row.key, { notes: e.target.value })} placeholder="e.g. slow on the way down" />

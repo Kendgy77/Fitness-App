@@ -145,7 +145,8 @@ public sealed class PlanService(AppDbContext db, TimeProvider clock) : IPlanServ
                     ExerciseId = e.ExerciseId,
                     Order = e.Order,
                     TargetSets = e.TargetSets,
-                    TargetReps = e.TargetReps,
+                    TargetRepsMin = e.TargetRepsMin,
+                    TargetRepsMax = e.TargetRepsMax,
                     TargetWeightKg = e.TargetWeightKg,
                     Notes = e.Notes,
                 })],
@@ -237,7 +238,8 @@ public sealed class PlanService(AppDbContext db, TimeProvider clock) : IPlanServ
             // The position in the request is the order in the plan.
             Order = index + 1,
             TargetSets = e.TargetSets,
-            TargetReps = e.TargetReps,
+            TargetRepsMin = e.TargetRepsMin,
+            TargetRepsMax = e.TargetRepsMax,
             TargetWeightKg = e.TargetWeightKg is { } kg ? Math.Round(kg, 2, MidpointRounding.AwayFromZero) : null,
             Notes = e.Notes?.Trim() ?? "",
         }));

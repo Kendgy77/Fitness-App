@@ -61,8 +61,8 @@ describe("PlanEditorPage (WF05)", () => {
         name: "Push day",
         description: "",
         exercises: [
-          { exerciseId: 1, targetSets: 3, targetReps: 10, targetWeightKg: null, notes: "" },
-          { exerciseId: 36, targetSets: 3, targetReps: 10, targetWeightKg: null, notes: "" },
+          { exerciseId: 1, targetSets: 3, targetRepsMin: 8, targetRepsMax: 12, targetWeightKg: null, notes: "" },
+          { exerciseId: 36, targetSets: 3, targetRepsMin: 8, targetRepsMax: 12, targetWeightKg: null, notes: "" },
         ],
       }),
     );
@@ -111,7 +111,7 @@ describe("PlanEditorPage (WF05)", () => {
 
   it("shows the API's error next to the right row", async () => {
     vi.mocked(endpoints.createPlan).mockRejectedValue(
-      apiError(400, { title: "One or more validation errors occurred.", errors: { "Exercises[0].TargetReps": ["Reps must be between 1 and 100."] } }),
+      apiError(400, { title: "One or more validation errors occurred.", errors: { "Exercises[0].TargetRepsMax": ["The top of the rep range can't be lower than the bottom."] } }),
     );
     renderApp("/plans/new");
     const user = userEvent.setup();
@@ -120,19 +120,47 @@ describe("PlanEditorPage (WF05)", () => {
 
     await user.click(screen.getByRole("button", { name: "Save plan" }));
 
-    expect(await screen.findByText("Reps must be between 1 and 100.")).toBeInTheDocument();
+    expect(await screen.findByText("The top of the rep range can't be lower than the bottom.")).toBeInTheDocument();
   });
 
   it("loads an existing plan for editing", async () => {
     vi.mocked(endpoints.getPlan).mockResolvedValue({
       ...savedPlan,
       exercises: [
-        { order: 1, exerciseId: 1, exerciseName: "Barbell Bench Press", category: "Chest", equipment: "Barbell", exerciseIsArchived: false, targetSets: 5, targetReps: 5, targetWeightKg: 80, notes: "" },
+        { order: 1, exerciseId: 1, exerciseName: "Barbell Bench Press", category: "Chest", equipment: "Barbell", exerciseIsArchived: false, targetSets: 5, targetRepsMin: 5, targetRepsMax: 5, targetWeightKg: 80, notes: "" },
       ],
     });
     renderApp("/plans/1000/edit");
 
     expect(await screen.findByDisplayValue("Push day")).toBeInTheDocument();
     expect(screen.getByLabelText("Weight (kg)")).toHaveValue("80");
+    // A fixed number shows in "from" only.
+    expect(screen.getByLabelText("Reps from")).toHaveValue("5");
+    expect(screen.getByLabelText("Reps to")).toHaveValue("");
+  });
+
+  it("an empty 'Reps to' saves a fixed number; an upside-down range is not sent", async () => {
+    renderApp("/plans/new");
+    const user = userEvent.setup();
+    await user.type(await screen.findByLabelText("Plan name"), "Day A");
+    await addFromPicker(user, "Barbell Bench Press");
+
+    await user.clear(screen.getByLabelText("Reps from"));
+    await user.type(screen.getByLabelText("Reps from"), "12");
+    await user.clear(screen.getByLabelText("Reps to"));
+    await user.type(screen.getByLabelText("Reps to"), "8");
+    await user.click(screen.getByRole("button", { name: "Save plan" }));
+
+    expect(await screen.findByText("At least 12")).toBeInTheDocument();
+    expect(endpoints.createPlan).not.toHaveBeenCalled();
+
+    await user.clear(screen.getByLabelText("Reps to"));
+    await user.click(screen.getByRole("button", { name: "Save plan" }));
+
+    await waitFor(() =>
+      expect(endpoints.createPlan).toHaveBeenCalledWith(
+        expect.objectContaining({ exercises: [expect.objectContaining({ targetRepsMin: 12, targetRepsMax: 12 })] }),
+      ),
+    );
   });
 });
