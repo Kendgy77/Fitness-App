@@ -72,7 +72,10 @@ public static class ServiceCollectionExtensions
                 cors.AddPolicy(FrontendCorsPolicy, policy => policy
                     .WithOrigins(settings.Value.AllowedOrigins)
                     .AllowAnyHeader()
-                    .AllowAnyMethod()));
+                    .AllowAnyMethod()
+                    // The web app reads the server's time from Date (the live workout timer counts on it); browsers
+                    // hide that header from another origin unless it is listed here.
+                    .WithExposedHeaders("Date")));
         return services;
     }
 

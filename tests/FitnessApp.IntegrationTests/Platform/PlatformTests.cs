@@ -39,6 +39,23 @@ public sealed class PlatformTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task The_web_app_can_read_the_server_time_from_another_origin()
+    {
+        // In production the web app and the API have different addresses. The live workout timer counts on the
+        // server's clock (the Date header), which browsers only show to the page if CORS exposes it.
+        using var app = factory.WithWebHostBuilder(b => b.UseSetting("Cors:AllowedOrigins:0", "https://app.example"));
+        var client = app.CreateClient();
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/health");
+        request.Headers.Add("Origin", "https://app.example");
+
+        var response = await client.SendAsync(request, _ct);
+
+        // The Date header itself comes from the real web server (Kestrel), not from this in-memory test server.
+        response.Headers.GetValues("Access-Control-Allow-Origin").ShouldBe(["https://app.example"]);
+        response.Headers.GetValues("Access-Control-Expose-Headers").ShouldContain("Date");
+    }
+
+    [Fact]
     public async Task Responses_carry_security_headers()
     {
         var response = await _client.GetAsync("/health", _ct);
