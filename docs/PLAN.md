@@ -4,6 +4,8 @@ The full plan with dates, risks and a detailed step-by-step playbook lives in th
 "Fitness App – 8-week plan". This file is the in-repo checklist: tick items as PRs merge.
 
 - Feature blocks: weeks 1–6. Feature freeze and `v1.0.0` tag on **3 Jan 2027**. After that only bug fixes.
+- The week dates are estimates, not deadlines (Ostap, 21 Nov): a block starts as soon as the previous one is
+  merged, whether that is early or late.
 - Every change goes in as a pull request with green CI. Ostap reviews and merges on weekdays.
 - A feature is done when CI is green, it has tests (including "user B can't see user A's data"),
   it works in a phone browser, and Ostap can explain how it works.
@@ -56,15 +58,16 @@ The full plan with dates, risks and a detailed step-by-step playbook lives in th
 - [ ] Slipped items from weeks 1–5 cleared first
 - [ ] PR feat/goals (moved from week 5); T14
 - [ ] PR feat/reminders-api: Notification, ReminderWorker; T15
-- [ ] PR feat/reminders-web: schedule a workout, notification bell, browser notifications
-      (push when the app is closed is best effort: needs HTTPS, and on iPhone the installed app)
+- [ ] PR feat/reminders-web: schedule a workout, reminders inside the app (notification bell).
+      No phone/browser push notifications (D025)
 - [ ] PR feat/export: JSON and CSV export; account deletion
 - [ ] Ostap: set two real goals; scheduled a workout with a reminder; opened the CSV in Excel
 
 ## Week 7 · 28 Dec–3 Jan · Deploy, test, freeze (WNF01–WNF06)
 
 - [ ] Free hosting: API on Render, database on Neon, website on Vercel or Cloudflare Pages;
-      accounts created by Ostap (free API servers sleep when idle: open the app early before a demo)
+      accounts created by Ostap. Free servers sleep when idle and take about a minute to wake: accepted, the
+      app is for Ostap and friends (D025); open it a few minutes before a demo
 - [ ] PR chore/deploy: Dockerfile, production config, migrations as a deploy step, docs/DEPLOY.md
 - [ ] Install the app on a phone from the live HTTPS address (first real test of the PWA)
 - [ ] PR test/e2e: Playwright flows
