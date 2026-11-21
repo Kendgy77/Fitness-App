@@ -274,3 +274,31 @@ something different from it, the reason is logged here.
 - **Free hosting waking up slowly is accepted.** The app is for Ostap and friends, not commercial use, so
   about a minute for the first load after a quiet period is fine. No paid plan, no "keep awake" tricks.
 - **The week plan is an estimate.** Each block starts when the previous one is merged, early or late.
+
+### D026 · 2026-11-21 · Workouts: live logging, past workouts, sets
+
+- **Model** (thesis "SesjaTreningowa" / "SeriaCwiczenia"): `WorkoutSession` → `SessionExercise` (order, notes,
+  targets copied from the plan) → `SetEntry` (number, type, reps 0–200, weight 0–1000 kg, optional RPE 1–10,
+  optional time and distance for cardio). Starting from a plan **copies** its exercises and targets, so
+  editing the plan never changes a past workout; `PlanId` stays only for "most recently used".
+- **Status** (`SessionStateMachine`, unit-tested): Planned → InProgress ⇄ Paused → Completed. Pauses are
+  summed and left out of the calculated duration. A typed-in duration wins over the clock.
+- **Two ways in:** a live workout (`POST /start`, one set per call, so a closed tab loses nothing), and a past
+  workout entered afterwards (`POST /api/sessions`, saved as Completed: the thesis form, T11).
+- **T12, in both ways:** a finished workout needs at least one exercise and every exercise at least one set.
+  Finishing a live workout drops the exercises that got no sets instead of refusing; with no sets at all it
+  answers 400 and the workout stays open.
+- **Editing:** sets and exercises change one by one only while the workout is active; a finished workout is
+  corrected with the full form (`PUT`), which is validated as a whole, so it can never end up without sets.
+- **One active workout at a time** (409 for a second one): the live screen always knows which one to show.
+- **Any workout can be deleted**, also a finished one (the playbook allowed only planned ones): it is the
+  user's own record, and an abandoned workout must be discardable.
+- **Set types:** Normal, Warmup, Drop, Failure, instead of an `IsWarmup` flag plus a `ParentSetId` link. A drop
+  set belongs to the set right before it, so its position is the link; it can't be the first set, and if
+  deleting makes it first, it becomes a normal set. Week 5's statistics leave out warm-ups.
+- **No unique index on set and exercise numbers** (unlike plans): rows are renumbered in place after a delete,
+  and a unique index can reject a half-done renumbering. The service keeps them 1, 2, 3, ….
+- **Exercise picker suggestions:** the 10 most used exercises in the last 90 days (counted in one grouped
+  query, no stored counter to keep in sync), then the 10 most recent others.
+- **History filters** take exact instants (`from`, `to`), so the app decides where a day begins in the user's
+  own time zone.

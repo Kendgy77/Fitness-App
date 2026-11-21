@@ -1240,6 +1240,175 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                     b.ToTable("UserProfiles", (string)null);
                 });
 
+            modelBuilder.Entity("FitnessApp.Api.Features.Sessions.SessionExercise", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TargetRepsMax")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TargetRepsMin")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TargetSets")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("TargetWeightKg")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("numeric(6,2)");
+
+                    b.Property<int>("WorkoutSessionId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.HasIndex("WorkoutSessionId", "Order");
+
+                    b.ToTable("SessionExercises", (string)null);
+                });
+
+            modelBuilder.Entity("FitnessApp.Api.Features.Sessions.SetEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CompletedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("DistanceMeters")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("DurationSeconds")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Reps")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Rpe")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SessionExerciseId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SetNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<decimal?>("WeightKg")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("numeric(6,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SessionExerciseId", "SetNumber");
+
+                    b.ToTable("SetEntries", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_SetEntries_Reps", "\"Reps\" BETWEEN 0 AND 200");
+
+                            t.HasCheckConstraint("CK_SetEntries_Rpe", "\"Rpe\" IS NULL OR \"Rpe\" BETWEEN 1 AND 10");
+
+                            t.HasCheckConstraint("CK_SetEntries_WeightKg", "\"WeightKg\" IS NULL OR \"WeightKg\" BETWEEN 0 AND 1000");
+                        });
+                });
+
+            modelBuilder.Entity("FitnessApp.Api.Features.Sessions.WorkoutSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("DurationMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("FinishedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTimeOffset?>("PausedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("PausedSeconds")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("PlanId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("ScheduledAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("StartedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlanId");
+
+                    b.HasIndex("UserId", "StartedAtUtc");
+
+                    b.HasIndex("UserId", "Status");
+
+                    b.ToTable("WorkoutSessions", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_WorkoutSessions_PausedSeconds", "\"PausedSeconds\" >= 0");
+                        });
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -1430,6 +1599,50 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FitnessApp.Api.Features.Sessions.SessionExercise", b =>
+                {
+                    b.HasOne("FitnessApp.Api.Features.Exercises.Exercise", "Exercise")
+                        .WithMany()
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("FitnessApp.Api.Features.Sessions.WorkoutSession", "Session")
+                        .WithMany("Exercises")
+                        .HasForeignKey("WorkoutSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exercise");
+
+                    b.Navigation("Session");
+                });
+
+            modelBuilder.Entity("FitnessApp.Api.Features.Sessions.SetEntry", b =>
+                {
+                    b.HasOne("FitnessApp.Api.Features.Sessions.SessionExercise", null)
+                        .WithMany("Sets")
+                        .HasForeignKey("SessionExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FitnessApp.Api.Features.Sessions.WorkoutSession", b =>
+                {
+                    b.HasOne("FitnessApp.Api.Features.Plans.TrainingPlan", "Plan")
+                        .WithMany()
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("FitnessApp.Api.Features.Auth.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Plan");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1482,6 +1695,16 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                 });
 
             modelBuilder.Entity("FitnessApp.Api.Features.Plans.TrainingPlan", b =>
+                {
+                    b.Navigation("Exercises");
+                });
+
+            modelBuilder.Entity("FitnessApp.Api.Features.Sessions.SessionExercise", b =>
+                {
+                    b.Navigation("Sets");
+                });
+
+            modelBuilder.Entity("FitnessApp.Api.Features.Sessions.WorkoutSession", b =>
                 {
                     b.Navigation("Exercises");
                 });

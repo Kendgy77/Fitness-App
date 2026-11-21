@@ -129,6 +129,19 @@ The full, always-current list is in Swagger (`/swagger` when running in Developm
 | POST | `/api/plans/{id}/status` | user | Activate, archive or restore |
 | POST | `/api/plans/{id}/copy` | user | Copy a template or own plan into a new draft |
 | DELETE | `/api/plans/{id}` | user | Delete a draft |
+| GET | `/api/sessions` | user | Workout history, newest first; `from`, `to`, `exerciseId`, `status`, paging |
+| GET | `/api/sessions/{id}` | user | One workout with exercises and sets |
+| GET | `/api/sessions/active` | user | The workout in progress or paused (204 if none) |
+| GET | `/api/sessions/start-options` | user | Active plans and templates to start from, most recently used first |
+| POST | `/api/sessions` | user | Save a workout entered afterwards (completed) |
+| PUT | `/api/sessions/{id}` | user | Correct a finished workout (details, exercises, sets) |
+| POST | `/api/sessions/start` | user | Start a live workout now, empty or from a plan (one at a time) |
+| POST | `/api/sessions/{id}/start\|pause\|resume\|finish` | user | Change a workout's status |
+| POST, DELETE | `/api/sessions/{id}/exercises[/{entryId}]` | user | Add or remove an exercise during a workout |
+| POST, PUT, DELETE | `/api/sessions/{id}/exercises/{entryId}/sets[/{setId}]` | user | Log, correct or delete a set during a workout |
+| DELETE | `/api/sessions/{id}` | user | Delete a workout |
+| GET | `/api/exercises/suggestions` | user | The user's most-used (90 days) and recent exercises |
+| GET | `/api/exercises/{id}/history` | user | Every finished workout with this exercise and its sets |
 | GET | `/health` | anonymous | `Healthy` when the API can reach the database |
 
 Errors are returned as [ProblemDetails](https://www.rfc-editor.org/rfc/rfc7807) JSON with messages meant for the user.
