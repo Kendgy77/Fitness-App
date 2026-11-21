@@ -55,6 +55,15 @@ export function toApiError(error: unknown): ApiError {
   return { status, message, fieldErrors, retryAfter: problem.retryAfter };
 }
 
+/**
+ * One sentence for screens without a form field to put it next to (the live workout): the API's own message
+ * about the problem ("Log at least one set…") rather than the general "One or more validation errors occurred."
+ */
+export function errorMessage(error: unknown): string {
+  const apiError = toApiError(error);
+  return Object.values(apiError.fieldErrors)[0] ?? apiError.message;
+}
+
 // "Exercises[0].TargetSets" → "exercises[0].targetSets": every part of the path in camelCase.
 function toFieldName(key: string): string {
   const path = key.startsWith("$.") ? key.slice(2) : key;

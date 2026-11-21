@@ -41,9 +41,9 @@ The full plan with dates, risks and a detailed step-by-step playbook lives in th
 
 - [x] PR feat/sessions-api: WorkoutSession, SessionExercise, SetEntry, SessionStateMachine
       (Planned → In progress → Paused → Completed); drop sets; T11, T12
-- [ ] PR feat/sessions-web: log a past workout + live workout mode for the phone; start from a saved
+- [x] PR feat/sessions-web: log a past workout + live workout mode for the phone; start from a saved
       training day; most-used exercises first in the picker
-- [x] Workout history with search by date and exercise (API; screens in feat/sessions-web)
+- [x] Workout history with search by date and exercise; month calendar; history on each exercise page
 - [ ] Ostap: logged at least 2 real workouts; annoyances → BACKLOG.md
 
 ## Week 5 · 14–20 Dec · Progress, measurements, dashboard (WF07)

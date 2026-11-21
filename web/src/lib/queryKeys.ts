@@ -1,4 +1,4 @@
-import type { ExerciseQuery, PlanQuery } from "../api/types";
+import type { ExerciseQuery, PlanQuery, WorkoutQuery } from "../api/types";
 
 // React Query caches each response under a key. Keeping the keys in one place means a save can refresh exactly
 // the cached lists it made stale.
@@ -11,4 +11,11 @@ export const queryKeys = {
   planList: (query: PlanQuery) => ["plans", "list", query] as const,
   planTemplates: ["plans", "templates"] as const,
   plan: (id: number) => ["plans", id] as const,
+  workouts: ["workouts"] as const,
+  workoutList: (query: WorkoutQuery) => ["workouts", "list", query] as const,
+  workout: (id: number) => ["workouts", id] as const,
+  activeWorkout: ["workouts", "active"] as const,
+  startOptions: ["workouts", "start-options"] as const,
+  exerciseSuggestions: ["exercises", "suggestions"] as const,
+  exerciseHistory: (id: number) => ["exercises", id, "history"] as const,
 };

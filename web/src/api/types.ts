@@ -145,3 +145,112 @@ export interface PlanQuery {
   page?: number;
   pageSize?: number;
 }
+
+// ---- Workouts (src/FitnessApp.Api/Features/Sessions/SessionDtos.cs) ----------------------------------------
+
+export type SessionType = "Strength" | "Cardio" | "Mixed" | "Other";
+export type SessionStatus = "Planned" | "InProgress" | "Paused" | "Completed";
+export type SetType = "Normal" | "Warmup" | "Drop" | "Failure";
+
+export interface WorkoutSet {
+  id: number;
+  setNumber: number;
+  type: SetType;
+  reps: number;
+  weightKg: number | null;
+  rpe: number | null;
+  durationSeconds: number | null;
+  distanceMeters: number | null;
+  completedAtUtc: string;
+}
+
+export interface WorkoutExercise {
+  id: number;
+  order: number;
+  exerciseId: number;
+  exerciseName: string;
+  category: ExerciseCategory;
+  equipment: Equipment;
+  notes: string;
+  targetSets: number | null;
+  targetRepsMin: number | null;
+  targetRepsMax: number | null;
+  targetWeightKg: number | null;
+  sets: WorkoutSet[];
+}
+
+export interface Workout {
+  id: number;
+  name: string;
+  type: SessionType;
+  status: SessionStatus;
+  planId: number | null;
+  scheduledAtUtc: string | null;
+  startedAtUtc: string | null;
+  finishedAtUtc: string | null;
+  pausedAtUtc: string | null;
+  pausedSeconds: number;
+  durationMinutes: number | null;
+  notes: string;
+  exercises: WorkoutExercise[];
+}
+
+export interface WorkoutSummary {
+  id: number;
+  name: string;
+  type: SessionType;
+  status: SessionStatus;
+  startedAtUtc: string | null;
+  scheduledAtUtc: string | null;
+  durationMinutes: number | null;
+  exerciseCount: number;
+  setCount: number;
+  exerciseNames: string[];
+}
+
+export interface WorkoutQuery {
+  from?: string;
+  to?: string;
+  exerciseId?: number;
+  status?: SessionStatus;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface SetRequest {
+  type: SetType;
+  reps: number;
+  weightKg: number | null;
+  rpe: number | null;
+  durationSeconds: number | null;
+  distanceMeters: number | null;
+}
+
+export interface LogWorkoutRequest {
+  name: string;
+  type: SessionType;
+  startedAt: string;
+  durationMinutes: number;
+  notes: string;
+  exercises: { exerciseId: number; notes: string; sets: SetRequest[] }[];
+}
+
+export interface StartPlanOption {
+  id: number;
+  name: string;
+  isTemplate: boolean;
+  exerciseCount: number;
+  lastUsedAtUtc: string | null;
+}
+
+export interface ExerciseSuggestions {
+  mostUsed: Exercise[];
+  recent: Exercise[];
+}
+
+export interface ExerciseHistoryEntry {
+  sessionId: number;
+  sessionName: string;
+  startedAtUtc: string;
+  sets: WorkoutSet[];
+}
