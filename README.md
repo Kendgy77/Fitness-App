@@ -86,6 +86,10 @@ npm run dev
 Open http://localhost:5173. In development the web app sends `/api` calls to the API on port 5080
 (Vite proxy), so no CORS setup is needed.
 
+The app is installable on a phone (a PWA: `public/manifest.webmanifest`, `public/sw.js`). The service worker
+runs only in a production build, so to try it locally use `npm run build` and then `npm run preview`
+(http://localhost:4173). Phones offer to install only over HTTPS, so on a phone this works on the live site.
+
 ## Tests
 
 ```bash

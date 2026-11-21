@@ -15,4 +15,10 @@ export default tseslint.config(
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
     },
   },
+  {
+    // The service worker is plain JavaScript and runs in its own context (self, caches, clients).
+    files: ["public/sw.js"],
+    extends: [js.configs.recommended],
+    languageOptions: { globals: globals.serviceworker, sourceType: "script" },
+  },
 );

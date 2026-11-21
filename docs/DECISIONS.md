@@ -248,3 +248,29 @@ something different from it, the reason is logged here.
   templates got real ranges (e.g. bench press 6–8, curls 8–12).
 - **Editor:** two small boxes, "Reps from" and "Reps to" (empty = fixed number), not one "8–10" text box,
   because a phone's number keyboard often has no dash.
+
+### D024 · 2026-11-21 · Installable app (PWA) without a plugin; BMI disclaimer
+
+- **Why:** the updated 8-week plan (week 2) asks for the app to be installable on a phone and for a BMI
+  disclaimer.
+- **How:** a hand-written `public/manifest.webmanifest` (name, colours, standalone display, 192/512 icons and a
+  maskable icon), an `apple-touch-icon` for iPhones, and a minimal `public/sw.js`. The icons are the logo
+  rendered to PNG. No `vite-plugin-pwa`: three small files are easier to explain than a plugin's generated
+  code, and nothing here needs its caching machinery.
+- **Service worker scope:** network only, so a new version is never hidden behind an old cached copy. The only
+  offline content is `offline.html`, shown when the app is opened with no connection. API data is never cached:
+  a fitness log must not show stale workouts as if they were current. Push notifications were dropped (D025), so this stays minimal.
+- **Registered only in production builds** (`import.meta.env.PROD`), so it never interferes with Vite's dev
+  server. Browsers allow service workers only over HTTPS or on localhost, so installing on a phone can first be
+  tested once the app is online (week 7). Checked locally with `vite preview` on localhost.
+- **BMI disclaimer:** the BMI card says BMI can't tell muscle from fat (people who lift often score higher than
+  their body fat suggests) and isn't a diagnosis.
+
+### D025 · 2026-11-21 · No push notifications; slow first load on free hosting is fine; flexible weeks
+
+- **No phone/browser push notifications.** Push needs HTTPS, an installed app on iPhone and an always-on server,
+  and free hosting sleeps, so it would be unreliable. Ostap decided it isn't needed. Reminders (WF09, test
+  T15) stay, but are shown inside the app: a notification bell and a list of upcoming workouts.
+- **Free hosting waking up slowly is accepted.** The app is for Ostap and friends, not commercial use, so
+  about a minute for the first load after a quiet period is fine. No paid plan, no "keep awake" tricks.
+- **The week plan is an estimate.** Each block starts when the previous one is merged, early or late.

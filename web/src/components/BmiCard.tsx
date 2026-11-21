@@ -39,6 +39,13 @@ export function BmiCard({ profile, showProfileLink = false }: { profile: Profile
           <p className="mt-3 text-xs text-slate-500">
             BMI is body weight (kg) divided by height (m) squared. Categories follow the WHO ranges for adults.
           </p>
+          {/* Week 2 of the plan asks for a disclaimer: BMI is a screening number, and lifters are the classic case
+              where it misleads, because muscle weighs as much as fat. */}
+          <p className="mt-2 text-xs text-slate-500">
+            <span className="font-semibold text-slate-600">Only a rough guide.</span> BMI can't tell muscle from fat, so
+            people who train often get a higher number than their body fat suggests. It isn't a diagnosis: for health
+            questions, ask a doctor.
+          </p>
         </>
       ) : (
         <p className="mt-2 text-sm text-slate-700">
