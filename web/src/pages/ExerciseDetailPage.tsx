@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useParams } from "react-router";
-import { archiveExercise, getExercise } from "../api/endpoints";
+import { archiveExercise, getExercise, getExerciseHistory } from "../api/endpoints";
 import { toApiError } from "../api/errors";
 import { Alert, Badge, Button, Card, Loading } from "../components/ui";
-import { categoryLabels, difficultyLabels, equipmentLabels } from "../lib/labels";
+import { categoryLabels, difficultyLabels, equipmentLabels, formatDate, setTypeLabels } from "../lib/labels";
 import { queryKeys } from "../lib/queryKeys";
+import { describeSet } from "../lib/workout";
 
 /** One exercise: technique, muscles, difficulty and equipment (WF04). Own exercises can be edited or archived. */
 export function ExerciseDetailPage() {
@@ -80,6 +81,37 @@ export function ExerciseDetailPage() {
           )}
         </Card>
       )}
+      {exercise.data && <ExerciseHistory exerciseId={id} />}
     </>
+  );
+}
+
+/** "Your history": every finished workout with this exercise and its sets, newest first. */
+function ExerciseHistory({ exerciseId }: { exerciseId: number }) {
+  const history = useQuery({ queryKey: queryKeys.exerciseHistory(exerciseId), queryFn: () => getExerciseHistory(exerciseId) });
+
+  return (
+    <Card className="mt-4">
+      <h2 className="text-lg font-bold text-slate-900">Your history</h2>
+      {history.isPending && <Loading />}
+      {history.isError && <Alert>{toApiError(history.error).message}</Alert>}
+      {history.data &&
+        (history.data.items.length === 0 ? (
+          <p className="mt-2 text-sm text-slate-600">You haven't done this exercise in a finished workout yet.</p>
+        ) : (
+          <ul className="mt-3 divide-y divide-slate-100">
+            {history.data.items.map((entry, i) => (
+              <li key={`${entry.sessionId}-${i}`} className="py-3">
+                <Link to={`/workouts/${entry.sessionId}`} className="text-sm font-semibold text-slate-900 hover:underline">
+                  {formatDate(entry.startedAtUtc)} · {entry.sessionName}
+                </Link>
+                <p className="mt-1 text-sm text-slate-700 tabular-nums">
+                  {entry.sets.map((s) => describeSet(s) + (s.type === "Normal" ? "" : ` (${setTypeLabels[s.type].toLowerCase()})`)).join(", ")}
+                </p>
+              </li>
+            ))}
+          </ul>
+        ))}
+    </Card>
   );
 }

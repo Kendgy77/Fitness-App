@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
-import { getProfile } from "../api/endpoints";
+import { getActiveWorkout, getProfile, listWorkouts } from "../api/endpoints";
 import { toApiError } from "../api/errors";
 import { useAuth } from "../auth/authContext";
 import { BmiCard } from "../components/BmiCard";
 import { Alert, Card, Loading, PageHeader } from "../components/ui";
-import { formatDecimal, goalLabels } from "../lib/labels";
+import { formatDate, formatDecimal, goalLabels } from "../lib/labels";
 import { queryKeys } from "../lib/queryKeys";
 
 /**
@@ -20,6 +20,8 @@ export function DashboardPage() {
     <>
       <PageHeader title="Dashboard" />
       <p className="-mt-4 mb-6 text-slate-600">Welcome, {user?.email}!</p>
+
+      <WorkoutCard />
 
       {profile.isPending && <Loading />}
       {profile.isError && <Alert>{toApiError(profile.error).message}</Alert>}
@@ -45,5 +47,49 @@ export function DashboardPage() {
         </div>
       )}
     </>
+  );
+}
+
+/** The first thing at the gym: continue the workout in progress, or start one; plus the last workout done. */
+function WorkoutCard() {
+  const active = useQuery({ queryKey: queryKeys.activeWorkout, queryFn: getActiveWorkout });
+  const lastQuery = { status: "Completed", pageSize: 1 } as const;
+  const last = useQuery({ queryKey: queryKeys.workoutList(lastQuery), queryFn: () => listWorkouts(lastQuery) });
+  const lastWorkout = last.data?.items[0];
+
+  return (
+    <Card className="mb-4 flex flex-wrap items-center justify-between gap-4">
+      <div className="min-w-0">
+        {active.data ? (
+          <>
+            <h2 className="text-lg font-bold text-slate-900">{active.data.name}</h2>
+            <p className="text-sm text-slate-600">Workout in progress.</p>
+          </>
+        ) : (
+          <>
+            <h2 className="text-lg font-bold text-slate-900">Ready to train?</h2>
+            <p className="text-sm text-slate-600">
+              {lastWorkout?.startedAtUtc ? (
+                <>
+                  Last workout:{" "}
+                  <Link to={`/workouts/${lastWorkout.id}`} className="font-medium text-brand-700 hover:underline">
+                    {lastWorkout.name}
+                  </Link>
+                  , {formatDate(lastWorkout.startedAtUtc)}
+                </>
+              ) : (
+                "No workouts logged yet."
+              )}
+            </p>
+          </>
+        )}
+      </div>
+      <Link
+        to={active.data ? "/workouts/live" : "/workouts/new"}
+        className="inline-flex min-h-12 items-center rounded-lg bg-brand-700 px-5 text-base font-semibold text-white hover:bg-brand-800"
+      >
+        {active.data ? "Continue workout" : "Start workout"}
+      </Link>
+    </Card>
   );
 }
