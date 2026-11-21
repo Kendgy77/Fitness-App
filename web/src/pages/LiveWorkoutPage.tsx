@@ -17,6 +17,7 @@ import { ExercisePicker } from "../components/ExercisePicker";
 import { Alert, Badge, Button, Card, Loading, PageHeader, TextAreaField, TextField } from "../components/ui";
 import { sessionStatusLabels, setTypeLabels } from "../lib/labels";
 import { queryKeys } from "../lib/queryKeys";
+import { serverNow } from "../lib/serverClock";
 import {
   WEIGHT_STEP,
   describeSet,
@@ -57,11 +58,11 @@ export function LiveWorkoutPage() {
   return <LiveWorkout workout={active.data} />;
 }
 
-/** Ticks once a second, for the workout clock and the rest timer. */
+/** Ticks once a second, for the workout clock and the rest timer. Counts on the server's clock: a phone's own clock can be off. */
 function useNow() {
-  const [now, setNow] = useState(() => Date.now());
+  const [now, setNow] = useState(() => serverNow());
   useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 1000);
+    const timer = setInterval(() => setNow(serverNow()), 1000);
     return () => clearInterval(timer);
   }, []);
   return now;
@@ -118,7 +119,7 @@ function LiveWorkout({ workout }: { workout: Workout }) {
     // Extra room at the bottom, so the rest timer bar never hides the last button.
     <div className="space-y-4 pb-20">
       {/* The workout bar stays on screen while scrolling through the exercises. */}
-      <Card className="sticky top-16 z-10">
+      <Card className="sticky top-2 z-10">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
             <h1 className="truncate text-xl font-bold text-slate-900">{workout.name}</h1>

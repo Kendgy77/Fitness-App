@@ -1,4 +1,5 @@
 import axios from "axios";
+import { recordServerDate } from "../lib/serverClock";
 
 /**
  * The one HTTP client of the app. In development VITE_API_URL is empty and Vite forwards /api to the API
@@ -30,11 +31,21 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Every response, also an error, tells the time on the server: workout timers count by that clock (serverClock.ts).
 // A 401 while logged in means the token expired: log out. (A 401 on the login form itself is a wrong password,
 // and there is no token yet, so it doesn't trigger this.)
-api.interceptors.response.use(undefined, (error: unknown) => {
-  if (axios.isAxiosError(error) && error.response?.status === 401 && accessToken) {
-    onUnauthorized?.();
-  }
-  return Promise.reject(error);
-});
+api.interceptors.response.use(
+  (response) => {
+    recordServerDate(response.headers["date"]);
+    return response;
+  },
+  (error: unknown) => {
+    if (axios.isAxiosError(error)) {
+      recordServerDate(error.response?.headers["date"]);
+      if (error.response?.status === 401 && accessToken) {
+        onUnauthorized?.();
+      }
+    }
+    return Promise.reject(error);
+  },
+);

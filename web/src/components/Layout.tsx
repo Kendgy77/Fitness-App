@@ -28,7 +28,8 @@ export function Layout() {
         Skip to content
       </a>
 
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
+      {/* The top bar scrolls away with the page (Ostap, 21 Nov); only the bottom menu on phones stays in place. */}
+      <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4">
           <NavLink to="/" className="flex items-center gap-2 font-bold text-brand-800">
             <img src="/favicon.svg" alt="" className="size-7" />
@@ -44,7 +45,7 @@ export function Layout() {
       </header>
 
       <div className="mx-auto flex max-w-6xl gap-8 px-4">
-        <nav aria-label="Main menu" className="sticky top-14 hidden h-[calc(100dvh-3.5rem)] w-52 shrink-0 py-6 md:block">
+        <nav aria-label="Main menu" className="sticky top-0 hidden h-dvh w-52 shrink-0 py-6 md:block">
           <ul className="space-y-1">
             {navItems.map((item) => (
               <li key={item.to}>
