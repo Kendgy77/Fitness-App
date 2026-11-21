@@ -6,6 +6,9 @@ import { createAppRouter } from "./App";
 import { AuthProvider } from "./auth/AuthProvider";
 import "./index.css";
 import { createQueryClient } from "./lib/queryClient";
+import { registerServiceWorker } from "./lib/serviceWorker";
+
+registerServiceWorker();
 
 const queryClient = createQueryClient();
 const router = createAppRouter();

@@ -28,6 +28,8 @@ describe("ProfilePage (WF03, WF10)", () => {
     expect(await screen.findByText("23.3")).toBeInTheDocument();
     expect(screen.getByText("Healthy weight")).toBeInTheDocument();
     expect(screen.getByLabelText("Weight (kg)")).toHaveValue("78");
+    // The disclaimer always comes with the number.
+    expect(screen.getByText(/can't tell muscle from fat/)).toBeInTheDocument();
   });
 
   it("T17: without height it asks for the missing data instead of a BMI", async () => {

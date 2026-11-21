@@ -24,6 +24,7 @@ The full plan with dates, risks and a detailed step-by-step playbook lives in th
 - [x] PR feat/exercises: ~60 exercises seeded; search, filters, paging; custom exercises; admin; T07, T08
 - [x] PR feat/web-shell: React app, login/register, layout, profile page, exercise library; frontend CI
 - [x] UI direction (colours, font, spacing) in DECISIONS.md
+- [x] Added 21 Nov: BMI disclaimer; installable on the phone (PWA: manifest, icons, service worker) (D024)
 - [ ] Ostap: checked the exercise texts; tried it on a phone
 
 ## Week 3 · 30 Nov–6 Dec · Training plans (WF05)
@@ -31,34 +32,41 @@ The full plan with dates, risks and a detailed step-by-step playbook lives in th
 - [x] PR feat/plans-api: TrainingPlan, PlanExercise, PlanStateMachine (Draft → Active → Archived); T09, T10
 - [x] PR feat/plans-web: plan list and editor with exercise picker
 - [x] Three template plans in the seed
+- [x] Added 21 Nov: rep ranges like 8–10 (D023); each plan is one training day
 - [ ] Ostap: built his real plan in the app
 
 ## Week 4 · 7–13 Dec · Workout logging (WF06)
 
-- [ ] PR feat/sessions-api: WorkoutSession, SessionExercise, SetEntry, SessionStateMachine; T11, T12
-- [ ] PR feat/sessions-web: log a past workout + live workout mode for the phone
+- [ ] PR feat/sessions-api: WorkoutSession, SessionExercise, SetEntry, SessionStateMachine
+      (Planned → In progress → Paused → Completed); drop sets; T11, T12
+- [ ] PR feat/sessions-web: log a past workout + live workout mode for the phone; start from a saved
+      training day; most-used exercises first in the picker
+- [ ] Workout history with search by date and exercise
 - [ ] Ostap: logged at least 2 real workouts; annoyances → BACKLOG.md
 
-## Week 5 · 14–20 Dec · Progress, measurements, goals, dashboard (WF07, WF08)
+## Week 5 · 14–20 Dec · Progress, measurements, dashboard (WF07)
 
-- [ ] PR feat/body-measurements
-- [ ] PR feat/progress: StrengthCalculator (Epley 1RM, volume, PRs), progress endpoints; T13
-- [ ] PR feat/goals; T14
-- [ ] PR feat/progress-web: dashboard and progress page with charts
-- [ ] Ostap: added weight entries and two real goals; checked the numbers
+- [ ] PR feat/body-measurements: body weight, circumferences, body fat %, muscle mass; how-to-measure guide
+- [ ] PR feat/progress: StrengthCalculator (Epley 1RM, volume, PRs), detailed per-exercise stats; T13
+- [ ] PR feat/progress-web: dashboard cards, progress page with charts, measurements tab
+- [ ] Ostap: added weight and measurement entries; checked the numbers
 
-## Week 6 · 21–27 Dec · Reminders, export, buffer (WF09, WNF07)
+## Week 6 · 21–27 Dec · Goals, reminders, export, buffer (WF08, WF09, WNF07)
 
 - [ ] Slipped items from weeks 1–5 cleared first
+- [ ] PR feat/goals (moved from week 5); T14
 - [ ] PR feat/reminders-api: Notification, ReminderWorker; T15
 - [ ] PR feat/reminders-web: schedule a workout, notification bell, browser notifications
+      (push when the app is closed is best effort: needs HTTPS, and on iPhone the installed app)
 - [ ] PR feat/export: JSON and CSV export; account deletion
-- [ ] Ostap: scheduled a workout with a reminder; opened the CSV in Excel
+- [ ] Ostap: set two real goals; scheduled a workout with a reminder; opened the CSV in Excel
 
 ## Week 7 · 28 Dec–3 Jan · Deploy, test, freeze (WNF01–WNF06)
 
-- [ ] Hosting agreed with Ostap; accounts created by Ostap
+- [ ] Free hosting: API on Render, database on Neon, website on Vercel or Cloudflare Pages;
+      accounts created by Ostap (free API servers sleep when idle: open the app early before a demo)
 - [ ] PR chore/deploy: Dockerfile, production config, migrations as a deploy step, docs/DEPLOY.md
+- [ ] Install the app on a phone from the live HTTPS address (first real test of the PWA)
 - [ ] PR test/e2e: Playwright flows
 - [ ] docs/TESTS.md: result for every thesis test case T01–T24
 - [ ] Quality pass: Lighthouse, axe, keyboard-only, phones, load test
