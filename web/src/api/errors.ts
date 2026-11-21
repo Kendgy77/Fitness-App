@@ -16,13 +16,16 @@ interface ProblemDetails {
   retryAfter?: number;
 }
 
+/** Shown above a form when the problems are listed next to the fields themselves. */
+export const FIX_FIELDS = "A couple of things need fixing. Check the fields below.";
+
 const fallbackMessages: Record<number, string> = {
-  400: "Please check the data you entered.",
-  401: "Your session has expired. Please log in again.",
-  403: "You don't have permission to do this.",
-  404: "Not found.",
-  409: "This conflicts with existing data.",
-  429: "Too many attempts. Wait a moment and try again.",
+  400: "Something doesn't look right. Check what you entered and try again.",
+  401: "You've been logged out. Log in again to keep going.",
+  403: "You can't change this one.",
+  404: "Couldn't find that. It may have been deleted.",
+  409: "That clashes with something you already have.",
+  429: "Too many tries. Give it a minute and try again.",
 };
 
 /**
@@ -31,7 +34,7 @@ const fallbackMessages: Record<number, string> = {
  */
 export function toApiError(error: unknown): ApiError {
   if (!axios.isAxiosError(error)) {
-    return { status: null, message: "Something went wrong.", fieldErrors: {} };
+    return { status: null, message: "Something went wrong. Try again.", fieldErrors: {} };
   }
 
   if (!error.response) {
@@ -50,7 +53,12 @@ export function toApiError(error: unknown): ApiError {
   }
 
   const message =
-    status >= 500 ? "Server error. Please try again later." : problem.title ?? fallbackMessages[status] ?? "Something went wrong.";
+    status >= 500
+      ? "Something went wrong on our side. Try again in a bit."
+      : // With messages next to the fields, the API's general "One or more validation errors occurred." adds nothing.
+        Object.keys(fieldErrors).length > 0
+        ? FIX_FIELDS
+        : (problem.title ?? fallbackMessages[status] ?? "Something went wrong. Try again.");
 
   return { status, message, fieldErrors, retryAfter: problem.retryAfter };
 }

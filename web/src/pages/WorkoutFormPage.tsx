@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { getWorkout, logWorkout, updateWorkout } from "../api/endpoints";
-import { toApiError, type ApiError } from "../api/errors";
+import { FIX_FIELDS, toApiError, type ApiError } from "../api/errors";
 import type { Exercise, ExerciseCategory, LogWorkoutRequest, SessionType, SetType, Workout } from "../api/types";
 import { ExercisePicker } from "../components/ExercisePicker";
 import { Alert, Button, Card, Loading, PageHeader, SelectField, TextAreaField, TextField } from "../components/ui";
@@ -175,7 +175,7 @@ function WorkoutForm({ workout }: { workout?: Workout }) {
     });
 
     if (Object.keys(fieldErrors).length > 0) {
-      setError({ status: null, message: "Please fix the highlighted fields.", fieldErrors });
+      setError({ status: null, message: FIX_FIELDS, fieldErrors });
       return;
     }
 

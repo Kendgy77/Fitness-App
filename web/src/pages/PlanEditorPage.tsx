@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { createPlan, getPlan, updatePlan } from "../api/endpoints";
-import { toApiError, type ApiError } from "../api/errors";
+import { FIX_FIELDS, toApiError, type ApiError } from "../api/errors";
 import type { Exercise, Plan, PlanRequest } from "../api/types";
 import { ExercisePicker } from "../components/ExercisePicker";
 import { Alert, Button, Card, Loading, PageHeader, TextAreaField, TextField } from "../components/ui";
@@ -116,7 +116,7 @@ function PlanForm({ plan }: { plan?: Plan }) {
     });
 
     if (Object.keys(fieldErrors).length > 0) {
-      setError({ status: null, message: "Please fix the highlighted fields.", fieldErrors });
+      setError({ status: null, message: FIX_FIELDS, fieldErrors });
       return;
     }
 
