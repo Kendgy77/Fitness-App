@@ -254,3 +254,110 @@ export interface ExerciseHistoryEntry {
   startedAtUtc: string;
   sets: WorkoutSet[];
 }
+
+// ---- Measurements and progress (Features/Measurements, Features/Progress) -----------------------------------
+
+export interface MeasurementValues {
+  weightKg: number | null;
+  bodyFatPercent: number | null;
+  muscleMassKg: number | null;
+  neckCm: number | null;
+  chestCm: number | null;
+  waistCm: number | null;
+  hipsCm: number | null;
+  bicepsLeftCm: number | null;
+  bicepsRightCm: number | null;
+  forearmCm: number | null;
+  thighLeftCm: number | null;
+  thighRightCm: number | null;
+  calfCm: number | null;
+}
+
+export interface Measurement extends MeasurementValues {
+  id: number;
+  measuredOn: string;
+  bmi: Bmi | null;
+  notes: string;
+}
+
+export interface MeasurementRequest extends MeasurementValues {
+  measuredOn: string;
+  notes: string;
+}
+
+export type ProgressPeriod = "FourWeeks" | "ThreeMonths" | "Year" | "All";
+
+export interface ProgressSummary {
+  workoutsThisWeek: number;
+  workoutsThisMonth: number;
+  workoutsTotal: number;
+  streakWeeks: number;
+  volumeThisWeekKg: number;
+  volumeThisMonthKg: number;
+  weightKg: number | null;
+  weightMeasuredOn: string | null;
+  bmi: Bmi | null;
+  lastWorkoutAtUtc: string | null;
+}
+
+export interface WeeklyVolume {
+  weekStart: string;
+  volumeKg: number;
+  workouts: number;
+  sets: number;
+}
+
+export interface ExerciseProgressRow {
+  exerciseId: number;
+  name: string;
+  category: ExerciseCategory;
+  workouts: number;
+  volumeKg: number;
+  bestOneRepMaxKg: number | null;
+  oneRepMaxChangePercent: number | null;
+  lastDoneAtUtc: string;
+}
+
+export interface RecordValue {
+  value: number;
+  weightKg: number | null;
+  reps: number | null;
+  sessionId: number;
+  achievedAtUtc: string;
+}
+
+export interface ExerciseStats {
+  exerciseId: number;
+  name: string;
+  category: ExerciseCategory;
+  period: ProgressPeriod;
+  workouts: {
+    sessionId: number;
+    startedAtUtc: string;
+    bestOneRepMaxKg: number | null;
+    topSetWeightKg: number | null;
+    topSetReps: number | null;
+    volumeKg: number;
+    workingSets: number;
+  }[];
+  bestOneRepMaxKg: number | null;
+  heaviestSet: RecordValue | null;
+  oneRepMaxChangePercent: number | null;
+  workoutsPerWeek: number;
+  repRanges: { range: string; sets: number }[];
+}
+
+export interface ExerciseRecords {
+  exerciseId: number;
+  name: string;
+  category: ExerciseCategory;
+  heaviestSet: RecordValue | null;
+  bestOneRepMax: RecordValue | null;
+  bestSessionVolume: RecordValue | null;
+}
+
+export interface MuscleGroupVolume {
+  category: ExerciseCategory;
+  setsPerWeek: number;
+  volumePerWeekKg: number;
+}

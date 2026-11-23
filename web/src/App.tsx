@@ -5,7 +5,11 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { ExerciseDetailPage } from "./pages/ExerciseDetailPage";
 import { ExerciseFormPage } from "./pages/ExerciseFormPage";
 import { ExercisesPage } from "./pages/ExercisesPage";
+import { BodyPage } from "./pages/BodyPage";
+import { ExerciseStatsPage } from "./pages/ExerciseStatsPage";
 import { LiveWorkoutPage } from "./pages/LiveWorkoutPage";
+import { MeasureGuidePage } from "./pages/MeasureGuidePage";
+import { MeasurementFormPage } from "./pages/MeasurementFormPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NewWorkoutPage } from "./pages/NewWorkoutPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -13,6 +17,7 @@ import { PlanDetailPage } from "./pages/PlanDetailPage";
 import { PlanEditorPage } from "./pages/PlanEditorPage";
 import { PlansPage } from "./pages/PlansPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { ProgressPage } from "./pages/ProgressPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { WorkoutDetailPage } from "./pages/WorkoutDetailPage";
 import { WorkoutFormPage } from "./pages/WorkoutFormPage";
@@ -60,6 +65,12 @@ export const routes: RouteObject[] = [
       { path: "workouts/log", element: <WorkoutFormPage /> },
       { path: "workouts/:id", element: <WorkoutDetailPage /> },
       { path: "workouts/:id/edit", element: <WorkoutFormPage /> },
+      { path: "progress", element: <ProgressPage /> },
+      { path: "progress/exercises/:id", element: <ExerciseStatsPage /> },
+      { path: "progress/body", element: <BodyPage /> },
+      { path: "progress/body/new", element: <MeasurementFormPage /> },
+      { path: "progress/body/guide", element: <MeasureGuidePage /> },
+      { path: "progress/body/:id/edit", element: <MeasurementFormPage /> },
       { path: "*", element: <NotFoundPage /> },
     ],
   },

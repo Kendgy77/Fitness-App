@@ -35,6 +35,7 @@ function WorkoutView({ workout }: { workout: Workout }) {
       queryClient.removeQueries({ queryKey: queryKeys.workout(workout.id) });
       if (active) queryClient.setQueryData(queryKeys.activeWorkout, null);
       await queryClient.invalidateQueries({ queryKey: queryKeys.workouts, refetchType: "none" });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.progress, refetchType: "none" });
       navigate("/workouts", { replace: true });
     },
   });

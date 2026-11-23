@@ -21,6 +21,7 @@ export function NewWorkoutPage() {
     onSuccess: async (workout) => {
       queryClient.setQueryData(queryKeys.activeWorkout, workout);
       await queryClient.invalidateQueries({ queryKey: queryKeys.workouts, refetchType: "none" });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.progress, refetchType: "none" });
       navigate("/workouts/live");
     },
   });

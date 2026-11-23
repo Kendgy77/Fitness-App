@@ -105,6 +105,7 @@ function WorkoutForm({ workout }: { workout?: Workout }) {
     onSuccess: async (saved) => {
       queryClient.setQueryData(queryKeys.workout(saved.id), saved);
       await queryClient.invalidateQueries({ queryKey: queryKeys.workouts, refetchType: "none" });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.progress, refetchType: "none" });
       navigate(`/workouts/${saved.id}`, { replace: true });
     },
     onError: (e) => setError(toApiError(e)),
