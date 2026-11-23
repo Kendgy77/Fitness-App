@@ -48,8 +48,8 @@ The full plan with dates, risks and a detailed step-by-step playbook lives in th
 
 ## Week 5 · 14–20 Dec · Progress, measurements, dashboard (WF07)
 
-- [ ] PR feat/body-measurements: body weight, circumferences, body fat %, muscle mass; how-to-measure guide
-- [ ] PR feat/progress: StrengthCalculator (Epley 1RM, volume, PRs), detailed per-exercise stats; T13
+- [x] PR feat/body-measurements: body weight, circumferences, body fat %, muscle mass (API; screens + guide in feat/progress-web)
+- [x] PR feat/progress: StrengthCalculator (Epley 1RM, volume, PRs), detailed per-exercise stats; T13
 - [ ] PR feat/progress-web: dashboard cards, progress page with charts, measurements tab
 - [ ] Ostap: added weight and measurement entries; checked the numbers
 

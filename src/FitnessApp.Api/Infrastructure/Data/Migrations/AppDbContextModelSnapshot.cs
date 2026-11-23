@@ -885,6 +885,95 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("FitnessApp.Api.Features.Measurements.BodyMeasurement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("BicepsLeftCm")
+                        .HasPrecision(5, 1)
+                        .HasColumnType("numeric(5,1)");
+
+                    b.Property<decimal?>("BicepsRightCm")
+                        .HasPrecision(5, 1)
+                        .HasColumnType("numeric(5,1)");
+
+                    b.Property<decimal?>("BodyFatPercent")
+                        .HasPrecision(5, 1)
+                        .HasColumnType("numeric(5,1)");
+
+                    b.Property<decimal?>("CalfCm")
+                        .HasPrecision(5, 1)
+                        .HasColumnType("numeric(5,1)");
+
+                    b.Property<decimal?>("ChestCm")
+                        .HasPrecision(5, 1)
+                        .HasColumnType("numeric(5,1)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal?>("ForearmCm")
+                        .HasPrecision(5, 1)
+                        .HasColumnType("numeric(5,1)");
+
+                    b.Property<decimal?>("HipsCm")
+                        .HasPrecision(5, 1)
+                        .HasColumnType("numeric(5,1)");
+
+                    b.Property<DateOnly>("MeasuredOn")
+                        .HasColumnType("date");
+
+                    b.Property<decimal?>("MuscleMassKg")
+                        .HasPrecision(5, 1)
+                        .HasColumnType("numeric(5,1)");
+
+                    b.Property<decimal?>("NeckCm")
+                        .HasPrecision(5, 1)
+                        .HasColumnType("numeric(5,1)");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<decimal?>("ThighLeftCm")
+                        .HasPrecision(5, 1)
+                        .HasColumnType("numeric(5,1)");
+
+                    b.Property<decimal?>("ThighRightCm")
+                        .HasPrecision(5, 1)
+                        .HasColumnType("numeric(5,1)");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("WaistCm")
+                        .HasPrecision(5, 1)
+                        .HasColumnType("numeric(5,1)");
+
+                    b.Property<decimal?>("WeightKg")
+                        .HasPrecision(5, 1)
+                        .HasColumnType("numeric(5,1)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "MeasuredOn")
+                        .IsUnique();
+
+                    b.ToTable("BodyMeasurements", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_BodyMeasurements_AnyValue", "COALESCE(\"WeightKg\", \"BodyFatPercent\", \"MuscleMassKg\", \"NeckCm\", \"ChestCm\", \"WaistCm\", \"HipsCm\", \"BicepsLeftCm\", \"BicepsRightCm\", \"ForearmCm\", \"ThighLeftCm\", \"ThighRightCm\", \"CalfCm\") IS NOT NULL");
+                        });
+                });
+
             modelBuilder.Entity("FitnessApp.Api.Features.Plans.PlanExercise", b =>
                 {
                     b.Property<int>("Id")
@@ -1563,6 +1652,15 @@ namespace FitnessApp.Api.Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("FitnessApp.Api.Features.Measurements.BodyMeasurement", b =>
+                {
+                    b.HasOne("FitnessApp.Api.Features.Auth.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("FitnessApp.Api.Features.Plans.PlanExercise", b =>

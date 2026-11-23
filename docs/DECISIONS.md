@@ -302,3 +302,31 @@ something different from it, the reason is logged here.
   query, no stored counter to keep in sync), then the 10 most recent others.
 - **History filters** take exact instants (`from`, `to`), so the app decides where a day begins in the user's
   own time zone.
+
+### D027 · 2026-11-23 · Body measurements
+
+- **Model** (thesis "Postep"): `BodyMeasurement` per user and calendar day (`DateOnly`, the user's own day):
+  weight, body fat %, muscle mass and ten tape measurements (neck, chest, waist, hips, biceps L/R, forearm,
+  thigh L/R, calf). Ostap's plan added the tape measurements and muscle mass. Every value is optional, each with
+  its own range; an entry needs at least one (API check and database check constraint). Stored as numeric(5,1).
+- **One entry per day** (unique index): a second entry for the same day is a 409, and the app edits the existing
+  one instead. A history without duplicate days keeps the charts simple.
+- **Profile weight follows the newest weighed entry**, in the same `SaveChanges`. Entering an older day (filling
+  in history) leaves it alone, and deleting an entry doesn't change it: the profile holds "my weight now".
+- **BMI per entry** is computed when read, from the profile's height, never stored.
+
+### D028 · 2026-11-23 · Progress statistics computed per request
+
+- **Nothing is stored.** Every statistic is calculated from the finished workouts when asked, so it can't go
+  stale after a workout is edited or deleted. One projection query loads only date, exercise, set type, reps and
+  weight; `StrengthCalculator` (pure, unit-tested) does the maths in memory. A person's history is a few thousand
+  sets, so this stays fast; if it ever isn't, the numbers can be cached per user without changing the API.
+- **Rules:** estimated 1RM by Epley (weight × (1 + reps/30)), only up to 12 reps. Volume = reps × weight of every
+  set but warm-ups (drop sets are real work). Records (heaviest set, best 1RM) use only normal and to-failure
+  sets. Bodyweight sets have no weight, so no volume or 1RM.
+- **Weeks and months are the user's own** (profile time zone, weeks start on Monday). The streak counts weeks in
+  a row with a workout; the current week doesn't break it until it's over.
+- **Per-exercise stats** (Orest's idea): a period switch (4 weeks, 3 months, 1 year, all), 1RM and top set per
+  workout, rep ranges 1–5 / 6–8 / 9–12 / 13+, workouts per week, and a ranking of all exercises. Muscle groups
+  get working sets per week, the usual measure for how much a muscle is trained.
+- **Goals** (WF08) moved to week 6, as in the updated plan.

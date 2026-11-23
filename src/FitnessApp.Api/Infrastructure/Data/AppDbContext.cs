@@ -1,5 +1,6 @@
 using FitnessApp.Api.Features.Auth;
 using FitnessApp.Api.Features.Exercises;
+using FitnessApp.Api.Features.Measurements;
 using FitnessApp.Api.Features.Plans;
 using FitnessApp.Api.Features.Profile;
 using FitnessApp.Api.Features.Sessions;
@@ -27,6 +28,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : Ident
     public DbSet<SessionExercise> SessionExercises => Set<SessionExercise>();
 
     public DbSet<SetEntry> SetEntries => Set<SetEntry>();
+
+    public DbSet<BodyMeasurement> BodyMeasurements => Set<BodyMeasurement>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

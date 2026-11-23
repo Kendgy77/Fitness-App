@@ -1,8 +1,10 @@
 using System.Text.Json.Serialization;
 using FitnessApp.Api.Common.Errors;
 using FitnessApp.Api.Features.Exercises;
+using FitnessApp.Api.Features.Measurements;
 using FitnessApp.Api.Features.Plans;
 using FitnessApp.Api.Features.Profile;
+using FitnessApp.Api.Features.Progress;
 using FitnessApp.Api.Features.Sessions;
 using FitnessApp.Api.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -57,8 +59,10 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddFeatures(this IServiceCollection services)
     {
         services.AddScoped<IExerciseService, ExerciseService>();
+        services.AddScoped<IMeasurementService, MeasurementService>();
         services.AddScoped<IPlanService, PlanService>();
         services.AddScoped<IProfileService, ProfileService>();
+        services.AddScoped<IProgressService, ProgressService>();
         services.AddScoped<ISessionService, SessionService>();
         return services;
     }
