@@ -142,6 +142,15 @@ The full, always-current list is in Swagger (`/swagger` when running in Developm
 | DELETE | `/api/sessions/{id}` | user | Delete a workout |
 | GET | `/api/exercises/suggestions` | user | The user's most-used (90 days) and recent exercises |
 | GET | `/api/exercises/{id}/history` | user | Every finished workout with this exercise and its sets |
+| GET | `/api/measurements` | user | Body measurements, newest day first, each with its BMI; `from`, `to`, paging |
+| GET, PUT, DELETE | `/api/measurements/{id}` | user | One day's measurements |
+| POST | `/api/measurements` | user | Save a day's measurements (one entry per day); a newer weight updates the profile |
+| GET | `/api/progress/summary` | user | Dashboard numbers: workouts this week/month, streak, volume, weight, BMI |
+| GET | `/api/progress/volume` | user | Volume, workouts and sets per week; `weeks` (1–52) |
+| GET | `/api/progress/exercises` | user | Exercise ranking for a `period`: workouts, volume, best 1RM, 1RM change |
+| GET | `/api/progress/exercises/{id}` | user | One exercise in detail: 1RM and top set per workout, rep ranges |
+| GET | `/api/progress/records` | user | Personal records: heaviest set, best estimated 1RM, best workout volume |
+| GET | `/api/progress/muscle-groups` | user | Working sets and volume per week by muscle group |
 | GET | `/health` | anonymous | `Healthy` when the API can reach the database |
 
 Errors are returned as [ProblemDetails](https://www.rfc-editor.org/rfc/rfc7807) JSON with messages meant for the user.
