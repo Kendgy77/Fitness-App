@@ -5,7 +5,7 @@ import { getExerciseRanking, getMuscleGroupVolume, getProgressSummary, getRecord
 import { toApiError } from "../api/errors";
 import type { ExerciseProgressRow, ProgressPeriod } from "../api/types";
 import { BarChart, ValueBars } from "../components/charts";
-import { PeriodSwitch, ProgressTabs } from "../components/progress";
+import { PeriodSwitch } from "../components/progress";
 import { formatKg } from "../lib/progress";
 import { Alert, Card, Loading, PageHeader } from "../components/ui";
 import { categoryLabels, formatDate } from "../lib/labels";
@@ -13,7 +13,7 @@ import { queryKeys } from "../lib/queryKeys";
 
 const weekLabel = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" });
 
-/** Progress, strength half (WF07): weekly volume, every exercise ranked, muscle groups and personal records. */
+/** Progress (WF07): weekly volume, every exercise ranked, muscle groups and personal records. */
 export function ProgressPage() {
   const [period, setPeriod] = useState<ProgressPeriod>("ThreeMonths");
   const summary = useQuery({ queryKey: queryKeys.progressSummary, queryFn: getProgressSummary });
@@ -21,7 +21,6 @@ export function ProgressPage() {
   return (
     <>
       <PageHeader title="Progress" />
-      <ProgressTabs />
       {summary.isPending && <Loading />}
       {summary.isError && <Alert>{toApiError(summary.error).message}</Alert>}
       {summary.data &&

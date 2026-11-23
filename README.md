@@ -143,6 +143,8 @@ The full, always-current list is in Swagger (`/swagger` when running in Developm
 | GET | `/api/exercises/suggestions` | user | The user's most-used (90 days) and recent exercises |
 | GET | `/api/exercises/{id}/history` | user | Every finished workout with this exercise and its sets |
 | GET | `/api/measurements` | user | Body measurements, newest day first, each with its BMI; `from`, `to`, paging |
+| GET | `/api/measurements/current` | user | Each value's newest reading with its date (the profile form) |
+| PUT | `/api/measurements/current` | user | Save the profile's measurements for today; only changed values are kept |
 | GET, PUT, DELETE | `/api/measurements/{id}` | user | One day's measurements |
 | POST | `/api/measurements` | user | Save a day's measurements (one entry per day); a newer weight updates the profile |
 | GET | `/api/progress/summary` | user | Dashboard numbers: workouts this week/month, streak, volume, weight, BMI |

@@ -8,8 +8,8 @@ export function MeasureGuidePage() {
 
   return (
     <>
-      <Link to="/progress/body" className="mb-4 inline-flex min-h-11 items-center text-sm font-medium text-brand-700 hover:underline">
-        ← Body progress
+      <Link to="/profile" className="mb-4 inline-flex min-h-11 items-center text-sm font-medium text-brand-700 hover:underline">
+        ← Profile
       </Link>
       <PageHeader title="How to measure" />
 

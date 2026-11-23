@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router";
-import { createMeasurement, deleteMeasurement, getMeasurement, updateMeasurement } from "../api/endpoints";
+import { deleteMeasurement, getMeasurement, updateMeasurement } from "../api/endpoints";
 import { toApiError, type ApiError } from "../api/errors";
 import type { Measurement, MeasurementRequest, MeasurementValues } from "../api/types";
 import { Alert, Button, Card, Loading, PageHeader, TextAreaField, TextField } from "../components/ui";
@@ -9,17 +9,18 @@ import { metrics } from "../lib/measurements";
 import { queryKeys } from "../lib/queryKeys";
 import { localDayKey } from "../lib/workout";
 
-/** Enter a day's measurements (/progress/body/new) or correct them (/progress/body/:id/edit). */
+/**
+ * Correct or delete one day of the body history (/profile/body/:id/edit). New values are entered in the profile,
+ * which records them for today.
+ */
 export function MeasurementFormPage() {
-  const idParam = useParams().id;
-  const id = idParam ? Number(idParam) : null;
-  const existing = useQuery({ queryKey: queryKeys.measurement(id ?? 0), queryFn: () => getMeasurement(id!), enabled: id !== null });
+  const id = Number(useParams().id);
+  const existing = useQuery({ queryKey: queryKeys.measurement(id), queryFn: () => getMeasurement(id) });
 
   return (
     <>
-      <PageHeader title={id ? "Edit measurements" : "Add measurements"} />
-      {id === null && <MeasurementForm />}
-      {id !== null && existing.isPending && <Loading />}
+      <PageHeader title="Edit measurements" />
+      {existing.isPending && <Loading />}
       {existing.isError && <Alert>{toApiError(existing.error).message}</Alert>}
       {existing.data && <MeasurementForm measurement={existing.data} />}
     </>
@@ -28,14 +29,14 @@ export function MeasurementFormPage() {
 
 type Values = Record<keyof MeasurementValues, string>;
 
-function MeasurementForm({ measurement }: { measurement?: Measurement }) {
+function MeasurementForm({ measurement }: { measurement: Measurement }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [day, setDay] = useState(measurement?.measuredOn ?? localDayKey(new Date()));
+  const [day, setDay] = useState(measurement.measuredOn);
   const [values, setValues] = useState<Values>(
-    () => Object.fromEntries(metrics.map((m) => [m.key, measurement?.[m.key]?.toString() ?? ""])) as Values,
+    () => Object.fromEntries(metrics.map((m) => [m.key, measurement[m.key]?.toString() ?? ""])) as Values,
   );
-  const [notes, setNotes] = useState(measurement?.notes ?? "");
+  const [notes, setNotes] = useState(measurement.notes);
   const [error, setError] = useState<ApiError | null>(null);
 
   const done = async () => {
@@ -43,15 +44,15 @@ function MeasurementForm({ measurement }: { measurement?: Measurement }) {
     await queryClient.invalidateQueries({ queryKey: queryKeys.progress, refetchType: "none" });
     // Saving a newer weight also changes the profile's weight.
     await queryClient.invalidateQueries({ queryKey: queryKeys.profile, refetchType: "none" });
-    navigate("/progress/body", { replace: true });
+    navigate("/profile/body", { replace: true });
   };
 
   const save = useMutation({
-    mutationFn: (request: MeasurementRequest) => (measurement ? updateMeasurement(measurement.id, request) : createMeasurement(request)),
+    mutationFn: (request: MeasurementRequest) => updateMeasurement(measurement.id, request),
     onSuccess: done,
     onError: (e) => setError(toApiError(e)),
   });
-  const remove = useMutation({ mutationFn: () => deleteMeasurement(measurement!.id), onSuccess: done });
+  const remove = useMutation({ mutationFn: () => deleteMeasurement(measurement.id), onSuccess: done });
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -107,7 +108,7 @@ function MeasurementForm({ measurement }: { measurement?: Measurement }) {
       <Card>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-bold text-slate-900">Tape measurements</h2>
-          <Link to="/progress/body/guide" className="text-sm font-semibold text-brand-700 hover:underline">
+          <Link to="/profile/body/guide" className="text-sm font-semibold text-brand-700 hover:underline">
             How to measure
           </Link>
         </div>
@@ -122,19 +123,17 @@ function MeasurementForm({ measurement }: { measurement?: Measurement }) {
         <Button type="submit" busy={save.isPending}>
           Save measurements
         </Button>
-        <Link to="/progress/body" className="inline-flex min-h-11 items-center rounded-lg px-4 text-sm font-semibold text-slate-700 hover:bg-slate-100">
+        <Link to="/profile/body" className="inline-flex min-h-11 items-center rounded-lg px-4 text-sm font-semibold text-slate-700 hover:bg-slate-100">
           Cancel
         </Link>
-        {measurement && (
-          <Button
-            variant="danger"
-            className="ml-auto"
-            busy={remove.isPending}
-            onClick={() => window.confirm("Delete this day's measurements?") && remove.mutate()}
-          >
-            Delete
-          </Button>
-        )}
+        <Button
+          variant="danger"
+          className="ml-auto"
+          busy={remove.isPending}
+          onClick={() => window.confirm("Delete this day's measurements?") && remove.mutate()}
+        >
+          Delete
+        </Button>
       </div>
     </form>
   );

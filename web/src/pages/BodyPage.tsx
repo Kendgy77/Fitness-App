@@ -5,7 +5,6 @@ import { listMeasurements } from "../api/endpoints";
 import { toApiError } from "../api/errors";
 import type { Measurement } from "../api/types";
 import { LineChart } from "../components/charts";
-import { ProgressTabs } from "../components/progress";
 import { Alert, Card, Loading, PageHeader } from "../components/ui";
 import { formatDate } from "../lib/labels";
 import { formatMetric, metrics, metricValue, type ChartMetric } from "../lib/measurements";
@@ -17,30 +16,26 @@ const chartable: { key: ChartMetric; label: string; unit: string }[] = [
   ...metrics.filter((m) => m.key !== "weightKg").map((m) => ({ key: m.key, label: m.label, unit: m.unit })),
 ];
 
-/** Progress, body half (WF07): a chart for any measurement over time, and every entry. */
+/** Body history (WF07): a chart for any measurement over time, and every entry. New values come from the profile. */
 export function BodyPage() {
   const measurements = useQuery({ queryKey: queryKeys.measurements, queryFn: () => listMeasurements() });
 
   return (
     <>
-      <PageHeader
-        title="Progress"
-        actions={
-          <Link to="/progress/body/new" className="inline-flex min-h-11 items-center rounded-lg bg-brand-700 px-4 text-sm font-semibold text-white hover:bg-brand-800">
-            Add measurements
-          </Link>
-        }
-      />
-      <ProgressTabs />
+      <Link to="/profile" className="mb-4 inline-flex min-h-11 items-center text-sm font-medium text-brand-700 hover:underline">
+        ← Profile
+      </Link>
+      <PageHeader title="Body history" />
       {measurements.isPending && <Loading />}
       {measurements.isError && <Alert>{toApiError(measurements.error).message}</Alert>}
       {measurements.data &&
         (measurements.data.items.length === 0 ? (
           <Alert kind="info">
-            No measurements yet. Add your weight, and the tape measurements if you like, to follow how your body changes.{" "}
-            <Link to="/progress/body/guide" className="font-semibold text-brand-700 hover:underline">
-              How to measure
+            No measurements yet. Fill in your weight, and the tape measurements if you like, in your{" "}
+            <Link to="/profile" className="font-semibold text-brand-700 hover:underline">
+              profile
             </Link>
+            . Every change you save there shows up here.
           </Alert>
         ) : (
           <BodyView items={measurements.data.items} />
@@ -103,7 +98,7 @@ function BodyView({ items }: { items: Measurement[] }) {
       <Card>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-bold text-slate-900">All entries</h2>
-          <Link to="/progress/body/guide" className="text-sm font-semibold text-brand-700 hover:underline">
+          <Link to="/profile/body/guide" className="text-sm font-semibold text-brand-700 hover:underline">
             How to measure
           </Link>
         </div>
@@ -123,7 +118,7 @@ function BodyView({ items }: { items: Measurement[] }) {
                   </p>
                 </div>
                 <Link
-                  to={`/progress/body/${m.id}/edit`}
+                  to={`/profile/body/${m.id}/edit`}
                   aria-label={`Edit measurements of ${formatDate(m.measuredOn)}`}
                   className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-slate-300 px-3 text-sm font-semibold text-slate-800 hover:bg-slate-50"
                 >

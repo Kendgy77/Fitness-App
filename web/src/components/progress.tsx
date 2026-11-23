@@ -1,7 +1,5 @@
-import { NavLink } from "react-router";
 import type { ProgressPeriod } from "../api/types";
 import { periodLabels } from "../lib/progress";
-
 
 /** The time window of the statistics, as a row of toggle buttons. */
 export function PeriodSwitch({ value, onChange }: { value: ProgressPeriod; onChange: (period: ProgressPeriod) => void }) {
@@ -21,22 +19,3 @@ export function PeriodSwitch({ value, onChange }: { value: ProgressPeriod; onCha
     </div>
   );
 }
-
-/** Strength / Body: the two halves of the progress section. */
-export function ProgressTabs() {
-  const tab = ({ isActive }: { isActive: boolean }) =>
-    `inline-flex min-h-11 items-center border-b-2 px-4 text-sm font-semibold ${
-      isActive ? "border-brand-600 text-brand-800" : "border-transparent text-slate-600 hover:text-slate-900"
-    }`;
-  return (
-    <nav aria-label="Progress sections" className="mb-6 flex border-b border-slate-200">
-      <NavLink to="/progress" end className={tab}>
-        Strength
-      </NavLink>
-      <NavLink to="/progress/body" className={tab}>
-        Body
-      </NavLink>
-    </nav>
-  );
-}
-

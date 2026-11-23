@@ -285,6 +285,13 @@ export interface MeasurementRequest extends MeasurementValues {
   notes: string;
 }
 
+/** One value's newest reading, e.g. { field: "waistCm", value: 84.5, measuredOn: "2026-11-20" }. */
+export interface CurrentMeasurement {
+  field: keyof MeasurementValues;
+  value: number;
+  measuredOn: string;
+}
+
 export type ProgressPeriod = "FourWeeks" | "ThreeMonths" | "Year" | "All";
 
 export interface ProgressSummary {

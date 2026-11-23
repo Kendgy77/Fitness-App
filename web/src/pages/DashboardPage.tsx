@@ -58,8 +58,8 @@ export function DashboardPage() {
               <p className="mt-1 text-3xl font-bold text-slate-900">{s.weightKg !== null ? `${formatDecimal(s.weightKg)} kg` : "—"}</p>
               <p className="text-sm text-slate-600">
                 {s.weightMeasuredOn ? `${formatDate(s.weightMeasuredOn)} · ` : ""}
-                <Link to="/progress/body/new" className="font-semibold text-brand-700 hover:underline">
-                  Add measurements
+                <Link to="/profile" className="font-semibold text-brand-700 hover:underline">
+                  Update
                 </Link>
               </p>
               {profile.data.goal && <p className="mt-1 text-sm text-slate-600">Goal: {goalLabels[profile.data.goal]}</p>}

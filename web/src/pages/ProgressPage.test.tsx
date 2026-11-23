@@ -147,7 +147,7 @@ const measurement = (id: number, measuredOn: string, weightKg: number | null, wa
   notes: "",
 });
 
-describe("BodyPage (WF07)", () => {
+describe("Body history (WF07)", () => {
   it("charts weight by default and offers only the measurements that have data", async () => {
     vi.mocked(endpoints.listMeasurements).mockResolvedValue({
       items: [measurement(3, "2026-11-22", 81.5, 84), measurement(2, "2026-11-15", 82.5), measurement(1, "2026-11-08", 83)],
@@ -156,7 +156,7 @@ describe("BodyPage (WF07)", () => {
       totalCount: 3,
       totalPages: 1,
     });
-    renderApp("/progress/body");
+    renderApp("/profile/body");
     const user = userEvent.setup();
 
     expect(await screen.findByRole("img", { name: "Weight over time" })).toBeInTheDocument();
@@ -169,32 +169,38 @@ describe("BodyPage (WF07)", () => {
   });
 });
 
-describe("MeasurementFormPage (WF07)", () => {
-  it("saves only what was filled in", async () => {
-    vi.mocked(endpoints.createMeasurement).mockResolvedValue(measurement(9, "2026-11-23", 80.5));
-    vi.mocked(endpoints.listMeasurements).mockResolvedValue({ items: [], page: 1, pageSize: 100, totalCount: 0, totalPages: 0 });
-    renderApp("/progress/body/new");
-    const user = userEvent.setup();
-
-    await user.type(await screen.findByLabelText("Weight (kg)"), "80,5");
-    await user.type(screen.getByLabelText("Waist (cm)"), "84");
-    await user.click(screen.getByRole("button", { name: "Save measurements" }));
-
-    await waitFor(() => expect(endpoints.createMeasurement).toHaveBeenCalled());
-    const request = vi.mocked(endpoints.createMeasurement).mock.calls[0]![0];
-    expect(request).toMatchObject({ weightKg: 80.5, waistCm: 84, bodyFatPercent: null, calfCm: null });
+describe("Editing a day of the body history (WF07)", () => {
+  beforeEach(() => {
+    vi.mocked(endpoints.getMeasurement).mockResolvedValue(measurement(3, "2026-11-22", 81.5, 84));
   });
 
-  it("an empty form or a wild value is not sent", async () => {
-    renderApp("/progress/body/new");
+  it("saves the corrected values for that day", async () => {
+    vi.mocked(endpoints.updateMeasurement).mockResolvedValue(measurement(3, "2026-11-22", 80.5, 84));
+    vi.mocked(endpoints.listMeasurements).mockResolvedValue({ items: [], page: 1, pageSize: 100, totalCount: 0, totalPages: 0 });
+    renderApp("/profile/body/3/edit");
     const user = userEvent.setup();
 
-    await user.click(await screen.findByRole("button", { name: "Save measurements" }));
+    const weight = await screen.findByLabelText("Weight (kg)");
+    await user.clear(weight);
+    await user.type(weight, "80,5");
+    await user.click(screen.getByRole("button", { name: "Save measurements" }));
+
+    await waitFor(() => expect(endpoints.updateMeasurement).toHaveBeenCalled());
+    expect(vi.mocked(endpoints.updateMeasurement).mock.calls[0]).toEqual([3, expect.objectContaining({ measuredOn: "2026-11-22", weightKg: 80.5, waistCm: 84, calfCm: null })]);
+  });
+
+  it("an empty day or a wild value is not sent", async () => {
+    renderApp("/profile/body/3/edit");
+    const user = userEvent.setup();
+
+    await user.clear(await screen.findByLabelText("Weight (kg)"));
+    await user.clear(screen.getByLabelText("Waist (cm)"));
+    await user.click(screen.getByRole("button", { name: "Save measurements" }));
     expect(await screen.findByText("Enter at least one measurement.")).toBeInTheDocument();
 
     await user.type(screen.getByLabelText("Waist (cm)"), "400");
     await user.click(screen.getByRole("button", { name: "Save measurements" }));
     expect(await screen.findByText("40–200 cm")).toBeInTheDocument();
-    expect(endpoints.createMeasurement).not.toHaveBeenCalled();
+    expect(endpoints.updateMeasurement).not.toHaveBeenCalled();
   });
 });

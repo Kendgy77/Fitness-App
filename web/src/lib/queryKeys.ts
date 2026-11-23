@@ -20,6 +20,7 @@ export const queryKeys = {
   exerciseHistory: (id: number) => ["exercises", id, "history"] as const,
   measurements: ["measurements"] as const,
   measurement: (id: number) => ["measurements", id] as const,
+  currentMeasurements: ["measurements", "current"] as const,
   progress: ["progress"] as const,
   progressSummary: ["progress", "summary"] as const,
   weeklyVolume: (weeks: number) => ["progress", "volume", weeks] as const,

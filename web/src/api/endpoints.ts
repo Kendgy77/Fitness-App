@@ -10,6 +10,7 @@ import type {
   ExerciseQuery,
   ExerciseRequest,
   LogWorkoutRequest,
+  CurrentMeasurement,
   Measurement,
   MeasurementRequest,
   MuscleGroupVolume,
@@ -214,8 +215,15 @@ export async function getMeasurement(id: number) {
   return data;
 }
 
-export async function createMeasurement(request: MeasurementRequest) {
-  const { data } = await api.post<Measurement>("/measurements", request);
+/** Each value's newest reading: what the profile's measurements start from. */
+export async function getCurrentMeasurements() {
+  const { data } = await api.get<CurrentMeasurement[]>("/measurements/current");
+  return data;
+}
+
+/** Saves the profile's measurements for today; the API keeps only the values that changed. */
+export async function saveCurrentMeasurements(request: MeasurementRequest) {
+  const { data } = await api.put<CurrentMeasurement[]>("/measurements/current", request);
   return data;
 }
 

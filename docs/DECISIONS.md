@@ -330,3 +330,16 @@ something different from it, the reason is logged here.
   workout, rep ranges 1–5 / 6–8 / 9–12 / 13+, workouts per week, and a ranking of all exercises. Muscle groups
   get working sets per week, the usual measure for how much a muscle is trained.
 - **Goals** (WF08) moved to week 6, as in the updated plan.
+
+## D029 · Measurements live in the profile (2026-11-23)
+
+Ostap: filling in a separate dated form every time is tiring. Now the profile shows every body value already
+filled in with its latest reading ("Updated 10 Nov 2026" under each box), and the user only changes what changed.
+
+- **Saving** sends all values to `PUT /api/measurements/current` with today's date. The API keeps only the values
+  that differ from the last known ones in today's entry, so an unchanged waist doesn't add a flat point to its
+  chart on every save. Saving again the same day replaces that entry; changing everything back removes it.
+- **History stays**: Profile → Body history has the charts and the list of days, where a day can be corrected or
+  deleted. The Body tab under Progress and the separate "add measurements" form are gone.
+- A cleared box doesn't delete anything: history is only changed from Body history.
+
