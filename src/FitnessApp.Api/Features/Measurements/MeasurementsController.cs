@@ -13,6 +13,22 @@ public sealed class MeasurementsController(IMeasurementService measurements) : A
     public async Task<ActionResult<PagedResponse<MeasurementResponse>>> List([FromQuery] MeasurementQuery query, CancellationToken ct) =>
         Ok(await measurements.ListAsync(CurrentUserId, query, ct));
 
+    /// <summary>Each value's newest reading with its date: what the profile's measurements start from.</summary>
+    [HttpGet("current")]
+    [ProducesResponseType<IReadOnlyList<CurrentMeasurement>>(StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<CurrentMeasurement>>> Current(CancellationToken ct) =>
+        Ok(await measurements.CurrentAsync(CurrentUserId, ct));
+
+    /// <summary>
+    /// Saves the profile's measurements for <c>measuredOn</c> (the user's today). Only values that changed are kept
+    /// in that day's entry, so the history stays clean. A newer weight also updates the profile.
+    /// </summary>
+    [HttpPut("current")]
+    [ProducesResponseType<IReadOnlyList<CurrentMeasurement>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<IReadOnlyList<CurrentMeasurement>>> SaveCurrent(MeasurementRequest request, CancellationToken ct) =>
+        Ok(await measurements.SaveCurrentAsync(CurrentUserId, request, ct));
+
     [HttpGet("{id:int}")]
     [ProducesResponseType<MeasurementResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]

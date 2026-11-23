@@ -100,6 +100,7 @@ function LiveWorkout({ workout }: { workout: Workout }) {
     onSuccess: async () => {
       queryClient.setQueryData(queryKeys.activeWorkout, null);
       await queryClient.invalidateQueries({ queryKey: queryKeys.workouts, refetchType: "none" });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.progress, refetchType: "none" });
       navigate("/workouts", { replace: true });
     },
   });
@@ -452,6 +453,7 @@ function FinishDialog({ workout, now, onClose }: { workout: Workout; now: number
       queryClient.setQueryData(queryKeys.workout(finished.id), finished);
       queryClient.setQueryData(queryKeys.activeWorkout, null);
       await queryClient.invalidateQueries({ queryKey: queryKeys.workouts, refetchType: "none" });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.progress, refetchType: "none" });
       await queryClient.invalidateQueries({ queryKey: queryKeys.exerciseSuggestions, refetchType: "none" });
       navigate(`/workouts/${finished.id}`, { replace: true });
     },

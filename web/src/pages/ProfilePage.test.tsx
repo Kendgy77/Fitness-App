@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as endpoints from "../api/endpoints";
 import type { Profile } from "../api/types";
 import { apiError, renderApp } from "../test/render";
@@ -19,6 +19,10 @@ const savedProfile: Profile = {
   missingForBmi: [],
   updatedAtUtc: "2026-11-19T10:00:00Z",
 };
+
+beforeEach(() => {
+  vi.mocked(endpoints.getCurrentMeasurements).mockResolvedValue([]);
+});
 
 describe("ProfilePage (WF03, WF10)", () => {
   it("T16: shows the BMI calculated by the API", async () => {
@@ -92,6 +96,65 @@ describe("ProfilePage (WF03, WF10)", () => {
     await user.click(screen.getByRole("button", { name: "Save profile" }));
 
     expect(await screen.findByText("Enter a number, e.g. 180.")).toBeInTheDocument();
+    expect(endpoints.updateProfile).not.toHaveBeenCalled();
+  });
+});
+
+describe("ProfilePage: body measurements (WF07)", () => {
+  const today = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  };
+
+  beforeEach(() => {
+    vi.mocked(endpoints.getProfile).mockResolvedValue(savedProfile);
+    vi.mocked(endpoints.getCurrentMeasurements).mockResolvedValue([
+      { field: "weightKg", value: 78, measuredOn: "2026-11-20" },
+      { field: "waistCm", value: 84.5, measuredOn: "2026-11-10" },
+    ]);
+  });
+
+  it("starts from the latest values, each with the day it was measured", async () => {
+    renderApp("/profile");
+
+    expect(await screen.findByLabelText("Waist (cm)")).toHaveValue("84.5");
+    expect(screen.getByLabelText("Chest (cm)")).toHaveValue("");
+    expect(screen.getByText("Updated 10 Nov 2026")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "See charts and history" })).toHaveAttribute("href", "/profile/body");
+  });
+
+  it("saves the measurements for today together with the profile", async () => {
+    vi.mocked(endpoints.saveCurrentMeasurements).mockResolvedValue([]);
+    vi.mocked(endpoints.updateProfile).mockResolvedValue(savedProfile);
+    renderApp("/profile");
+    const user = userEvent.setup();
+
+    const waist = await screen.findByLabelText("Waist (cm)");
+    await user.clear(waist);
+    await user.type(waist, "83");
+    await user.type(screen.getByLabelText("Chest (cm)"), "101,5");
+    await user.click(screen.getByRole("button", { name: "Save profile" }));
+
+    expect(await screen.findByText("Profile saved.")).toBeInTheDocument();
+    expect(endpoints.saveCurrentMeasurements).toHaveBeenCalledWith(
+      expect.objectContaining({ measuredOn: today(), weightKg: 78, waistCm: 83, chestCm: 101.5, calfCm: null }),
+    );
+    expect(endpoints.updateProfile).toHaveBeenCalledWith(expect.objectContaining({ weightKg: 78 }));
+  });
+
+  it("shows the API message next to a measurement out of range", async () => {
+    vi.mocked(endpoints.saveCurrentMeasurements).mockRejectedValue(
+      apiError(400, { title: "One or more validation errors occurred.", errors: { WaistCm: ["Waist must be between 40 and 200 cm."] } }),
+    );
+    renderApp("/profile");
+    const user = userEvent.setup();
+
+    const waist = await screen.findByLabelText("Waist (cm)");
+    await user.clear(waist);
+    await user.type(waist, "400");
+    await user.click(screen.getByRole("button", { name: "Save profile" }));
+
+    expect(await screen.findByText("Waist must be between 40 and 200 cm.")).toBeInTheDocument();
     expect(endpoints.updateProfile).not.toHaveBeenCalled();
   });
 });

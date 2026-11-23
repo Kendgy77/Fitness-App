@@ -16,4 +16,13 @@ public interface IMeasurementService
     Task<MeasurementResponse?> UpdateAsync(string userId, int id, MeasurementRequest request, CancellationToken ct);
 
     Task<bool> DeleteAsync(string userId, int id, CancellationToken ct);
+
+    /// <summary>Each value's newest reading, whichever day it was taken (what the profile shows).</summary>
+    Task<IReadOnlyList<CurrentMeasurement>> CurrentAsync(string userId, CancellationToken ct);
+
+    /// <summary>
+    /// Saves the profile's measurements: values that differ from the last known ones go into that day's entry
+    /// (created, replaced, or removed when nothing differs any more). Returns the new current values.
+    /// </summary>
+    Task<IReadOnlyList<CurrentMeasurement>> SaveCurrentAsync(string userId, MeasurementRequest request, CancellationToken ct);
 }

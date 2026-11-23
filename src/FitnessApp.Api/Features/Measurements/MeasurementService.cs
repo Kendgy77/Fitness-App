@@ -93,6 +93,105 @@ public sealed class MeasurementService(AppDbContext db, TimeProvider clock) : IM
         return deleted > 0;
     }
 
+    public async Task<IReadOnlyList<CurrentMeasurement>> CurrentAsync(string userId, CancellationToken ct)
+    {
+        var entries = await db.BodyMeasurements.AsNoTracking()
+            .Where(m => m.UserId == userId)
+            .OrderByDescending(m => m.MeasuredOn)
+            .ToListAsync(ct);
+        return Latest(entries);
+    }
+
+    public async Task<IReadOnlyList<CurrentMeasurement>> SaveCurrentAsync(string userId, MeasurementRequest request, CancellationToken ct)
+    {
+        var profile = await db.UserProfiles.SingleOrDefaultAsync(p => p.UserId == userId, ct);
+        var day = request.MeasuredOn!.Value;
+        EnsureNotInFuture(day, profile);
+
+        var entries = await db.BodyMeasurements
+            .Where(m => m.UserId == userId)
+            .OrderByDescending(m => m.MeasuredOn)
+            .ToListAsync(ct);
+        var dayEntry = entries.FirstOrDefault(m => m.MeasuredOn == day);
+        var before = Latest(entries.Where(m => m.MeasuredOn < day)).ToDictionary(c => c.Field, c => c.Value);
+
+        // Only what differs from the last known value goes into the day's entry, so an unchanged waist doesn't add
+        // a flat point to its chart every time the profile is saved. A cleared box leaves the history alone.
+        var changed = Fields
+            .Select(f => (Field: f, Value: Round(f.FromRequest(request))))
+            .Where(x => x.Value is { } v && (!before.TryGetValue(x.Field.Name, out var old) || old != v))
+            .ToList();
+
+        var now = clock.GetUtcNow();
+        if (changed.Count == 0)
+        {
+            if (dayEntry is not null)
+            {
+                db.BodyMeasurements.Remove(dayEntry);
+                entries.Remove(dayEntry);
+            }
+        }
+        else
+        {
+            if (dayEntry is null)
+            {
+                dayEntry = new BodyMeasurement { UserId = userId, MeasuredOn = day, CreatedAtUtc = now };
+                db.BodyMeasurements.Add(dayEntry);
+                entries.Insert(0, dayEntry);
+            }
+
+            foreach (var field in Fields)
+            {
+                field.Set(dayEntry, null);
+            }
+
+            foreach (var (field, value) in changed)
+            {
+                field.Set(dayEntry, value);
+            }
+
+            dayEntry.UpdatedAtUtc = now;
+            await UpdateProfileWeightAsync(userId, profile, dayEntry, now, ct);
+        }
+
+        await db.SaveChangesAsync(ct);
+        return Latest(entries);
+    }
+
+    /// <summary>Each value's newest reading, from entries ordered newest first.</summary>
+    private static List<CurrentMeasurement> Latest(IEnumerable<BodyMeasurement> newestFirst)
+    {
+        var list = newestFirst.ToList();
+        return
+        [
+            .. Fields.SelectMany(f => list
+                .Where(m => f.Get(m) is not null)
+                .Take(1)
+                .Select(m => new CurrentMeasurement(f.Name, f.Get(m)!.Value, m.MeasuredOn))),
+        ];
+    }
+
+    private sealed record MeasurementField(
+        string Name, Func<BodyMeasurement, decimal?> Get, Action<BodyMeasurement, decimal?> Set, Func<MeasurementRequest, decimal?> FromRequest);
+
+    /// <summary>Every value an entry can hold, named as in the JSON.</summary>
+    private static readonly MeasurementField[] Fields =
+    [
+        new("weightKg", m => m.WeightKg, (m, v) => m.WeightKg = v, r => r.WeightKg),
+        new("bodyFatPercent", m => m.BodyFatPercent, (m, v) => m.BodyFatPercent = v, r => r.BodyFatPercent),
+        new("muscleMassKg", m => m.MuscleMassKg, (m, v) => m.MuscleMassKg = v, r => r.MuscleMassKg),
+        new("neckCm", m => m.NeckCm, (m, v) => m.NeckCm = v, r => r.NeckCm),
+        new("chestCm", m => m.ChestCm, (m, v) => m.ChestCm = v, r => r.ChestCm),
+        new("waistCm", m => m.WaistCm, (m, v) => m.WaistCm = v, r => r.WaistCm),
+        new("hipsCm", m => m.HipsCm, (m, v) => m.HipsCm = v, r => r.HipsCm),
+        new("bicepsLeftCm", m => m.BicepsLeftCm, (m, v) => m.BicepsLeftCm = v, r => r.BicepsLeftCm),
+        new("bicepsRightCm", m => m.BicepsRightCm, (m, v) => m.BicepsRightCm = v, r => r.BicepsRightCm),
+        new("forearmCm", m => m.ForearmCm, (m, v) => m.ForearmCm = v, r => r.ForearmCm),
+        new("thighLeftCm", m => m.ThighLeftCm, (m, v) => m.ThighLeftCm = v, r => r.ThighLeftCm),
+        new("thighRightCm", m => m.ThighRightCm, (m, v) => m.ThighRightCm = v, r => r.ThighRightCm),
+        new("calfCm", m => m.CalfCm, (m, v) => m.CalfCm = v, r => r.CalfCm),
+    ];
+
     /// <summary>
     /// The profile's weight is "my weight now", so it follows the newest measurement with a weight. An entry for
     /// an older day (filling in history) leaves it alone. Saved in the same SaveChanges as the measurement.

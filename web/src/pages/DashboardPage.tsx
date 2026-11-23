@@ -1,20 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
-import { getActiveWorkout, getProfile, listWorkouts } from "../api/endpoints";
+import { getActiveWorkout, getProfile, getProgressSummary, listWorkouts } from "../api/endpoints";
 import { toApiError } from "../api/errors";
 import { useAuth } from "../auth/authContext";
 import { BmiCard } from "../components/BmiCard";
+import { formatKg } from "../lib/progress";
 import { Alert, Card, Loading, PageHeader } from "../components/ui";
-import { formatDate, formatDecimal, goalLabels } from "../lib/labels";
+import { formatDate, formatDecimal, formatMinutes, goalLabels } from "../lib/labels";
 import { queryKeys } from "../lib/queryKeys";
+import { WeeklyVolumeCard } from "./ProgressPage";
 
 /**
- * The page after login (thesis mock-up 6.2). For now: profile summary and BMI. Workout statistics and progress
- * charts join it in week 5, once there are workouts to count.
+ * The page after login (thesis mock-up 6.2, WF07): start or continue a workout, this week's numbers, weight and
+ * BMI, the weekly volume chart and the last workouts.
  */
 export function DashboardPage() {
   const { user } = useAuth();
   const profile = useQuery({ queryKey: queryKeys.profile, queryFn: getProfile });
+  const summary = useQuery({ queryKey: queryKeys.progressSummary, queryFn: getProgressSummary });
+  const s = summary.data;
 
   return (
     <>
@@ -23,30 +27,98 @@ export function DashboardPage() {
 
       <WorkoutCard />
 
-      {profile.isPending && <Loading />}
+      {(profile.isPending || summary.isPending) && <Loading />}
       {profile.isError && <Alert>{toApiError(profile.error).message}</Alert>}
-      {profile.data && (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <h2 className="text-sm font-medium text-slate-600">Weight</h2>
-            <p className="mt-1 text-3xl font-bold text-slate-900">
-              {profile.data.weightKg !== null ? `${formatDecimal(profile.data.weightKg)} kg` : "—"}
-            </p>
-            {profile.data.goal && <p className="mt-2 text-sm text-slate-600">Goal: {goalLabels[profile.data.goal]}</p>}
-          </Card>
-          <Card>
-            <BmiCard profile={profile.data} showProfileLink />
-          </Card>
-          <Card>
-            <h2 className="text-sm font-medium text-slate-600">Exercise library</h2>
-            <p className="mt-2 text-sm text-slate-700">Over 60 exercises with technique tips and the muscles they work.</p>
-            <Link to="/exercises" className="mt-3 inline-block text-sm font-semibold text-brand-700 hover:underline">
-              Browse exercises
-            </Link>
-          </Card>
+      {summary.isError && <Alert>{toApiError(summary.error).message}</Alert>}
+      {profile.data && s && (
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <Card>
+              <h2 className="text-sm font-medium text-slate-600">This week</h2>
+              <p className="mt-1 text-3xl font-bold text-slate-900">{s.workoutsThisWeek}</p>
+              <p className="text-sm text-slate-600">
+                {s.workoutsThisWeek === 1 ? "workout" : "workouts"}
+                {s.streakWeeks > 1 && ` · ${s.streakWeeks}-week streak`}
+              </p>
+            </Card>
+            <Card>
+              <h2 className="text-sm font-medium text-slate-600">This month</h2>
+              <p className="mt-1 text-3xl font-bold text-slate-900">{s.workoutsThisMonth}</p>
+              <p className="text-sm text-slate-600">{s.workoutsThisMonth === 1 ? "workout" : "workouts"}</p>
+            </Card>
+            <Card>
+              <h2 className="text-sm font-medium text-slate-600">Volume this week</h2>
+              <p className="mt-1 text-3xl font-bold text-slate-900 tabular-nums">{formatKg(s.volumeThisWeekKg)}</p>
+              <Link to="/progress" className="text-sm font-semibold text-brand-700 hover:underline">
+                See progress
+              </Link>
+            </Card>
+            <Card>
+              <h2 className="text-sm font-medium text-slate-600">Weight</h2>
+              <p className="mt-1 text-3xl font-bold text-slate-900">{s.weightKg !== null ? `${formatDecimal(s.weightKg)} kg` : "—"}</p>
+              <p className="text-sm text-slate-600">
+                {s.weightMeasuredOn ? `${formatDate(s.weightMeasuredOn)} · ` : ""}
+                <Link to="/profile" className="font-semibold text-brand-700 hover:underline">
+                  Update
+                </Link>
+              </p>
+              {profile.data.goal && <p className="mt-1 text-sm text-slate-600">Goal: {goalLabels[profile.data.goal]}</p>}
+            </Card>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+              {s.workoutsTotal > 0 ? (
+                <WeeklyVolumeCard weeks={8} />
+              ) : (
+                <Card>
+                  <h2 className="text-lg font-bold text-slate-900">Weekly volume</h2>
+                  <p className="mt-2 text-slate-600">Your training chart appears here after your first workout.</p>
+                  <Link to="/workouts/new" className="mt-3 inline-block font-semibold text-brand-700 hover:underline">
+                    Log your first workout
+                  </Link>
+                </Card>
+              )}
+            </div>
+            <Card>
+              <BmiCard profile={profile.data} showProfileLink />
+            </Card>
+          </div>
+
+          <RecentWorkouts />
         </div>
       )}
     </>
+  );
+}
+
+function RecentWorkouts() {
+  const recentQuery = { status: "Completed", pageSize: 5 } as const;
+  const recent = useQuery({ queryKey: queryKeys.workoutList(recentQuery), queryFn: () => listWorkouts(recentQuery) });
+  if (!recent.data || recent.data.items.length === 0) return null;
+
+  return (
+    <Card>
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <h2 className="text-lg font-bold text-slate-900">Last workouts</h2>
+        <Link to="/workouts" className="text-sm font-semibold text-brand-700 hover:underline">
+          All workouts
+        </Link>
+      </div>
+      <ul className="divide-y divide-slate-100">
+        {recent.data.items.map((w) => (
+          <li key={w.id}>
+            <Link to={`/workouts/${w.id}`} className="flex min-h-11 flex-wrap items-baseline justify-between gap-x-4 py-2 hover:underline">
+              <span className="font-medium text-slate-900">{w.name}</span>
+              <span className="text-sm text-slate-600">
+                {w.startedAtUtc && formatDate(w.startedAtUtc)}
+                {w.durationMinutes !== null && ` · ${formatMinutes(w.durationMinutes)}`} · {w.setCount} sets
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </Card>
   );
 }
 

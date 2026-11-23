@@ -82,3 +82,6 @@ public sealed record MeasurementResponse(
     decimal? ThighRightCm,
     decimal? CalfCm,
     string Notes);
+
+/// <summary>One value's newest reading, e.g. ("waistCm", 84.5, 2026-11-20).</summary>
+public sealed record CurrentMeasurement(string Field, decimal Value, DateOnly MeasuredOn);

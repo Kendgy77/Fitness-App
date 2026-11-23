@@ -2,10 +2,11 @@ import { NavLink, Outlet } from "react-router";
 import { useAuth } from "../auth/authContext";
 
 // Navigation from the thesis mock-ups (6.2): a side menu on wide screens. On phones the same links sit in a
-// bottom tab bar, where thumbs reach them (WNF05). Progress joins this list in week 5.
+// bottom tab bar, where thumbs reach them (WNF05).
 const navItems = [
   { to: "/", label: "Dashboard", icon: "M3 12l9-8 9 8M5 10v10h5v-6h4v6h5V10", end: true },
   { to: "/workouts", label: "Workouts", icon: "M12 8v4l3 2M21 12a9 9 0 11-18 0 9 9 0 0118 0z", end: false },
+  { to: "/progress", label: "Progress", icon: "M4 20V11M10 20V5M16 20v-6M3 20h18", end: false },
   { to: "/plans", label: "Plans", icon: "M9 5h10M9 12h10M9 19h10M5 5h.01M5 12h.01M5 19h.01", end: false },
   { to: "/exercises", label: "Exercises", icon: "M6 9v6M9 7v10M15 7v10M18 9v6M9 12h6", end: false },
   { to: "/profile", label: "Profile", icon: "M12 12a4 4 0 100-8 4 4 0 000 8zm-7 9a7 7 0 0114 0", end: false },
@@ -73,14 +74,14 @@ export function Layout() {
       </div>
 
       <nav aria-label="Main menu" className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden">
-        <ul className="grid grid-cols-5">
+        <ul className="grid grid-cols-6">
           {navItems.map((item) => (
             <li key={item.to}>
               <NavLink
                 to={item.to}
                 end={item.end}
                 className={({ isActive }) =>
-                  `flex min-h-14 flex-col items-center justify-center gap-0.5 text-xs font-medium ${isActive ? "text-brand-700" : "text-slate-600"}`
+                  `flex min-h-14 flex-col items-center justify-center gap-0.5 text-[11px] font-medium ${isActive ? "text-brand-700" : "text-slate-600"}`
                 }
               >
                 <NavIcon path={item.icon} />

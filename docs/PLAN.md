@@ -50,7 +50,7 @@ The full plan with dates, risks and a detailed step-by-step playbook lives in th
 
 - [x] PR feat/body-measurements: body weight, circumferences, body fat %, muscle mass (API; screens + guide in feat/progress-web)
 - [x] PR feat/progress: StrengthCalculator (Epley 1RM, volume, PRs), detailed per-exercise stats; T13
-- [ ] PR feat/progress-web: dashboard cards, progress page with charts, measurements tab
+- [x] PR feat/progress-web: dashboard cards, progress page with charts, how-to-measure guide; measurements in the profile with a body history page (D029)
 - [ ] Ostap: added weight and measurement entries; checked the numbers
 
 ## Week 6 · 21–27 Dec · Goals, reminders, export, buffer (WF08, WF09, WNF07)

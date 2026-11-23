@@ -92,7 +92,14 @@ function ExerciseHistory({ exerciseId }: { exerciseId: number }) {
 
   return (
     <Card className="mt-4">
-      <h2 className="text-lg font-bold text-slate-900">Your history</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-lg font-bold text-slate-900">Your history</h2>
+        {history.data && history.data.items.length > 0 && (
+          <Link to={`/progress/exercises/${exerciseId}`} className="text-sm font-semibold text-brand-700 hover:underline">
+            See progress
+          </Link>
+        )}
+      </div>
       {history.isPending && <Loading />}
       {history.isError && <Alert>{toApiError(history.error).message}</Alert>}
       {history.data &&

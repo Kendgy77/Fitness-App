@@ -3,10 +3,17 @@ import type {
   AuthResponse,
   Exercise,
   ExerciseHistoryEntry,
+  ExerciseProgressRow,
+  ExerciseRecords,
+  ExerciseStats,
   ExerciseSuggestions,
   ExerciseQuery,
   ExerciseRequest,
   LogWorkoutRequest,
+  CurrentMeasurement,
+  Measurement,
+  MeasurementRequest,
+  MuscleGroupVolume,
   Paged,
   Plan,
   PlanQuery,
@@ -14,12 +21,15 @@ import type {
   PlanStatus,
   PlanSummary,
   Profile,
+  ProgressPeriod,
+  ProgressSummary,
   SetRequest,
   StartPlanOption,
   UpdateProfileRequest,
   Workout,
   WorkoutQuery,
   WorkoutSummary,
+  WeeklyVolume,
 } from "./types";
 
 // One function per API endpoint. Pages call these (through React Query), never axios directly.
@@ -191,4 +201,67 @@ export async function deleteSet(id: number, entryId: number, setId: number) {
 
 export async function deleteWorkout(id: number) {
   await api.delete(`/sessions/${id}`);
+}
+
+// ---- Measurements and progress -----------------------------------------------------------------------------
+
+export async function listMeasurements(pageSize = 100) {
+  const { data } = await api.get<Paged<Measurement>>("/measurements", { params: { pageSize } });
+  return data;
+}
+
+export async function getMeasurement(id: number) {
+  const { data } = await api.get<Measurement>(`/measurements/${id}`);
+  return data;
+}
+
+/** Each value's newest reading: what the profile's measurements start from. */
+export async function getCurrentMeasurements() {
+  const { data } = await api.get<CurrentMeasurement[]>("/measurements/current");
+  return data;
+}
+
+/** Saves the profile's measurements for today; the API keeps only the values that changed. */
+export async function saveCurrentMeasurements(request: MeasurementRequest) {
+  const { data } = await api.put<CurrentMeasurement[]>("/measurements/current", request);
+  return data;
+}
+
+export async function updateMeasurement(id: number, request: MeasurementRequest) {
+  const { data } = await api.put<Measurement>(`/measurements/${id}`, request);
+  return data;
+}
+
+export async function deleteMeasurement(id: number) {
+  await api.delete(`/measurements/${id}`);
+}
+
+export async function getProgressSummary() {
+  const { data } = await api.get<ProgressSummary>("/progress/summary");
+  return data;
+}
+
+export async function getWeeklyVolume(weeks: number) {
+  const { data } = await api.get<WeeklyVolume[]>("/progress/volume", { params: { weeks } });
+  return data;
+}
+
+export async function getExerciseRanking(period: ProgressPeriod) {
+  const { data } = await api.get<ExerciseProgressRow[]>("/progress/exercises", { params: { period } });
+  return data;
+}
+
+export async function getExerciseStats(exerciseId: number, period: ProgressPeriod) {
+  const { data } = await api.get<ExerciseStats>(`/progress/exercises/${exerciseId}`, { params: { period } });
+  return data;
+}
+
+export async function getRecords() {
+  const { data } = await api.get<ExerciseRecords[]>("/progress/records");
+  return data;
+}
+
+export async function getMuscleGroupVolume(period: ProgressPeriod) {
+  const { data } = await api.get<MuscleGroupVolume[]>("/progress/muscle-groups", { params: { period } });
+  return data;
 }

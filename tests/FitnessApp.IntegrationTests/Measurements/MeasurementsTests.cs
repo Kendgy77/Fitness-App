@@ -149,5 +149,65 @@ public sealed class MeasurementsTests(ApiFactory factory)
         (await other.DeleteAsync($"{Url}/{saved.Id}", _ct)).StatusCode.ShouldBe(HttpStatusCode.NotFound);
         var list = await other.GetFromJsonAsync<PagedResponse<MeasurementResponse>>(Url, TestJson.Options, _ct);
         list!.TotalCount.ShouldBe(0);
+        (await other.GetFromJsonAsync<List<CurrentMeasurement>>($"{Url}/current", TestJson.Options, _ct))!.ShouldBeEmpty();
+    }
+
+    private async Task<List<CurrentMeasurement>> SaveCurrentAsync(HttpClient client, MeasurementRequest request)
+    {
+        var response = await client.PutAsJsonAsync($"{Url}/current", request, TestJson.Options, _ct);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK, await response.Content.ReadAsStringAsync(_ct));
+        return (await response.Content.ReadFromJsonAsync<List<CurrentMeasurement>>(TestJson.Options, _ct))!;
+    }
+
+    private async Task<List<MeasurementResponse>> AllAsync(HttpClient client) =>
+        (await client.GetFromJsonAsync<PagedResponse<MeasurementResponse>>(Url, TestJson.Options, _ct))!.Items.ToList();
+
+    [Fact]
+    public async Task Current_shows_each_values_newest_reading_with_its_date()
+    {
+        var client = await ClientWithHeightAsync();
+        await CreateAsync(client, Entry(DaysAgo(10), weightKg: 84, waistCm: 90));
+        await CreateAsync(client, Entry(DaysAgo(3), weightKg: 82));
+
+        var current = await client.GetFromJsonAsync<List<CurrentMeasurement>>($"{Url}/current", TestJson.Options, _ct);
+
+        current.ShouldBe([new("weightKg", 82m, DaysAgo(3)), new("waistCm", 90m, DaysAgo(10))]);
+    }
+
+    [Fact]
+    public async Task Saving_the_profile_measurements_keeps_only_changed_values_in_todays_entry()
+    {
+        var client = await ClientWithHeightAsync();
+        await CreateAsync(client, Entry(DaysAgo(10), weightKg: 84, waistCm: 90));
+
+        // Weight changed, waist the same as before: today's entry gets only the weight.
+        var current = await SaveCurrentAsync(client, Entry(DaysAgo(0), weightKg: 82.5m, waistCm: 90));
+        current.ShouldBe([new("weightKg", 82.5m, DaysAgo(0)), new("waistCm", 90m, DaysAgo(10))]);
+        var today = (await AllAsync(client))[0];
+        (today.MeasuredOn, today.WeightKg, today.WaistCm).ShouldBe((DaysAgo(0), 82.5m, (decimal?)null));
+        (await ProfileWeightAsync(client)).ShouldBe(82.5m);
+
+        // Saving again the same day changes that entry instead of adding one.
+        await SaveCurrentAsync(client, Entry(DaysAgo(0), weightKg: 82, waistCm: 88));
+        var all = await AllAsync(client);
+        all.Count.ShouldBe(2);
+        (all[0].WeightKg, all[0].WaistCm).ShouldBe((82m, 88m));
+
+        // Back to the old values: nothing differs any more, so today's entry goes away.
+        current = await SaveCurrentAsync(client, Entry(DaysAgo(0), weightKg: 84, waistCm: 90));
+        (await AllAsync(client)).ShouldHaveSingleItem().MeasuredOn.ShouldBe(DaysAgo(10));
+        current.ShouldBe([new("weightKg", 84m, DaysAgo(10)), new("waistCm", 90m, DaysAgo(10))]);
+    }
+
+    [Fact]
+    public async Task Saving_the_profile_measurements_validates_like_an_entry()
+    {
+        var client = await ClientWithHeightAsync();
+
+        var wild = await client.PutAsJsonAsync($"{Url}/current", Entry(DaysAgo(0), waistCm: 400), TestJson.Options, _ct);
+        wild.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        var future = await client.PutAsJsonAsync($"{Url}/current", Entry(DaysAgo(-3), waistCm: 80), TestJson.Options, _ct);
+        future.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        (await AllAsync(client)).ShouldBeEmpty();
     }
 }
